@@ -1,0 +1,33 @@
+# .gitleaks.toml — scanner configuration.
+# Docs: https://github.com/gitleaks/gitleaks#configuration
+#
+# Extends gitleaks' built-in rule set. Baseline strategy:
+#   - Inherit every default rule (`useDefault = true`).
+#   - Add repo-specific allowlist entries below for reviewed false
+#     positives — never broaden a rule or disable one wholesale.
+#   - Findings block the commit (lefthook pre-commit hook) and
+#     `mise run check`. An allowlist entry is a documented judgement
+#     call; committing around a finding without one is not.
+#
+# Run with: mise run secrets:scan (also part of mise run check).
+
+[extend]
+useDefault = true
+
+# --- Allowlist -------------------------------------------------------
+# Each entry below is a *documented* exemption. The comment names the
+# file and the reason; the regex or path narrows the exemption to the
+# smallest possible surface.
+#
+# Add entries here only after triaging the finding. Suppress with a
+# narrow allowlist, not a broad rule-disable.
+
+# No global allowlist: every file is scanned, test fixtures included (they hold captured
+# display state, which must stay free of secrets).
+
+# Narrow per-file allowlist example — keep commented until needed.
+# [[allowlists]]
+# description = "test fixture: rotated credential used in integration tests"
+# targetRules = ["github-pat"]
+# paths = ['''(^|/)tests/integration/fixtures/rotated_token\.txt$''']
+# regexes = ['''ghp_0000000000000000000000000000000000$''']
