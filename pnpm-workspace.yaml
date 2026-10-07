@@ -1,0 +1,18 @@
+# pnpm settings — strict defaults. The pinned pnpm 12 reads these here and ignores
+# them in .npmrc, which is left for per-user registry auth only (~/.npmrc, never committed).
+# Single package: no `packages:` list.
+
+# engines.node becomes a hard install-time gate.
+engineStrict: true
+# Every `pnpm add` records an exact pin.
+saveExact: true
+autoInstallPeers: true
+dedupePeerDependents: true
+# Supply-chain cooldown, as in mise.toml: refuse versions younger than a week (minutes).
+minimumReleaseAge: 10080
+
+# Build-script gate. Each entry is a reviewed decision.
+allowBuilds:
+  # postinstall = napi-postinstall: fetches a native binding only when the optional
+  # @unrs/resolver-binding-* package for the platform is missing. Not needed — denied.
+  unrs-resolver: false

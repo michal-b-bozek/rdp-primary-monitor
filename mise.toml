@@ -1,7 +1,8 @@
 # RDP Primary Monitor — pinned dev tools and quality tasks.
 # Nothing here ships in the extension: the zip holds plain JavaScript, metadata and the schema.
-# Gate tasks are added as the thing they check lands — no placeholder tasks that always pass:
-# typecheck with the dev tooling, test / schemas:check / pack / install:dev with the code.
+# Gate tasks are added as the thing they check lands — no placeholder tasks that always pass
+# (typecheck is the exception: a no-op until src/ exists). test / schemas:check / pack /
+# install:dev arrive with the code.
 
 # mise.lock uses lock format v2; this is the oldest mise verified to read and write it.
 min_version = "2026.9.14"
@@ -23,17 +24,29 @@ lychee = "0.24.2"
 # aqua's taplo package publishes no checksums, so mise.lock pins taplo by URL only.
 taplo = "0.10.0"
 
+[env]
+# Dev tools installed by pnpm (package.json) run from the project, never from a global install.
+_.path = ["{{config_root}}/node_modules/.bin"]
+
+[tasks."deps:install"]
+description = "Install the pinned dev dependencies from pnpm-lock.yaml (frozen)"
+run = "pnpm install --frozen-lockfile"
+
 [tasks."format:check"]
-description = "Check formatting without changing files (TOML: taplo)"
-run = "taplo fmt --check"
+description = "Check formatting without changing files (Prettier; TOML: taplo)"
+run = ["prettier --check .", "taplo fmt --check"]
 
 [tasks."format:fix"]
 description = "Rewrite files to match the formatters"
-run = "taplo fmt"
+run = ["prettier --write .", "taplo fmt"]
 
 [tasks.lint]
-description = "Lint TOML files (taplo)"
-run = "taplo lint --no-schema"
+description = "Lint JavaScript (ESLint, eslint.config.js) and TOML files (taplo)"
+run = ["eslint --max-warnings=0 .", "taplo lint --no-schema"]
+
+[tasks.typecheck]
+description = "Type-check the JavaScript against the GNOME Shell types (tsc, tsconfig.json; a no-op until src/ exists)"
+run = "tsc -p tsconfig.json"
 
 [tasks."docs:check"]
 description = "Check Markdown links and anchors (lychee, lychee.toml)"
@@ -46,7 +59,23 @@ run = [
   "gitleaks dir --no-banner --redact .",
 ]
 
+[tasks."pins:check"]
+description = "Check that package.json pins the same node and pnpm as mise.toml"
+run = '''
+want="$(mise current node)"; got="$(node -p "require('./package.json').engines.node")"
+[ "$got" = "$want" ] || { printf 'error: package.json engines.node is %s, mise.toml pins node %s\n' "$got" "$want" >&2; exit 65; }
+want="pnpm@$(mise current pnpm)"; got="$(node -p "require('./package.json').packageManager")"
+[ "$got" = "$want" ] || { printf 'error: package.json packageManager is %s, mise.toml pins %s\n' "$got" "$want" >&2; exit 65; }
+'''
+
 [tasks.check]
 description = "Run the local quality gates"
-depends = ["format:check", "lint", "docs:check", "secrets:scan"]
+depends = [
+  "format:check",
+  "lint",
+  "typecheck",
+  "pins:check",
+  "docs:check",
+  "secrets:scan",
+]
 run = "echo 'quality gates passed'"

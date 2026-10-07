@@ -1,0 +1,42 @@
+// Type-checks the extension's plain ESM JavaScript (`// @ts-check` + JSDoc) against the
+// @girs GNOME types. Adapted from a strict-default tsconfig: the strictness
+// flags are kept; emit is off because GJS runs the sources directly. Dropped:
+// esModuleInterop / allowSyntheticDefaultImports (implied by NodeNext, always on in TS 6),
+// resolveJsonModule (GJS cannot import JSON) and the output block.
+{
+  "compilerOptions": {
+    // --- base -------------------------------------------------------------
+    // GJS on GNOME Shell 49 runs SpiderMonkey with full ES2023 support. No DOM lib: the
+    // few web APIs GJS provides come from @girs/gjs/dom.
+    "target": "ES2023",
+    "lib": ["ES2023"],
+
+    // --- module system ----------------------------------------------------
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+
+    // --- output: none — sources ship as written ---------------------------
+    "noEmit": true,
+
+    // --- strictness --------------------------------------------------------
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // --- JavaScript checking ----------------------------------------------
+    // A strict TypeScript baseline turns these off for greenfield TS; this project is JS by
+    // design decision, so every .js file is checked as if it carried `// @ts-check`.
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true
+  },
+  "include": ["src/**/*.js", "tests/**/*.js", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "build", "dist"]
+}

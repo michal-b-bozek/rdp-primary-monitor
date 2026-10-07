@@ -1,0 +1,26 @@
+{
+  "name": "rdp-primary-monitor",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Dev tooling only (lint, format, type-check). Nothing from npm ships in the extension.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@12.8.2",
+  "engines": {
+    "node": "24.21.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@girs/gjs": "4.9.0",
+    "@girs/gnome-shell": "49.1.0",
+    "eslint": "10.11.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import-x": "4.17.1",
+    "eslint-plugin-no-secrets": "2.3.3",
+    "eslint-plugin-regexp": "3.3.1",
+    "eslint-plugin-security": "4.1.0",
+    "prettier": "3.9.9",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.0"
+  }
+}

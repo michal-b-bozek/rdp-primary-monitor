@@ -1,5 +1,6 @@
 # --- Credentials — never commit them. -------------------------------------
-# Registry tokens belong in ~/.npmrc, never in a project .npmrc.
+# pnpm settings live in pnpm-workspace.yaml (the pinned pnpm 12 reads them there), so a project
+# .npmrc could only carry registry auth — keep that in ~/.npmrc.
 *.key
 *.pem
 auth.json
