@@ -1,0 +1,68 @@
+# Markdown link & anchor checker — invoked by `mise run docs:check`.
+#
+# Checks both relative paths (including `#anchor` fragments inside
+# Markdown files) and external URLs. If a specific host proves flaky
+# (rate limits, auth walls, anti-bot pages), prefer extending `accept`
+# (`429`, `999`) or adding a targeted `exclude` regex over silencing
+# the whole gate.
+
+# Resolve `#anchor` links against the headings in the target file.
+# The type of this key changed: a bool up to and including lychee
+# 0.23.0, an enum (`none` / `anchor-only` / `text-only` / `full`) from
+# 0.24.0 on. The two are mutually exclusive — a bool is a hard startup
+# failure on 0.24.0+ ("wanted string or table") and the string is one
+# on 0.23.0 ("expected a boolean") — so this ships the enum for the
+# pinned lychee 0.24.2.
+#
+# `anchor-only` is lychee's own flagless default and covers what this
+# gate exists for: `#section` links into the repo's own Markdown.
+# Upstream's `lychee.example.toml` ships `full`, which adds text
+# fragments (`#:~:text=…`) — those appear only in URLs pasted from a
+# browser, and checking them makes the gate depend on the exact prose
+# of a third-party page, which is the flake the settings below work to
+# keep out.
+include_fragments = "anchor-only"
+
+# Cache external lookups in `.lycheecache` (gitignored). Subsequent
+# runs skip already-checked URLs until `max_cache_age` elapses,
+# which keeps the gate fast. 5xx
+# responses are not cached — a one-off upstream outage must not
+# poison the gate for a full day.
+cache = true
+max_cache_age = "1d"
+cache_exclude_status = "500.."
+
+# Network limits. `host_request_interval`
+# keeps the checker polite against any single host.
+timeout = 20
+retry_wait_time = 2
+max_retries = 2
+max_redirects = 10
+host_request_interval = "100ms"
+
+# 200..=299 — success.
+# 429 — rate-limited but the URL is real; treat as live.
+accept = ["200..=299", "429"]
+
+# Detailed format prints source file and line for each broken link —
+# `compact` (the default) makes failures harder to triage.
+format = "detailed"
+
+# Set `GITHUB_TOKEN` in the environment to dodge the 60-req/hr
+# unauthenticated rate limit if the docs come to cite many github.com URLs;
+# lychee reads it automatically.
+# github_token = "ghp_xxxx"  # prefer the env var
+
+# Hosts that prove flaky despite the retry / accept config go here as
+# regex patterns matched against the full URL. Keep the list short, with
+# a comment naming each host and why it is excluded.
+exclude = [
+  # Example shape — uncomment and edit, do not ship as-is:
+  # "^https://gitlab\\.com/<org>/<private-repo>/",  # redirects to login
+]
+
+# Skip vendored / generated / build-output directories.
+exclude_path = ["node_modules", "build", "dist"]
+
+# Cleaner output; suppresses the live progress bar.
+no_progress = true

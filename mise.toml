@@ -1,0 +1,52 @@
+# RDP Primary Monitor — pinned dev tools and quality tasks.
+# Nothing here ships in the extension: the zip holds plain JavaScript, metadata and the schema.
+# Gate tasks are added as the thing they check lands — no placeholder tasks that always pass:
+# typecheck with the dev tooling, test / schemas:check / pack / install:dev with the code.
+
+# mise.lock uses lock format v2; this is the oldest mise verified to read and write it.
+min_version = "2026.9.14"
+
+[settings]
+lockfile = true
+# Supply-chain hardening — refuse releases younger than a week. Override one invocation with
+# MISE_MINIMUM_RELEASE_AGE=0 in an emergency.
+minimum_release_age = "168h"
+
+[tools]
+# Dev tools only. Exact pins; bump through a
+# reviewed build(deps) commit. pnpm must match package.json "packageManager".
+node = "24.21.0"
+pnpm = "12.8.2"
+cocogitto = "7.0.0"
+gitleaks = "8.30.1"
+lychee = "0.24.2"
+# aqua's taplo package publishes no checksums, so mise.lock pins taplo by URL only.
+taplo = "0.10.0"
+
+[tasks."format:check"]
+description = "Check formatting without changing files (TOML: taplo)"
+run = "taplo fmt --check"
+
+[tasks."format:fix"]
+description = "Rewrite files to match the formatters"
+run = "taplo fmt"
+
+[tasks.lint]
+description = "Lint TOML files (taplo)"
+run = "taplo lint --no-schema"
+
+[tasks."docs:check"]
+description = "Check Markdown links and anchors (lychee, lychee.toml)"
+run = "lychee ."
+
+[tasks."secrets:scan"]
+description = "Scan the git history and the working tree for secrets (gitleaks)"
+run = [
+  "gitleaks git --no-banner --redact .",
+  "gitleaks dir --no-banner --redact .",
+]
+
+[tasks.check]
+description = "Run the local quality gates"
+depends = ["format:check", "lint", "docs:check", "secrets:scan"]
+run = "echo 'quality gates passed'"

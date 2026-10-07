@@ -13,6 +13,8 @@ auth.json
 mise.local.toml
 .mise.local.toml
 mise.*.local.toml
+# lychee link-check cache (mise run docs:check).
+.lycheecache
 
 # --- Agent session state ----------------------------------------------------
 # The task record: per-session working notes, never committed.
