@@ -1,3 +1,5 @@
 # Generated files: formatted by the tool that writes them, never by hand.
 pnpm-lock.yaml
 mise.lock
+# cocogitto writes `- - -` separators that Prettier would rewrite.
+CHANGELOG.md

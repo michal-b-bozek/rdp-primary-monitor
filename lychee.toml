@@ -57,8 +57,9 @@ format = "detailed"
 # regex patterns matched against the full URL. Keep the list short, with
 # a comment naming each host and why it is excluded.
 exclude = [
-  # Example shape — uncomment and edit, do not ship as-is:
-  # "^https://gitlab\\.com/<org>/<private-repo>/",  # redirects to login
+  # This repository is private until publication: unauthenticated requests get 404.
+  # Remove this entry when the repository goes public.
+  "^https://github\\.com/michal-b-bozek/rdp-primary-monitor(/|$)",
 ]
 
 # Skip vendored / generated / build-output directories.
