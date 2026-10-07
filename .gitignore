@@ -14,6 +14,9 @@ auth.json
 mise.local.toml
 .mise.local.toml
 mise.*.local.toml
+# Per-developer lefthook overrides.
+lefthook-local.yml
+.lefthook-local.yml
 # lychee link-check cache (mise run docs:check).
 .lycheecache
 

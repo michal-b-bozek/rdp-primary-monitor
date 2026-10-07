@@ -42,6 +42,7 @@ extension.
 mise trust mise.toml      # once per clone
 mise install              # pinned tools
 mise run deps:install     # pinned npm dev dependencies (before the first check)
+mise run hooks:install    # git hooks (lefthook): secrets, lint, format, commit messages
 mise run check            # all quality gates
 ```
 

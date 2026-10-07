@@ -1,0 +1,28 @@
+# Git hooks — lefthook is the only owner of .git/hooks/.
+# Install once per clone: mise run hooks:install. Never also run `cog install-hook` or
+# `pre-commit install`. Every command goes through mise, so hooks use the pinned tools.
+
+pre-commit:
+  parallel: false
+  commands:
+    # gitleaks pre-commit layer: the staged diff only; the full-history scan is
+    # mise run secrets:scan.
+    gitleaks:
+      run: mise exec -- gitleaks git --staged --no-banner --redact
+    # Fix and format staged files; re-stage what changed.
+    lint-staged:
+      run: mise exec -- pnpm exec lint-staged
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    cog-verify:
+      run: mise exec -- cog verify --file {1}
+
+pre-push:
+  commands:
+    # Cross-file checks the staged-files hooks cannot see.
+    commits:
+      run: mise run commits:check
+    typecheck:
+      run: mise run typecheck
