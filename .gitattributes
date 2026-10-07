@@ -1,0 +1,15 @@
+# Line-ending normalisation + binary markers.
+# Canonical LF on checkin and checkout; paired with .editorconfig's end_of_line = lf.
+
+* text=auto eol=lf
+
+# Lock files are reviewable text but generated; collapse them in GitHub review.
+pnpm-lock.yaml linguist-generated
+mise.lock linguist-generated
+
+# Images (README screenshots), archives.
+*.png binary
+*.jpg binary
+*.svg text
+*.zip binary
+*.gz binary

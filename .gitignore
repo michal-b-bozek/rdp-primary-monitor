@@ -1,0 +1,47 @@
+# --- Credentials — never commit them. -------------------------------------
+# Registry tokens belong in ~/.npmrc, never in a project .npmrc.
+*.key
+*.pem
+auth.json
+.npmrc
+.env
+.env.*
+!.env.example
+
+# --- mise -------------------------------------------------------------------
+# Per-developer overrides, in every file name mise reads.
+mise.local.toml
+.mise.local.toml
+mise.*.local.toml
+
+# --- Agent session state ----------------------------------------------------
+# The task record: per-session working notes, never committed.
+.task-record.md
+# Claude Code's per-user settings.
+.claude/settings.local.json
+
+# --- Node dev tooling -------------------------------------------------------
+node_modules/
+.pnpm-store/
+*.tsbuildinfo
+.eslintcache
+
+# --- Build output -----------------------------------------------------------
+# Packed extension zips (gnome-extensions pack) and the schema cache GNOME compiles itself.
+build/
+dist/
+*.zip
+src/schemas/gschemas.compiled
+
+# --- OS junk, editor state, logs --------------------------------------------
+.DS_Store
+.Trash-*
+.nfs*
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.orig
+*.rej
+*.log
