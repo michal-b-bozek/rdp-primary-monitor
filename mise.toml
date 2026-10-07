@@ -52,6 +52,10 @@ run = "tsc -p tsconfig.json"
 description = "Check Markdown links and anchors (lychee, lychee.toml)"
 run = "lychee ."
 
+[tasks."commits:check"]
+description = "Check every commit message against Conventional Commits (cocogitto, cog.toml)"
+run = "cog check"
+
 [tasks."secrets:scan"]
 description = "Scan the git history and the working tree for secrets (gitleaks)"
 run = [
@@ -76,6 +80,7 @@ depends = [
   "typecheck",
   "pins:check",
   "docs:check",
+  "commits:check",
   "secrets:scan",
 ]
 run = "echo 'quality gates passed'"

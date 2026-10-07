@@ -1,0 +1,58 @@
+# cog.toml — cocogitto 7.x, single package.
+# Verify:  mise run commits:check
+# Bump:    cog bump --auto   (on main or release/** only; runs mise run check first)
+
+# No SemVer tag exists yet, so walk the whole history. Flip to true right after v0.1.0 is
+# tagged (from_latest_tag needs at least one tag).
+from_latest_tag = false
+
+# Merge-button merge commits and fixup!/squash! commits are not Conventional Commits.
+ignore_merge_commits = true
+ignore_fixup_commits = true
+
+# Bumps only on main or release/**; elsewhere `cog bump` no-ops.
+branch_whitelist = ["main", "release/**"]
+
+# Tags look like v1.2.3.
+tag_prefix = "v"
+
+skip_ci = "[skip ci]"
+
+# Validate before anything mutates (cocogitto does not roll back hook side effects).
+# The metadata.json `version-name` sync is added here, after the validations, once
+# src/metadata.json exists.
+# mise run check includes commits:check (cog check).
+pre_bump_hooks = ["mise run check"]
+
+# No post_bump_hooks: the changelog is curated before anything is pushed. Release sequence:
+#   1. cog bump --auto (the first release: cog bump --version 0.1.0, because the history so
+#      far has no feat or fix commit)
+#   2. Curate CHANGELOG.md: headings to `## [X.Y.Z] - date` and `###` sections, entries in
+#      user voice, reference links at the bottom (`[Unreleased]` compares from the new tag,
+#      plus a `[X.Y.Z]` release link). Unreleased stays empty: cocogitto is its only author.
+#   3. git add CHANGELOG.md && git commit --amend --no-edit && git tag -f vX.Y.Z
+#   4. git push && git push origin vX.Y.Z
+
+[changelog]
+path = "CHANGELOG.md"
+# The built-in remote template writes `## [v0.1.0](compare-url) - date` and `####` sections;
+# the curation pass after each bump rewrites them to Keep a Changelog form.
+template = "remote"
+remote = "github.com"
+owner = "michal-b-bozek"
+repository = "rdp-primary-monitor"
+
+# Keep a Changelog 1.1 section names instead of cocogitto's Angular defaults.
+[commit_types]
+feat = { changelog_title = "Added" }
+fix = { changelog_title = "Fixed" }
+perf = { changelog_title = "Changed" }
+# The right KACL section for a revert depends on what was reverted; curate by hand.
+revert = { omit_from_changelog = true }
+refactor = { omit_from_changelog = true }
+docs = { omit_from_changelog = true }
+test = { omit_from_changelog = true }
+chore = { omit_from_changelog = true }
+style = { omit_from_changelog = true }
+ci = { omit_from_changelog = true }
+build = { omit_from_changelog = true }
