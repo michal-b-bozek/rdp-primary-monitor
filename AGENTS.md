@@ -19,3 +19,5 @@ Ground rules for this repo:
 - **Extension review rules apply to all shipped code.** No work at module import time, full
   cleanup in `disable()`, async D-Bus only, SPDX header
   (`// SPDX-License-Identifier: MIT`) in every source file.
+- **Architecture decisions are recorded in the ADR log** at `docs/architecture/decisions/`; read
+  it before reopening a design question.

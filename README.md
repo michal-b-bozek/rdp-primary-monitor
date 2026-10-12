@@ -27,7 +27,8 @@ use the setting has not persisted reliably from one remote session to the next.
   during the session stay where GNOME puts them.
 - With no virtual monitor present, the extension changes nothing.
 
-How it works, state by state: [docs/design.md](docs/design.md).
+How it works, state by state: [docs/design.md](docs/design.md). The reasons behind it are being
+recorded in the [architecture decision records](docs/architecture/decisions/).
 
 ## Requirements
 
