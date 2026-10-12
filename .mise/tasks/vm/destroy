@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+#MISE description="Delete a test VM: its domain, disk and generated credentials"
+#MISE confirm="Delete the test VM, its disk and its credentials?"
+#USAGE arg "<vm>" help="f43 (Fedora 43, GNOME 49) or f44 (Fedora 44, GNOME 50)" {
+#USAGE   choices "f43" "f44"
+#USAGE }
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly SCRIPT_DIR
+# shellcheck source=tools/vm/lib.sh
+source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
+
+main() {
+  rdppm_vm_resolve "${usage_vm:?}"
+  rdppm_require_cmd virsh
+
+  rdppm_vm_lookup
+  if [[ "${RDPPM_VM_EXISTS}" == "true" ]]; then
+    local state
+    state="$(rdppm_vm_state)"
+    if [[ "${state}" != "shut off" ]]; then
+      rdppm_vm_force_off
+    fi
+    rdppm_virsh undefine "${RDPPM_VM_NAME}" --nvram --managed-save --snapshots-metadata \
+      --remove-all-storage > /dev/null
+  fi
+  rm -rf -- "${RDPPM_VM_STATE_DIR}"
+  printf '%s deleted\n' "${RDPPM_VM_NAME}" >&2
+}
+
+main "$@"

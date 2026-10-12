@@ -1,0 +1,117 @@
+# SPDX-License-Identifier: MIT
+# Kickstart for the RDP Primary Monitor test VMs (Fedora Workstation, GNOME). A template:
+# `mise run vm:build` fills the @…@ placeholders into a temporary copy and injects it into the
+# installer initrd. The rendered copy carries a password hash, the RDP credentials and
+# rdppm-guest-setup.sh (base64) and is never written to the repository.
+#
+# Result: user `tester` logs in automatically into a GNOME session that never locks; on first
+# login rdppm-guest-setup enables Desktop Sharing (RDP, `extend` mode) with the generated
+# credentials. sshd accepts only the generated key (password login is turned off). Throwaway
+# VM: tester has passwordless sudo.
+
+text
+lang en_US.UTF-8
+keyboard us
+timezone Etc/UTC --utc
+url --url=@INSTALL_TREE@
+repo --name=updates --mirrorlist=https://mirrors.fedoraproject.org/mirrorlist?repo=updates-released-f@RELEASE@&arch=x86_64
+network --bootproto=dhcp --hostname=@HOSTNAME@
+rootpw --lock
+user --name=tester --groups=wheel --iscrypted --password=@TESTER_PASSWORD_HASH@
+sshkey --username=tester "@SSH_PUBLIC_KEY@"
+firewall --enabled --service=ssh --port=3389:tcp
+services --enabled=sshd
+selinux --enforcing
+zerombr
+clearpart --all --initlabel --disklabel=gpt
+autopart
+# virtio-gpu enables a second head only when a viewer asks for it; `e` forces the connector
+# on, so the guest always has two "physical" monitors. Only `e` takes effect: Mutter picks the
+# head's preferred mode (5120x2160, see vm:build), not the one named here.
+bootloader --timeout=1 --append="video=Virtual-2:1920x1080@60e"
+poweroff
+
+%packages
+@^workstation-product-environment
+openssl
+# The user is created above; the first-login wizard would block autologin.
+-gnome-initial-setup
+%end
+
+# This shell has no shebang, so ShellCheck and shfmt do not see it; keep it short and plain.
+%post --interpreter=/usr/bin/bash --erroronfail
+set -euo pipefail
+IFS=$'\n\t'
+
+# Anaconda installs from the release tree even with the updates repo added above; bring the
+# GNOME stack to the current point release so the VM matches an updated desktop.
+dnf -y upgrade --refresh
+
+mkdir -p /usr/local/libexec /home/tester/.config/rdppm
+printf '%s' '@GUEST_SETUP_B64@' | base64 -d > /usr/local/libexec/rdppm-guest-setup
+chmod 0755 /usr/local/libexec/rdppm-guest-setup
+(
+  umask 077
+  printf '%s' '@RDP_CREDENTIALS_B64@' | base64 -d > /home/tester/.config/rdppm/rdp-credentials
+)
+
+# sshd keeps the first value it reads and reads drop-ins in name order, so this file must sort
+# before Fedora's own 50-*.conf.
+printf 'PasswordAuthentication no\nKbdInteractiveAuthentication no\n' \
+  > /etc/ssh/sshd_config.d/10-rdppm.conf
+
+printf 'tester ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/tester
+chmod 0440 /etc/sudoers.d/tester
+visudo -cf /etc/sudoers.d/tester
+
+# A `text` install leaves multi-user.target as the default; GDM needs the graphical one.
+systemctl set-default graphical.target
+
+cat > /etc/gdm/custom.conf << 'EOF'
+[daemon]
+AutomaticLoginEnable=True
+AutomaticLogin=tester
+EOF
+
+# System dconf defaults: no idle blanking or lock (a locked session hides the windows under
+# test), Desktop Sharing in extend mode (the virtual monitor this extension exists for).
+mkdir -p /etc/dconf/db/local.d
+cat > /etc/dconf/db/local.d/00-rdppm << 'EOF'
+[org/gnome/desktop/session]
+idle-delay=uint32 0
+
+[org/gnome/desktop/screensaver]
+lock-enabled=false
+
+[org/gnome/desktop/remote-desktop/rdp]
+screen-share-mode='extend'
+EOF
+dconf update
+
+# Autologin has no password to unlock the login keyring with, and gnome-remote-desktop keeps
+# its RDP credentials there. An unencrypted (textual) keyring is always unlocked.
+mkdir -p /home/tester/.local/share/keyrings
+printf 'login\n' > /home/tester/.local/share/keyrings/default
+cat > /home/tester/.local/share/keyrings/login.keyring << 'EOF'
+[keyring]
+display-name=login
+ctime=0
+mtime=0
+lock-on-idle=false
+lock-after=false
+EOF
+chmod 0700 /home/tester/.local/share/keyrings
+chmod 0600 /home/tester/.local/share/keyrings/*
+
+mkdir -p /home/tester/.config/autostart
+cat > /home/tester/.config/autostart/rdppm-guest-setup.desktop << 'EOF'
+[Desktop Entry]
+Type=Application
+Name=RDP Primary Monitor test VM setup
+Exec=/usr/local/libexec/rdppm-guest-setup
+NoDisplay=true
+EOF
+
+chown -R tester:tester /home/tester
+restorecon -R /home/tester /usr/local/libexec
+%end

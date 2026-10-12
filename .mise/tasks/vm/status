@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+#MISE description="Show the test VMs: state, forwarded ports, state directory"
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly SCRIPT_DIR
+# shellcheck source=tools/vm/lib.sh
+source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
+
+# show <id> — one line per VM; a subshell because rdppm_vm_resolve sets readonly globals.
+show() (
+  local state
+  rdppm_vm_resolve "$1"
+  rdppm_vm_lookup
+  if [[ "${RDPPM_VM_EXISTS}" == "true" ]]; then
+    state="$(rdppm_vm_state)"
+  else
+    state="not built"
+  fi
+  printf '%-8s %-10s rdp 127.0.0.1:%s  ssh 127.0.0.1:%s  %s\n' "${RDPPM_VM_NAME}" \
+    "${state}" "${RDPPM_VM_RDP_PORT}" "${RDPPM_VM_SSH_PORT}" "${RDPPM_VM_STATE_DIR}"
+)
+
+main() {
+  rdppm_require_cmd virsh
+  show f43
+  show f44
+}
+
+main "$@"

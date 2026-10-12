@@ -50,6 +50,21 @@ mise run check            # all quality gates
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/); `mise run check`
 verifies them.
 
+### Test VMs
+
+The `vm:*` tasks build disposable Fedora 43 (GNOME 49) and Fedora 44 (GNOME 50) VMs with
+Desktop Sharing in `extend` mode, in the unprivileged libvirt session. They need a Linux host
+with KVM and these host packages, named as on Fedora, which mise does not manage:
+`libvirt-daemon-kvm` (libvirt's QEMU driver and QEMU), `libvirt-client`, `virt-install`,
+`passt`, `openssh-clients`, `openssl` and `freerdp`. KVM is unavailable while a VirtualBox VM is
+running.
+
+```sh
+mise run vm:build f43     # install from the Fedora mirrors; ends powered off
+mise run vm:start f43     # boot and wait for Desktop Sharing
+mise run vm:connect f43   # RDP client window; the guest gains a virtual monitor
+```
+
 ## Project
 
 - **Licence:** MIT; the text is in [LICENSE](LICENSE).

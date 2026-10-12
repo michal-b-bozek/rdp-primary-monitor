@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+#MISE description="Open a shell (or run a command) in a test VM as the tester user"
+#USAGE arg "<vm>" help="f43 (Fedora 43, GNOME 49) or f44 (Fedora 44, GNOME 50)" {
+#USAGE   choices "f43" "f44"
+#USAGE }
+#USAGE arg "[command]" var=#true help="Command to run in the guest instead of a login shell; ssh joins the words with spaces, so quote for the guest shell"
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly SCRIPT_DIR
+# shellcheck source=tools/vm/lib.sh
+source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
+
+main() {
+  rdppm_vm_resolve "${usage_vm:?}"
+  rdppm_require_cmd virsh ssh
+  rdppm_vm_require_running
+  rdppm_vm_require_ssh_key
+  # "$@" holds the raw task arguments: the VM id, then the command words.
+  shift
+  if [[ "${1:-}" == "--" ]]; then shift; fi
+  if (($# == 0)); then
+    rdppm_vm_ssh_raw -t -o ConnectTimeout=5 -- 127.0.0.1
+    return
+  fi
+  rdppm_vm_ssh "$@"
+}
+
+main "$@"

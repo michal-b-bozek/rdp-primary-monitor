@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+#MISE description="Connect to a running test VM's Desktop Sharing with FreeRDP (opens a window)"
+#USAGE arg "<vm>" help="f43 (Fedora 43, GNOME 49) or f44 (Fedora 44, GNOME 50)" {
+#USAGE   choices "f43" "f44"
+#USAGE }
+#USAGE flag "--size <size>" default="1920x1080" help="Client size, WIDTHxHEIGHT; becomes the virtual monitor's mode"
+#
+# The arguments, password included, reach FreeRDP on stdin (/args-from:stdin), never on its
+# command line. The server certificate is pinned to the fingerprint read from the guest over
+# ssh, so a rebuilt VM never trips a stale trust-on-first-use entry.
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly SCRIPT_DIR
+# shellcheck source=tools/vm/lib.sh
+source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
+
+# guest_cert_fingerprint — SHA-256 of the guest's RDP certificate, lowercase hex.
+guest_cert_fingerprint() {
+  local out
+  out="$(rdppm_vm_ssh openssl x509 -noout -fingerprint -sha256 \
+    -in .local/share/gnome-remote-desktop/rdp-tls.crt)"
+  out="${out#*=}"
+  out="${out//:/}"
+  printf '%s\n' "${out,,}"
+}
+
+main() {
+  rdppm_vm_resolve "${usage_vm:?}"
+  rdppm_require_cmd virsh ssh
+  # FreeRDP 3's X11 client is xfreerdp on Fedora and xfreerdp3 on Debian and Arch.
+  local client
+  client="$(command -v xfreerdp3 || command -v xfreerdp)" || {
+    printf 'error: FreeRDP 3 not found on PATH (xfreerdp3 or xfreerdp)\n' >&2
+    exit 127
+  }
+  # Older distributions ship FreeRDP 2 as xfreerdp; it lacks /args-from and /cert:fingerprint.
+  local version
+  version="$("${client}" --version 2>&1)" || version=
+  if [[ ! "${version}" =~ version\ 3\. ]]; then
+    printf 'error: %s is not FreeRDP 3 (%s)\n' "${client}" "${version:-no version output}" >&2
+    exit 69
+  fi
+  rdppm_vm_require_running
+  rdppm_vm_require_ssh_key
+  if [[ ! "${usage_size:?}" =~ ^[0-9]+x[0-9]+$ ]]; then
+    printf 'error: --size must be WIDTHxHEIGHT, got %q\n' "${usage_size}" >&2
+    exit 2
+  fi
+
+  local fingerprint user='' password=''
+  # shellcheck disable=SC2310  # an empty result is caught by the format check below
+  fingerprint="$(guest_cert_fingerprint)" || fingerprint=
+  if [[ ! "${fingerprint}" =~ ^[0-9a-f]{64}$ ]]; then
+    printf 'error: could not read the RDP certificate fingerprint from %s; is Desktop Sharing set up? (mise run vm:start %s)\n' \
+      "${RDPPM_VM_NAME}" "${usage_vm}" >&2
+    exit 69
+  fi
+  if [[ ! -r "${RDPPM_VM_STATE_DIR}/rdp-credentials" ]]; then
+    printf 'error: no RDP credentials in %s; rebuild the VM (vm:destroy, then vm:build %s)\n' \
+      "${RDPPM_VM_STATE_DIR}" "${usage_vm}" >&2
+    exit 66
+  fi
+  # A short file fails `read`; the format check below reports it.
+  {
+    IFS= read -r user && IFS= read -r password
+  } < "${RDPPM_VM_STATE_DIR}/rdp-credentials" || true
+  if [[ ! "${user}" =~ ^[[:alnum:]]+$ || ! "${password}" =~ ^[[:alnum:]]+$ ]]; then
+    printf 'error: malformed %s; rebuild the VM (vm:destroy, then vm:build %s)\n' \
+      "${RDPPM_VM_STATE_DIR}/rdp-credentials" "${usage_vm}" >&2
+    exit 65
+  fi
+
+  "${client}" /args-from:stdin << ARGS
+/v:127.0.0.1:${RDPPM_VM_RDP_PORT}
+/u:${user}
+/p:${password}
+/cert:fingerprint:sha256:${fingerprint}
+/size:${usage_size}
+ARGS
+}
+
+main "$@"
