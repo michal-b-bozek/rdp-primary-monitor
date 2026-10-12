@@ -2,6 +2,9 @@
 # Canonical LF on checkin and checkout; paired with .editorconfig's end_of_line = lf.
 
 * text=auto eol=lf
+# Shell scripts must never be checked out with CRLF; declared, not left to text detection.
+*.sh text eol=lf
+.mise/tasks/** text eol=lf
 
 # Lock files are reviewable text but generated; collapse them in GitHub review.
 pnpm-lock.yaml linguist-generated

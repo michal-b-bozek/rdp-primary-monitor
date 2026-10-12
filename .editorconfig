@@ -14,3 +14,21 @@ insert_final_newline = true
 # Markdown carries meaningful trailing whitespace (two trailing spaces = <br>).
 [*.md]
 trim_trailing_whitespace = false
+
+# Shell: shfmt reads these keys when run without flags (Google style). The mise file
+# tasks have no extension, so their directory gets its own section.
+[*.sh]
+shell_variant = bash
+switch_case_indent = true
+space_redirects = true
+binary_next_line = false
+keep_padding = false
+function_next_line = false
+
+[.mise/tasks/**]
+shell_variant = bash
+switch_case_indent = true
+space_redirects = true
+binary_next_line = false
+keep_padding = false
+function_next_line = false

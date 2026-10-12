@@ -24,6 +24,8 @@ lefthook = "2.1.15"
 lychee = "0.24.2"
 # aqua's taplo package publishes no checksums, so mise.lock pins taplo by URL only.
 taplo = "0.10.0"
+shellcheck = "0.11.0"
+shfmt = "3.14.1"
 
 [env]
 # Dev tools installed by pnpm (package.json) run from the project, never from a global install.
@@ -38,16 +40,28 @@ description = "Install the git hooks from lefthook.yml (once per clone)"
 run = "lefthook install"
 
 [tasks."format:check"]
-description = "Check formatting without changing files (Prettier; TOML: taplo)"
-run = ["prettier --check .", "taplo fmt --check"]
+description = "Check formatting without changing files (Prettier; TOML: taplo; shell: shfmt)"
+run = [
+  "prettier --check .",
+  "taplo fmt --check",
+  "shfmt --diff .mise/tasks tools",
+]
 
 [tasks."format:fix"]
 description = "Rewrite files to match the formatters"
-run = ["prettier --write .", "taplo fmt"]
+run = ["prettier --write .", "taplo fmt", "shfmt --write .mise/tasks tools"]
 
 [tasks.lint]
-description = "Lint JavaScript (ESLint, eslint.config.js) and TOML files (taplo)"
-run = ["eslint --max-warnings=0 .", "taplo lint --no-schema"]
+description = "Lint JavaScript (ESLint, eslint.config.js), TOML (taplo) and shell (ShellCheck, .shellcheckrc)"
+# bash, not sh: the shell step needs pipefail, which dash (sh on Debian) lacks.
+shell = "bash -o errexit -o pipefail -c"
+run = [
+  "eslint --max-warnings=0 .",
+  "taplo lint --no-schema",
+  # shfmt lists the shell files, extensionless mise file tasks included, by shebang; an empty
+  # first listing fails the task instead of checking nothing.
+  "files=\"$(shfmt --find .mise/tasks tools)\"; [[ -n \"$files\" ]] || { echo 'error: shfmt found no shell files under .mise/tasks or tools' >&2; exit 66; }; shfmt --find=0 .mise/tasks tools | xargs -0 shellcheck",
+]
 
 [tasks.typecheck]
 description = "Type-check the JavaScript against the GNOME Shell types (tsc, tsconfig.json; a no-op until src/ exists)"
