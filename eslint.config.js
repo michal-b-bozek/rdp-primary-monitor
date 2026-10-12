@@ -9,6 +9,8 @@
 //   support and ESLint 9 is end-of-life. Same rules, `import-x/` prefix.
 // - GJS globals are declared; GNOME Shell requires a default export from extension.js and
 //   prefs.js.
+// - eslint-plugin-jsdoc requires JSDoc types on the extension's exports (src/), standing in for
+//   explicit-module-boundary-types, which cannot read JSDoc.
 //
 // Prettier integration as in the baseline: eslint-config-prettier last, no
 // eslint-plugin-prettier.
@@ -17,6 +19,7 @@ import js from '@eslint/js'
 import { defineConfig } from 'eslint/config'
 import prettierConfig from 'eslint-config-prettier'
 import importPlugin from 'eslint-plugin-import-x'
+import jsdocPlugin from 'eslint-plugin-jsdoc'
 import noSecretsPlugin from 'eslint-plugin-no-secrets'
 import regexpPlugin from 'eslint-plugin-regexp'
 import securityPlugin from 'eslint-plugin-security'
@@ -37,6 +40,10 @@ const gjsGlobals = {
   setInterval: 'readonly',
   clearInterval: 'readonly',
 }
+
+// A method of a class expression passed to a call, as in GObject.registerClass(class … {}).
+const registeredClassMethod =
+  'CallExpression > ClassExpression > ClassBody > MethodDefinition'
 
 export default defineConfig(
   // --- 1. global ignores ---------------------------------------------------
@@ -109,10 +116,10 @@ export default defineConfig(
       ],
 
       // Need TypeScript syntax (annotations, `import type`) that .js files cannot carry.
-      // Substitutes, by review convention: every export carries JSDoc `@param` / `@returns`
-      // types; type-only imports use `/** @import … */`. A value import used only in JSDoc is
-      // reported by @typescript-eslint/no-unused-vars (JSDoc references don't count), so no
-      // GJS module is loaded just for a type.
+      // Substitutes: exports in src/ carry JSDoc `@param` / `@returns` types (section 7,
+      // eslint-plugin-jsdoc); type-only imports use `/** @import … */`. A value import used
+      // only in JSDoc is reported by @typescript-eslint/no-unused-vars (JSDoc references don't
+      // count), so no GJS module is loaded just for a type.
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/consistent-type-imports': 'off',
       '@typescript-eslint/consistent-type-exports': 'off',
@@ -163,7 +170,50 @@ export default defineConfig(
     },
   },
 
-  // --- 7. per-file overrides ----------------------------------------------
+  // --- 7. JSDoc types on the extension's exports ---------------------------
+  {
+    files: ['src/**/*.js'],
+    // `jsdoc-gobject` is a second name for the same plugin, so require-jsdoc can run twice.
+    plugins: { jsdoc: jsdocPlugin, 'jsdoc-gobject': jsdocPlugin },
+    settings: { jsdoc: { mode: 'typescript' } },
+    rules: {
+      'jsdoc/require-jsdoc': [
+        'error',
+        {
+          publicOnly: true,
+          require: {
+            FunctionDeclaration: true,
+            MethodDefinition: true,
+            ArrowFunctionExpression: true,
+            FunctionExpression: true,
+          },
+        },
+      ],
+      // GNOME Shell classes are usually `export const X = GObject.registerClass(class … {})`.
+      // publicOnly counts that class's methods as exported only while the export statement has
+      // no JSDoc of its own, so they are checked here without publicOnly.
+      'jsdoc-gobject/require-jsdoc': [
+        'error',
+        {
+          require: { FunctionDeclaration: false },
+          contexts: [
+            `ExportNamedDeclaration ${registeredClassMethod}`,
+            `ExportDefaultDeclaration ${registeredClassMethod}`,
+          ],
+        },
+      ],
+      'jsdoc/require-param': 'error',
+      'jsdoc/require-param-type': 'error',
+      'jsdoc/require-returns': [
+        'error',
+        { forceRequireReturn: true, forceReturnsWithAsync: true },
+      ],
+      'jsdoc/require-returns-type': 'error',
+      'jsdoc/valid-types': 'error',
+    },
+  },
+
+  // --- 8. per-file overrides ----------------------------------------------
   {
     // GNOME Shell loads the extension and its preferences through their default export.
     files: ['src/extension.js', 'src/prefs.js'],
@@ -194,6 +244,6 @@ export default defineConfig(
     rules: { 'import-x/no-default-export': 'off' },
   },
 
-  // --- 8. Prettier compatibility (MUST be last) ---------------------------
+  // --- 9. Prettier compatibility (MUST be last) ---------------------------
   prettierConfig,
 )
