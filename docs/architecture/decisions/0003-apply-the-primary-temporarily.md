@@ -1,6 +1,6 @@
 # 3. Apply the primary temporarily
 
-- **Status:** accepted
+- **Status:** accepted; Last amended: 2026-10-12
 - **Date:** 2026-10-12
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0002](0002-match-the-virtual-monitor.md), which picks the session's
@@ -143,3 +143,8 @@ monitor hot-plug, dismisses their session.
   so that part 4's rule is tested against the real change.
 - What `disable()` does to the temporary primary during a session: the window snapshot and
   restore decision.
+
+  > **Amendment (2026-10-12).** Settled by
+  > [ADR-0004](0004-snapshot-and-restore-windows.md), part 5: `disable()` sends no display
+  > configuration and leaves the temporary primary until the client disconnects. No rule of this
+  > ADR changes; the item is closed.

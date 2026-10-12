@@ -16,16 +16,18 @@ Everything it reads and changes is on the same machine:
   monitor this way: a virtual monitor with vendor `MetaVendor` and product
   `Virtual remote monitor`, sized to the client window.
 - **The monitor list** (input): `global.backend.get_monitor_manager().get_monitors()` gives each
-  monitor's vendor, product and connector; `get_monitor_for_connector()` maps a connector to the
-  monitor index that the window API uses.
-- **Window placement** (input): `global.display.list_all_windows()` and each `Meta.Window`'s
-  frame, monitor, workspace and maximized, fullscreen and minimized state.
+  monitor's vendor, product, serial and connector; `get_monitor_for_connector()` maps a connector to
+  the monitor index that the window API uses.
+- **Window placement** (input): `global.display.list_all_windows()` and each `Meta.Window`'s frame,
+  monitor, workspace and maximized, fullscreen and minimized state. The extension handles only
+  _normal windows_ (`Meta.WindowType.NORMAL`, not skipped from the taskbar).
 - **Display configuration** (input and output): Mutter's `org.gnome.Mutter.DisplayConfig` D-Bus
   interface, called asynchronously from inside the Shell. `GetCurrentState` reads the layout;
   `ApplyMonitorsConfig` with the _temporary_ method changes which monitor is primary. A temporary
   configuration is never written to `~/.config/monitors.xml`.
-- **Window moves** (output): `Meta.Window` methods (`move_to_monitor`, `move_resize_frame`,
-  `maximize`, `unmaximize`, `make_fullscreen`, `unmake_fullscreen`).
+- **Window moves** (output): `Meta.Window` methods (`move_to_monitor`, `change_workspace`,
+  `move_resize_frame`, `set_maximize_flags` with `maximize`, `set_unmaximize_flags` with
+  `unmaximize`, `make_fullscreen`, `unmake_fullscreen`, `minimize`, `unminimize`).
 
 ## States
 
@@ -103,18 +105,23 @@ client stays connected, even if the primary returns to the session's monitor.
 
 **Restoring.** The client disconnected. Mutter removes the virtual monitor and returns to the
 previous layout by itself; it parks the gathered windows on the remaining primary monitor. The
-extension then puts back each window it gathered, and only those: monitor first, then maximized
-state, then the frame rectangle for windows that were not maximized, then fullscreen, then
-minimized. If the session ended before any apply succeeded, nothing was gathered and nothing moves.
-Windows that closed during the session are skipped, and so are windows whose original monitor no
-longer exists. If the client reconnects before this finishes (a matching monitor appears during
-Restoring, or at the very monitor check that found the session's monitor gone), the extension goes
-back to Focusing with the same snapshot, so the windows still return to where they were before the
-first connect. A virtual monitor that was already present before the check that found the session's
-monitor gone does not count as a reconnect: once the restore finishes, the extension enters Idle,
-rebuilding the placement record from the restored windows, and runs the monitor check right away, so
-another client still connected gets a session of its own. If the screen is locked, both the rebuild
-and the check wait for unlock.
+extension then puts back each window it gathered, and only those, whatever the remote user did to
+them. For each window it leaves fullscreen if the window is fullscreen now and was not in the
+snapshot, then restores the workspace, the monitor, the maximized state, the frame rectangle (stored
+relative to its monitor) for windows that were not maximized, and the fullscreen and minimized
+states. It finds a window's original monitor by vendor, product and serial, and by connector only to
+choose among monitors that share all three
+([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the session ended
+before any apply succeeded, nothing was gathered and nothing moves. Windows that closed during the
+session are skipped, and so are windows whose original monitor no longer exists, which are left as
+they are; the extension logs each window whose monitor is gone, once. If the client reconnects
+before this finishes (a matching monitor appears during Restoring, or at the very monitor check that
+found the session's monitor gone), the extension goes back to Focusing with the same snapshot, so
+the windows still return to where they were before the first connect. A virtual monitor that was
+already present before the check that found the session's monitor gone does not count as a
+reconnect: once the restore finishes, the extension enters Idle, rebuilding the placement record
+from the restored windows, and runs the monitor check right away, so another client still connected
+gets a session of its own. If the screen is locked, both the rebuild and the check wait for unlock.
 
 ## The placement record
 
@@ -141,9 +148,12 @@ placement record; nothing happens at import time. If a matching monitor is alrea
 extension was enabled, or the user logged in, with a client connected), it goes straight to Focusing
 and takes the placement record it has just built as the snapshot. That record shows the layout after
 the virtual monitor arrived, including any moves Mutter made then, so a disconnect restores windows
-to where they were at `enable()`. `disable()` disconnects every signal and removes every timeout;
-what it does to a session in progress (the gathered windows, the temporary primary, the snapshot) is
-not settled yet.
+to where they were at `enable()`. `disable()` disconnects every signal and removes every timeout.
+During a session it first puts the gathered windows back as Restoring does, synchronously, and drops
+the snapshot (a window whose original monitor is gone stays on the session's monitor until the
+client disconnects); it sends no display configuration and cancels an apply still in flight, so the
+temporary primary stays until the client disconnects
+([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5).
 
 The extension runs in the `user` and `unlock-dialog` session modes, so locking the screen does not
 disable it. When the screen locks, a pending monitor check is dropped; while it is locked the
