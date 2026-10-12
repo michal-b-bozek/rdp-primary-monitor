@@ -25,7 +25,9 @@ use the setting has not persisted reliably from one remote session to the next.
 - On disconnect, each moved window returns to its original monitor, position, size and
   maximized, fullscreen or minimized state, if that monitor still exists. Windows opened
   during the session stay where GNOME puts them.
-- With no virtual monitor present, the extension does nothing.
+- With no virtual monitor present, the extension changes nothing.
+
+How it works, state by state: [docs/design.md](docs/design.md).
 
 ## Requirements
 
