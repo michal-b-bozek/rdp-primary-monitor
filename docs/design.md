@@ -40,9 +40,10 @@ stateDiagram-v2
     [*] --> Idle: no matching monitor at enable
     [*] --> Focusing: matching monitor present at enable
     Idle --> Focusing: matching monitor present
-    Focusing --> Focused: primary applied, windows gathered
+    Focusing --> Focused: windows gathered
     Focusing --> Restoring: session's monitor gone
     Focusing --> Dismissed: apply failed twice
+    Focusing --> Dismissed: primary moved off the session's monitor
     Focused --> Restoring: session's monitor gone
     Focused --> Dismissed: primary moved off the session's monitor
     Dismissed --> Restoring: session's monitor gone
@@ -79,11 +80,17 @@ chosen monitor is the session's own until it goes
    from a fresh `GetCurrentState`, at the next monitor check or one debounce period after the
    failure, whichever comes first
    ([ADR-0003](architecture/decisions/0003-apply-the-primary-temporarily.md));
-3. if it applied, waits for the resulting `monitors-changed`, so that work areas and the top bar
-   have moved;
+3. if it applied, waits, at most one debounce period after the apply, for the monitor check that
+   follows the resulting `monitors-changed`, so that work areas and the top bar have moved; if that
+   check finds the primary already off the session's monitor, the extension goes to Dismissed and
+   gathers nothing; if no check comes by then, it gathers anyway;
 4. moves each snapshotted normal window (all workspaces or only the current one, per a setting) to
    the session's monitor with `move_to_monitor`. Maximized, fullscreen and minimized windows are
    moved too and keep their state.
+
+Settings can turn off making the monitor primary (step 2), gathering (step 4) and the restore when
+the session ends. Each step reads its setting when it runs, so a change during a session takes
+effect at the next step that uses it and moves nothing by itself.
 
 Mutter does not remember a temporary configuration, so the extension applies it again on every
 connect. The virtual monitor's serial changes with each session. Matching ignores it; the
@@ -95,36 +102,39 @@ notifications and the gathered windows. Windows opened during the session are le
 places them and are not restored later. A client resizing its window is expected to change the
 virtual monitor's mode (a change not yet observed), which is not a reason to act, and neither is any
 other change to positions, scales or modes. If the primary moves off the session's monitor while it
-is still present, the extension treats it as a deliberate rearrangement and moves to Dismissed. A
-virtual monitor that arrives in Focusing, Focused or Dismissed is ignored. The session ends only
-when its own monitor goes, even if other virtual monitors remain.
+is still present, the extension treats it as a deliberate rearrangement and moves to Dismissed; this
+holds only if the session's monitor was primary when gathering began, which it usually is not when
+the setting that makes it primary is off. A virtual monitor that arrives in Focusing, Focused or
+Dismissed is ignored. The session ends only when its own monitor goes, even if other virtual
+monitors remain.
 
 **Dismissed.** The session's monitor is present but the extension no longer acts on it: the apply
 failed twice, or the user took the primary back. It changes neither windows nor the layout while the
 client stays connected, even if the primary returns to the session's monitor.
 
 **Restoring.** The client disconnected. Mutter removes the virtual monitor and returns to the
-previous layout by itself; it parks the gathered windows on the remaining primary monitor. The
-extension then puts back each window it gathered, and only those, whatever the remote user did to
-them. For each window it leaves fullscreen if the window is fullscreen now and was not in the
-snapshot, then restores the workspace and the monitor. It leaves the maximized state if the window is
-maximized in a direction the snapshot does not have, sets the frame rectangle (stored relative to its
-monitor) unless the snapshot has it maximized in both directions, and maximizes it in the snapshot's
-directions; then it restores the fullscreen and minimized states. It finds a window's original
-monitor by vendor, product and serial, and by connector only to choose among monitors that share all
-three; if none of them has the stored connector, the monitor counts as gone
-([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the
-session ended before any windows were gathered, nothing moves. Windows gathered before a reconnect
-still count as gathered, even if the reconnected session goes to Dismissed. Windows that closed
-during the session are skipped, and so are windows whose original monitor no longer exists, which
-are left as they are; the extension logs each window whose monitor is gone, once. If the client
-reconnects before this finishes (a matching monitor appears during Restoring, or at the very monitor
-check that found the session's monitor gone), the extension goes back to Focusing with the same
-snapshot, so the windows still return to where they were before the first connect. A virtual monitor
-that was already present before the check that found the session's monitor gone does not count as a
-reconnect: once the restore finishes, the extension enters Idle, rebuilding the placement record
-from the restored windows, and runs the monitor check right away, so another client still connected
-gets a session of its own. If the screen is locked, both the rebuild and the check wait for unlock.
+previous layout by itself; it parks the gathered windows on the remaining primary monitor. Unless
+the restore setting is off, the extension then puts back each window it gathered, and only those,
+whatever the remote user did to them. For each window it leaves fullscreen if the window is
+fullscreen now and was not in the snapshot, then restores the workspace and the monitor. It leaves
+the maximized state if the window is maximized in a direction the snapshot does not have, sets the
+frame rectangle (stored relative to its monitor) unless the snapshot has it maximized in both
+directions, and maximizes it in the snapshot's directions; then it restores the fullscreen and
+minimized states. It finds a window's original monitor by vendor, product and serial, and by
+connector only to choose among monitors that share all three; if none of them has the stored
+connector, the monitor counts as gone
+([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the session ended
+before any windows were gathered, nothing moves. Windows gathered before a reconnect still count as
+gathered, even if the reconnected session goes to Dismissed. Windows that closed during the session
+are skipped, and so are windows whose original monitor no longer exists, which are left as they are;
+the extension logs each window whose monitor is gone, once. If the client reconnects before this
+finishes (a matching monitor appears during Restoring, or at the very monitor check that found the
+session's monitor gone), the extension goes back to Focusing with the same snapshot, so the windows
+still return to where they were before the first connect. A virtual monitor that was already present
+before the check that found the session's monitor gone does not count as a reconnect: once the
+restore finishes, the extension enters Idle, rebuilding the placement record from the restored
+windows, and runs the monitor check right away, so another client still connected gets a session of
+its own. If the screen is locked, both the rebuild and the check wait for unlock.
 
 ## The placement record
 

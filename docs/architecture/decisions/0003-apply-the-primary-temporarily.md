@@ -1,6 +1,6 @@
 # 3. Apply the primary temporarily
 
-- **Status:** accepted; Last amended: 2026-10-12
+- **Status:** accepted; Last amended: 2026-10-13
 - **Date:** 2026-10-12
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0002](0002-match-the-virtual-monitor.md), which picks the session's
@@ -100,6 +100,17 @@ the session's monitor is still present. Every other change is left alone: monito
 and modes, including the mode of the session's monitor when the client resizes its window. In
 Dismissed the extension sends no configuration and moves no windows until the session's monitor
 goes, even if the primary comes back to it.
+
+> **Amendment (2026-10-13).** Two edge cases, found while writing the state machine
+> (`src/lib/state.js`). The rule applies only to a session whose monitor was primary when gathering
+> began. Without that condition, every session with the setting that makes the monitor primary
+> turned off would be dismissed at the first monitor check after gathering: the extension sends no
+> apply then, and the session's monitor is usually not primary. The rule also covers the check that
+> follows a successful apply: if the primary is off the session's monitor by then, the extension
+> goes from Focusing to Dismissed and gathers no windows. Gathering them would put them on a monitor
+> the user has just taken the primary from, and the next check would dismiss the session with the
+> windows left there. `docs/design.md`'s Focusing and Focused text and its state diagram change
+> with this.
 
 Explicitly not:
 
