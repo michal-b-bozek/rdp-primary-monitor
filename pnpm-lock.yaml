@@ -162,6 +162,32 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@girs/accountsservice-1.0': 4.9.0
+  '@girs/adw-1': 4.9.0
+  '@girs/atk-1.0': 4.9.0
+  '@girs/clutter-17': 4.9.0
+  '@girs/cogl-2.0': 4.9.0
+  '@girs/gcr-4': 4.9.0
+  '@girs/gdm-1.0': 4.9.0
+  '@girs/gio-2.0': 4.9.0
+  '@girs/giounix-2.0': 4.9.0
+  '@girs/gjs': 4.9.0
+  '@girs/glib-2.0': 4.9.0
+  '@girs/gnomebg-4.0': 4.9.0
+  '@girs/gnomebluetooth-3.0': 4.9.0
+  '@girs/gnomedesktop-4.0': 4.9.0
+  '@girs/gobject-2.0': 4.9.0
+  '@girs/gtk-4.0': 4.9.0
+  '@girs/gvc-1.0': 4.9.0
+  '@girs/meta-17': 4.9.0
+  '@girs/mtk-17': 4.9.0
+  '@girs/polkit-1.0': 4.9.0
+  '@girs/shell-17': 4.9.0
+  '@girs/shew-0': 4.9.0
+  '@girs/st-17': 4.9.0
+  '@girs/upowerglib-1.0': 4.9.0
+
 importers:
 
   .:
@@ -273,146 +299,62 @@ packages:
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@girs/accountsservice-1.0@1.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-6QzytM5dztmMynF2bxN73EuNK9ArMFxkP2L8wUC7IH45zBeBOfYcqL85BFh2PmkGmqRk+Rli5EFR8dAkx3Ig5Q==}
+  '@girs/accountsservice-1.0@4.9.0':
+    resolution: {integrity: sha512-rhQgMjVqU1/SmYp4LPZt9u0xpyKoQCrFsedmSSlqZkMSQiZ1/G/UnXBn01RTPw3vtFSAZmqLor547GEVKk6x8w==}
 
-  '@girs/adw-1@1.9.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-AaP8nDnUQkB7AUiOvOXXyXbjFC/L8Uh8MwqDD/NZKpIGKYwgE8hfuLyPW1d/K10wabLq4pgO19QJiTpr6hKyhg==}
+  '@girs/adw-1@4.9.0':
+    resolution: {integrity: sha512-aFGYthrzCwsIxtLvoDn6LXVGAxqBhoF/Cdu46MMI6mxy2VTO3dr53QAzA7KqUtHgzD2TTzWwGm8iN1NCiS6cmw==}
 
-  '@girs/atk-1.0@2.58.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-rfLlLlAecHE1uAqK81DHZT27E1nVwN/pAHtgbgDUcu70UdHoCYAsQymLjk/tuDcTX0Lwp6U9x6w+GHG1sbYlQA==}
-
-  '@girs/atk-1.0@2.60.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-Mc4aOlvHCfcE0a0r/vsULbtO4fYDo0SL5dh2F037B/NG/O6ByNn4YLpIdQUnPkO1sY7ViGb4HY/aCtWcPZIcdA==}
-
-  '@girs/cairo-1.0@1.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-VJa0vw9teZjCydDzWIcbNBwT37MSej52rqwBuQ/ir7+72+7dpzeudkNOOif1nDIulGu+RLAy4cgWbguQhsUH/Q==}
-
-  '@girs/cairo-1.0@1.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-luqUsMf2cPphDc4lb8IHcw0bX8eGa4g0aQypZJypAeIs9eyHfEDHWKhLgp4I0HaQvaevbd3QBosaH7UhkArL1A==}
-
-  '@girs/cairo-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-CAR/TbYfxWq+pJl7H7s4dG6zH3KN1LUYy+YAFFmaopFJEaLheMN9j84gX+VsF23UwZvKVZH+PX5qk6LSrBdWjg==}
+  '@girs/atk-1.0@4.9.0':
+    resolution: {integrity: sha512-xLLVjyFeCoOIlTW86WmmX+An7h3hc9HT51hQh4J1VjB28BrSIlu4DL5vldIiwEFMUfJAAsTHP0TSeRj1fCrRpw==}
 
   '@girs/cairo-1.0@4.9.0':
     resolution: {integrity: sha512-4k48vMxVsHVNFz2Ow/tqtqaImhHBDbVUMy1gTO1+O3Pst2VZs9xHlKZsnsepWTs1NNvR1/ppqCS1MXjfrGr0ag==}
 
-  '@girs/clutter-17@17.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-+oH3zKDTt6Z0SPI7RvdUO/QRzw7wFmIJt90aQJGEfwkgKHdhttV1fNkZet9ue2sBSfz153bA3xwwBZ3eiL4EJw==}
+  '@girs/clutter-17@4.9.0':
+    resolution: {integrity: sha512-W3+3EW51J9zPW47N6M79EKWHxl2xlTpKt7KYSOlpIDIF7ixyZmvgddm1weg+1w1kzh43qo3iOIGZZL5u3iQWaA==}
 
-  '@girs/cogl-17@17.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-MFU73XFvWItcazQoMbOQ+eMHPuXdnb4Lyw3HUt9pNd7IWIqDIGaS6DoCkbBeyUZHoIZ7ZDb1iozM1w02ISnp6g==}
+  '@girs/cogl-17@4.9.0':
+    resolution: {integrity: sha512-R2hOTtdXCA83tsVaKKU/44bvAW8Wg7Al/uR8AjgDH2vHCI0aITwywbBpK7h4tJMgAY+PPudakkaYujo+We0mGA==}
 
-  '@girs/cogl-2.0@2.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-C9TcbrfzEOXlD0XpM5S+bNB2mPGDQKGwGcxDH1Y7sBlL6EEzdGnFquIiTh0M5HnH3pJEwtpec+U/Az9eYyMIYA==}
-
-  '@girs/freetype2-2.0@2.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-543dlQheKHSVWIatqHNBiLceIWYzIJDXvofR3PfgarKMMi0IRkn1TndzxUxsLC4Eu24KgOKGZYjU1YPUMVGbgg==}
-
-  '@girs/freetype2-2.0@2.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-vS+etsSesMQZNH8Sei81fmkWcgYzjLDbddSPIZaCw2nJ1TIu8eC/CTW46bBk0JGgOaQwL3DxuE0V+BdyhQwIyQ==}
-
-  '@girs/freetype2-2.0@2.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-llJxKidMOX8HDcKXVg051EPQ08BFOeIcYSnUlLzLETWDE5mZv+slXTfH6k5cZX+5VH66fJvOoBALXl/MebkbCA==}
+  '@girs/cogl-2.0@4.9.0':
+    resolution: {integrity: sha512-qjA0UaeCCqNpLISa8Ni9sPRvhZ3eXoy9ooNJVOXB8Lxfx0a/VrOmuHnF1w6Bck6OD5q/BLto/9A0tgnfJZCW6A==}
 
   '@girs/freetype2-2.0@4.9.0':
     resolution: {integrity: sha512-WzRbjGI34XPCRZQxf3O6BkycvoZBtgrw+6CKr6/Kt4vtc6Bq6wLNuIClqfFtKmOpcRNSLKt/uCW9IF/vbyl/dg==}
 
-  '@girs/gck-2@4.4.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-l382BN5YD4gXfoHuG7yvhYH87B6yw+qKdxToWLlJWV6L8LJFCqaSMg+Ezn+nKC+czRxb/57YhOIRp39wzoZiGA==}
-
   '@girs/gck-2@4.9.0':
     resolution: {integrity: sha512-+FZJo134OnlicT+kCBNeyElVTOYlM6MTtsF1MUGHLLjhYhoZ22oFWqZr2Bwfq7iiuRI+Zve2yo0+Syd0ERNWUw==}
-
-  '@girs/gcr-4@4.4.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-QX3BI9Oq8Zwmhbxb/1UfJ6E0GWC3gCQObxMTxbNPlSWACXdHtTwBON1tEh29TwkyEOvuIfdHXSMrJjV+iQdK+A==}
 
   '@girs/gcr-4@4.9.0':
     resolution: {integrity: sha512-c/5BjxJ2vVOnQDQWT+iyE+ZkV/zJzm+FCb4J/UqvzEg+xHYo0uUfGY9wzXB2SEQY4KJ7SEA/v76PpE13T7P1iw==}
 
-  '@girs/gdesktopenums-3.0@3.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-MJJyJQb9dTtVUe54NJ9Y+jq5VqI7gnf25SWrbw5QbHeswDEvUP8Blt1+cii9nKJncADbpEkHnOFeNw0BLio7uw==}
-
   '@girs/gdesktopenums-3.0@4.9.0':
     resolution: {integrity: sha512-AMfXl0zYrtdvJeRwo7BjoxQm7YnrnJLMY7qYjvkeSudZ3AZNUMrDKVCpxlRaTtloP9TCycMhhdpnk8CRHUf2Tg==}
-
-  '@girs/gdk-4.0@4.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-hk6SG4pCcezKp2VNxJc0TC1gkZe3C8shD8sRQ3bUGyWl/9581WM2/8UU+W6fOf3SwXA1hquN6d3SjKbqkFNRKg==}
-
-  '@girs/gdk-4.0@4.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-4O5Yqk1QSKUqaRn7402XtkGFwg/7SMoGof0Xe/JiqnjF7oDav2giRUoDKx4uXKnfQm+6NA69b0meGEXr8yJJYA==}
-
-  '@girs/gdk-4.0@4.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-1UPtr5LfLn558R3tXADVJV9vDWc3rQRwSvC0C8gr2/NesRbTb/O7r95ikgxKGDD6MwV8fW+zrMSGBJwtvwifHg==}
 
   '@girs/gdk-4.0@4.9.0':
     resolution: {integrity: sha512-iWzhHgGqomiLtwbLY49pZ7MpZ40YYRtzjJ9YvXND2zkN56bZMqiXVRhAuHwDqzEbFtM9p/Pd8Q5DB2LrjIRERw==}
 
-  '@girs/gdkpixbuf-2.0@2.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-L8NE18rhj100lRGMnf7lNUdr6pHw2co1UtExxDnglba5lNee4NoyF/u8g4Mk3toPU0fAu+ug91HJ4o2mIJd7MQ==}
-
-  '@girs/gdkpixbuf-2.0@2.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-ImVsfgs4OdJnWqZm1ugB+WcpySf2wNtY99nUBm+/YpCLeIyrl+NRbft+ymom6CTim83f3XzwaOCDEwE5azj42w==}
-
-  '@girs/gdkpixbuf-2.0@2.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-vezXIM2WFni7f/IxslMvd1RFk/zJj6YNO0yrSfAShtqF1u8hxUvJc4p0S6Ve2RYh0cRBD1WZRYvK91OlnA1VXg==}
-
   '@girs/gdkpixbuf-2.0@4.9.0':
     resolution: {integrity: sha512-M5TTMRTKuCRJo4JXJGqTnqED+g2rWFfWFuTka9fnY/NRkwF8soZD+LNy2z58JvVPoNeim4Q1xp1NYpNAxQc/qQ==}
 
-  '@girs/gdm-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-jUW8J8UWiGa5q3tshvqDiCNRr6Hs5zAWDNtIfVBWvOI4Lgi2iw6hxzMZsjqUN8IwZs1/gj/DMbWG9clB/g17Bw==}
-
-  '@girs/gio-2.0@2.86.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-hKCyDEqSIgqcZeFf63KNrUnrYtAuJ0yfIypbdLgNEMbJBPQ/e3ZiwzWa7i3OPCh52Cnl9qYRdj8MSbZndpyZiQ==}
-
-  '@girs/gio-2.0@2.86.4-4.0.0-beta.40':
-    resolution: {integrity: sha512-TTAEE/2nCAkx01hID4n8f0ByiFJ0QwGJcY8QYmom19QXmlIWCLF/GWLeXi/7ZyKJOtChSFk8IJglS0O6zC1spw==}
-
-  '@girs/gio-2.0@2.88.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-OkyK3LvTjgaRIiySxZdDdOM07BFRzy7SRPj1J4YbMSZpqmkpWRhmeq7uZoZCLqQxAQk4MUdAOp17XiUGZFpibg==}
+  '@girs/gdm-1.0@4.9.0':
+    resolution: {integrity: sha512-ID75rAR7ND7ngpaXn8CwqoPOGJVsvqTTgMhavN3Uzq/46y3WU/GdXAD4r/zEp8NhPn7p0vcbNF+KRKbkcU6Y4A==}
 
   '@girs/gio-2.0@4.9.0':
     resolution: {integrity: sha512-3n39vbeOmX1CggTz4vTn+xKpa9wpVe39/gLwoBY6kaXE40OLy6xmNQMB6Nhyutj00acb22fDUx81q6UgQ9gvVg==}
 
-  '@girs/giounix-2.0@2.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-bS3SdZ0LCHa+mGJYw+JNly7TqjQM5xlhdxKfnHgvwS5XzY+6Ko8sIq2ozi76Pho/cz5TJPigbxuW6OywxqqHFw==}
-
-  '@girs/gjs@4.0.0-beta.38':
-    resolution: {integrity: sha512-eI/9lfI1mQpXN8RsKiNRFWJso6LgQe9Eb+YxLAdKarD5fccvIRx3chsyIyhw5tYH7VvgaZkqm1c4GX7pDDokBQ==}
-
-  '@girs/gjs@4.0.0-beta.40':
-    resolution: {integrity: sha512-+gHGA5PJvEExpiPkpc3+DSjhWGmxHDb482h52FO64eo2EmHuLoeOKCoUJIY0PS80xOJWFRSO2dNFxZdD1bV6XA==}
-
-  '@girs/gjs@4.0.0-rc.17':
-    resolution: {integrity: sha512-8UzowTxia0CzmyW7NRLnWNeEx+ImFxi4hyuZZppSfJBHQj4/sbaQSKf672CIbtOzsbVdeKQyQ8WWzlvA8rTxzQ==}
+  '@girs/giounix-2.0@4.9.0':
+    resolution: {integrity: sha512-OCinDBCoAvDFrXmIWDUYzXG5AMXnzhQH77ua1r81RiXfkzYLVh5mbVavTviE/k0OY+MDqWQUb5zkC2w8vfNkfg==}
 
   '@girs/gjs@4.9.0':
     resolution: {integrity: sha512-RxEqCV2ANcz1SrF7nh54mUpe9Oq9YA5HuG+5q/pWToULvCr/sKtMbpNSRsAaS/xgpP7y2qGjX68YVhPjk/gHXg==}
 
-  '@girs/gl-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-2radfaX9jOKQ06yyXS5f7bjTXcWvYRP+bAQsxqyqm3/2wOjyfT+XnMRKfj5tUu6yCPXUXBix2jVwNANibWcZBA==}
-
-  '@girs/glib-2.0@2.86.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-TFbrh5+Y3pb61synbhi37VrRzh0e+JQaRCzfGbe7oewUq0v7Sb8eSi2Fmj98r5tCizaRYptqgt6bxG7G5cFzVg==}
-
-  '@girs/glib-2.0@2.86.4-4.0.0-beta.40':
-    resolution: {integrity: sha512-DTvRmZlTVpYW+JI0zMN/dybhzoqJ/I3bx3txftSQgcxXl3mKnrSI6Qzv15VTyxQSpcnD3CBxpnfYT/+QrzU9QQ==}
-
-  '@girs/glib-2.0@2.88.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-nTZBcDY++60wLo2OfrOWAYe7Lw9BRVIEIwiQ+7CieDAzgBgpMs1QE2xY3xwfUHEBIyzsDSZMd2DW4afHXtkz3g==}
+  '@girs/gl-1.0@4.9.0':
+    resolution: {integrity: sha512-3mYwXT28bx9ZDlMFliC9NucTRqzSEAManl4GhOP9o/mFUi+VieAbAbtkWLVQvIGfiTnietjZPgeI4JcobozgHA==}
 
   '@girs/glib-2.0@4.9.0':
     resolution: {integrity: sha512-ylAlrPtjVokPumJbbGQUGT1JSLtR6whvzU2DKVEoVO67h2yqZ37TFYBihwtskVf0/BfLNHdpGj2JPS+wMHJfuQ==}
-
-  '@girs/gmodule-2.0@2.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-BmspJtwdBSfCJRZQMxn3gx6H9FNcoqCebFXK2UKknq18DIo8U2q4iN/jQBWPoLh2siK9LhCdL2egoyXteTy1NA==}
-
-  '@girs/gmodule-2.0@2.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-srPSbc/uespMNHR2o2Gg6OYeCprW42gADIXCujpMMWl5OfJzKU0mA+R8Z/D713tDq0xp1Lz2P7hprVznf1uF3A==}
-
-  '@girs/gmodule-2.0@2.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-47UwefN6gjqWSZRrYLGnQumVAsughnu+gHBuDkeB4ZZCPZko4AiAb+G/WB6tTWdAy08pm+tLvlQ1vjP1eN9bQQ==}
 
   '@girs/gmodule-2.0@4.9.0':
     resolution: {integrity: sha512-vH75DrILqwaSu2TBgoEeiQlJywLpjGGHSFcT+IQA+iiF+91I2Kqi3KHE9AidxpG226HaRvW+ZNWFECdEV4tPVw==}
@@ -423,122 +365,68 @@ packages:
   '@girs/gnomebg-4.0@4.9.0':
     resolution: {integrity: sha512-aMveqDMtQ6rR4xAH00Jtgk2diiD0CIzJKwlVeiuYFRXfFC4MnIQIqxvtHGnpA8Xa/nU7LeubWlMatXFVYLzjTg==}
 
-  '@girs/gnomebluetooth-3.0@3.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-6Ky3o26G5Xnbq/wg51siQEljBlB4sNrWpfYOsl9lch7eAtupNBqWbVm/Dxd4G0B2iXkmMLPSPOSahyTyW5HMiA==}
+  '@girs/gnomebluetooth-3.0@4.9.0':
+    resolution: {integrity: sha512-T2kiFVGwg0+ltmDpuZn08RcZAAgLfT0nPLvGncPAGkw+HQmXVdT4qMt/br3pBQAY0+wLhugTgb8muWJ3df7u5A==}
 
   '@girs/gnomedesktop-4.0@4.9.0':
     resolution: {integrity: sha512-oEdvsFKCNpEGiRYrPcBkPmp9DfQx7/2ZWUUDU9q+1Qjsjv1z+MdCduxov3x1+OhUpXO0RjQZwfmMxO8ZymDJIQ==}
 
-  '@girs/gobject-2.0@2.86.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-oYrm6Gb/tCQosMkN8Beu5jqGRkJ7LED4O1H1dKYOI4SnP1Ojb66A9ECy78yTO8piBtMopsbRODV81yKniVtKKA==}
-
-  '@girs/gobject-2.0@2.86.4-4.0.0-beta.40':
-    resolution: {integrity: sha512-coS5607duUekhRfl2GDC9Gt3WcgAtTNEDL0efrRBBOuORjvBrIGiGJJXB9cX4jYQ7c9FITUMVLTd+a0MMRAaXA==}
-
-  '@girs/gobject-2.0@2.88.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-pUkGnIrYVgRzFLWJSXU+pwWpWzrTCzbDeZLu1QzxpBT0n/t5HJnIGX3PYBnQSvXbBgVFXoSOt1pOfB7m8J2agQ==}
-
   '@girs/gobject-2.0@4.9.0':
     resolution: {integrity: sha512-zEkMERp6u2APCkq1mFnkykxDS9Hqsawun0hiJ5L1fyFv0MWMscVvocyunS8zvsSiu2bsIqqj6F2t0qfNNsZIIg==}
 
-  '@girs/graphene-1.0@1.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-zqCyLXFqsOJtCnwUR6lI6HBVdaJ6aKsA25y+6xK2dFO/NChOjH0hmBuVyTQiyLe+4jGW700o+uYIYlrpEXT/7Q==}
+  '@girs/graphene-1.0@4.9.0':
+    resolution: {integrity: sha512-8XPKRlHPzUjXekxAzEWUWwcfC5mwEw2WCpzZ7es1rUCRFB8tjSZWGxqMErHN9hLft7Yd5rtXq8DlUrcmLW/PSg==}
 
-  '@girs/graphene-1.0@1.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-0ReJbd31inyIE7Q96I4ED1uj6ssmfl1iB4xc6eakac95FZK/uZSC6uBtBLfA/tmnkgRb7ChQgK/ZGbb8sx4tHQ==}
+  '@girs/gsk-4.0@4.9.0':
+    resolution: {integrity: sha512-UJyrz2OHu2Fu2fbdo9oq4zyIp8XApKWlXfevLxkWndO/xTRL89WDJBzbh7AzdaDXE9MFbaZwdAla5jQ07wAD/g==}
 
-  '@girs/graphene-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-9+b0ApjMsG8Pq2bLyug3mE4lO3cFNqoEvtQIl3z50cXz/4alpPI+GdBL9C/SeiqMiEK+x3RbPsFXm7r/epkGDg==}
+  '@girs/gtk-4.0@4.9.0':
+    resolution: {integrity: sha512-YuAbI8fVdZylJTvKfap8QQdATsB4s4zMcgkGm9Sro+ZwucUA0QAHSczsc/snqVtUvmpZoPOXan5+MKt7nMmPOg==}
 
-  '@girs/gsk-4.0@4.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-BfYpVfmKjD7Tq58W5p9fcU6Mvg3QcNRjJ1oQn05d/Xk1rjQmsk6tkcTkK3i/KIOhA9eVadQsMlFFWuN0KBE5Dw==}
-
-  '@girs/gsk-4.0@4.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-hSNHG+E6O736vLgGtMcG50iiSoK/tRIVdsJ55H/AqyRCL2HzCzUIAQ7VTqsCgDGGs0N2P8i6Oq0FAZ7+4j/3IQ==}
-
-  '@girs/gsk-4.0@4.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-NztZASK0Lahi2whus75NeVOOl/RcJRjswVY9HDCZjO38KoFWIO8rt1aT0z5Dw8YXscnNhkkbQcMh+myWq0yHuw==}
-
-  '@girs/gtk-4.0@4.20.1-4.0.0-beta.38':
-    resolution: {integrity: sha512-lNujJDta1YK3/9Inp5HrtF/JOMN5EmD+3U7diRTyWNzc2KdaN2jO2mk90taaGK28xhoCC+VESkFkQAgFTwZXWw==}
-
-  '@girs/gtk-4.0@4.20.3-4.0.0-beta.40':
-    resolution: {integrity: sha512-rdAkZpt6IvyF8dvNsvC1cU8beQl1LesH0ZzpYArF0kg5KnKGDOqVGAAFjcz4QOHQ3LRiWJ47S5VT4n/TkCG76w==}
-
-  '@girs/gtk-4.0@4.23.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-tbX3nR68/n6BhhePMJHjIp9gSHfM+noyUjpx+4Pd1VImbEWjfZKqn92+X9zQZWyD6rgmaRu0CRGbD3z5ecNMcA==}
-
-  '@girs/gvc-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-KTf7RhTgz+C0AwIEK/rDixvLzxmmYyUCmNSIlnWN1Ct2OKt9wRAPESPJIqb4AOOvJkDkm7XYlP4pQKuk7iF2OQ==}
-
-  '@girs/harfbuzz-0.0@11.5.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-XRf/neZYpEkinNZ8SCRKIao3RNVJzMeYcjuO1b1tbqVCrN7uVZ+MIaDW5NjWKi0K6IQSyZWdDgkzrtOrIN4CWQ==}
-
-  '@girs/harfbuzz-0.0@11.5.1-4.0.0-beta.40':
-    resolution: {integrity: sha512-cwR4WHJ9LtnvvXFUnkiFtWdInKvhlQUr3bQHmHiJxCjloQHHMNVA7CsrMDL/tRD9WoU77rQF6dB+uqSlRKT1zQ==}
-
-  '@girs/harfbuzz-0.0@13.2.1-4.0.0-rc.17':
-    resolution: {integrity: sha512-sefFHkbo++qj7Fbt9l6VmAhHtGFvVoQEyIsfQtsWLCURj2A4YCcBMvFhD2IZRSEBE6ZxyIvxszyzauintFcVlg==}
+  '@girs/gvc-1.0@4.9.0':
+    resolution: {integrity: sha512-3MUHf6ECC1zYQtfY013Yt+Qm7qlHZe0HvO3ldVaY9b2D0IE8467+suy62LjVheUNNOzwvWiCWLkzh24kTVSyVA==}
 
   '@girs/harfbuzz-0.0@4.9.0':
     resolution: {integrity: sha512-7DoBhKUSynQxc/E76KZ1yWBd777NU/JPrBtvv5mBnkfBqxz0LwFFuDcn0iYFTKJ51GgyOfJv6dY5AEEP15n/Kg==}
 
-  '@girs/meta-17@17.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-sCLJQoG/lvkzV44NjsUvkhyEB7bg3cLfYUZ/cfp1gcho2g+Qb0NlS23Ev/9GtPoUXc26tDk/tCYGmXdRJnGybQ==}
+  '@girs/meta-17@4.9.0':
+    resolution: {integrity: sha512-4lBT63PwNTdnI3zvV+sJM2+2U93ddv+WYXkM68CsMtmH9JwvasqahOr4lF4ySbaT/ZL4YTKBu7lUt/Hg568ScA==}
 
-  '@girs/mtk-17@17.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-IU9RG7m4rCu6auLrcpC91n+piJ97O82gJQ7lNuAWO4nOWVVlqkW6bvyIGaDGx0Q4oneLvywekBWFlp5vHNElOw==}
+  '@girs/mtk-17@4.9.0':
+    resolution: {integrity: sha512-SyWQCqHyeewDLBEf7XG6OH3MCeIJPicSylhBgyHz+f5JGPMBoIVjllvugOL0o2G7w/v4oYvk5vVnluL7fGSFpw==}
 
-  '@girs/nm-1.0@1.56.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-Xu9wViW0WuEL9kp5wl0ybVVQCiJ6DbMjGibg48mE6aWq336jE/GYvEBdGr/VjSsmP3k1KtehKB3BqHIz4DXq7w==}
-
-  '@girs/pango-1.0@1.57.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-fnTzVVhKb4XjGrnuqk9X++KDe2bk84Hg5472O2UrtIT1A6dzMS6gWhSvaw0ULZH/Ypj9WN12B0oceWynR6unLw==}
-
-  '@girs/pango-1.0@1.57.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-H8COoSffShFRilpCh9JQ6Lafd/WG+hPRKNkruvfmLAEcnIDnPDIS79BO3OOJz6E+QWqY9mwQIjqjjPwFcasuzA==}
-
-  '@girs/pango-1.0@1.57.1-4.0.0-rc.17':
-    resolution: {integrity: sha512-bsYFe06tlIAcqcKK8ALOBOzIs04sgTIturR0tGyeC1bxwPPU+2VTeHDarRMbG7tCq9U1B6hCSHzPaT1Z94onHg==}
+  '@girs/nm-1.0@4.9.0':
+    resolution: {integrity: sha512-/h7siAsQl39e8OC2eDMotMh7QbiXfcgprDFV+YYRHdH3h6PgBrl2wY7sd6y0J9VRoIWD9C+X6XnAcDuC+GU9gw==}
 
   '@girs/pango-1.0@4.9.0':
     resolution: {integrity: sha512-WxsQXqenTFNkZB24666aZPuE0BJF0ofx9mhLGXJ99ZpR7yyQY9hwuO6XfECYeKcPQV0Wu47vOtEH1lh1i4GZiQ==}
 
-  '@girs/pangocairo-1.0@1.0.0-4.0.0-beta.38':
-    resolution: {integrity: sha512-BY4rEgQW0H1c/24v+FGBjSZgZ6rk2Y4+ka9/WldUs74N1ZOh6nS4lHKUyy0antylQ7x0Fnw5UHgN0PbpdjkGuQ==}
-
-  '@girs/pangocairo-1.0@1.0.0-4.0.0-beta.40':
-    resolution: {integrity: sha512-CFvAGWXWN/Ui469met+Q39Tmyn910Y6g+pBxWC60q5T1F9jck7qjehn1/Jo6D7R/n2Bh1FVyjYK3JhIwIMGOyw==}
-
-  '@girs/pangocairo-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-f6NfgDiNJVnRCa4QVBa4hvkGs0cVVfTqy1chvxfN95YjLLeO9rmlYlpqPoonN39ttM+HuEG0X4IuQoY1yG3zxw==}
-
   '@girs/pangocairo-1.0@4.9.0':
     resolution: {integrity: sha512-4h+8a+6HAkVYsOnbh0BBs5fN/GMqMdi6VkU8vKK60+kqeFjTjtAVQE0W0Qc/OJEVP6Jb8eDph8BPHQEn6a06OQ==}
 
-  '@girs/polkit-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-JCPnI7b6NPByEsmERKDnVOCbvsSpApJM2nPkcoibJD+YZR/s0xZsTU0gOAWYGGRvtTSDxovoSc0IY9KpLCxu4g==}
+  '@girs/polkit-1.0@4.9.0':
+    resolution: {integrity: sha512-g1aZ9/sMAoDyiq+ofqgZSdstv/pZvI/8Z01tjS8bmMccN1+51pEAWn7sg7hBltNE+92kEEExbDygmMGXNjfD/g==}
 
-  '@girs/polkitagent-1.0@1.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-5k/rJQY2GoamqED02ljM0f4He0vR5ubuHd21H4VNv/2q3TA1vfbR8aid8B+1dLTNCbOabeNeJa8RLL5fZm8/cA==}
+  '@girs/polkitagent-1.0@4.9.0':
+    resolution: {integrity: sha512-bbvRhp+z7veoNn/G+6dn2eq6OQAebVKQ3feYCd48H2KJIfJ30kbU9oGNnHDpeXzv2ybcepUzACNE1wRNTKgsRg==}
 
-  '@girs/shell-17@17.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-MY3GP8spBjMrXIdOMisxHuZ/hihgZayJi2oHTnUkziX5AjiqE9A+Dy8J/od+PsOmwaK4AAfSoA38ZnzpbDJ1bw==}
+  '@girs/shell-17@4.9.0':
+    resolution: {integrity: sha512-Am7xwQO+C07TaSgWGXge6r446ALBQPvG0wu1kUOoxjqo72mDuRWl6NPE8qq70T4piLm4IR/9zBwk4+wVSJhL9g==}
 
-  '@girs/shew-0@0.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-YUzSrTT7euZufSXGDRMfxICWf0056TgwFr9P+0c9BdUAhFuCzlPv17/ozeCE/f1Rj2QNHS/THbwSCGrlmv62sg==}
+  '@girs/shew-0@4.9.0':
+    resolution: {integrity: sha512-fW4pl8JDRll47YQMAmqEUSQDCZhk4scEEvRsvExLGrWc6MygdwRbFA+04ra+zgRO365k4j7t5gFC1R1/0X99OQ==}
 
-  '@girs/st-17@17.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-CHicipW6xZ/52SNoORE9uvaFzLOns5Q25GGLXialdS8jKGVKx/hS97Frd1+ICQ6Xe+jaWH8YPMZUydu6s9lBGQ==}
+  '@girs/st-17@4.9.0':
+    resolution: {integrity: sha512-pdYiFJQnyAVQngZTumQIWsi3yFEDPHRePK3ovVW6n024JdMpmMm+/7vjeubAyX2xwejjMZ7AKcmZVzAr9EURYA==}
 
-  '@girs/upowerglib-1.0@0.99.1-4.0.0-beta.40':
-    resolution: {integrity: sha512-J4+XAEIg1ZsGOId49KcIpAW/8ARzBudbSbFyO4FVCavA+1YZC5ENfbL+QEP4w2T1BkRSvdtIM2161zB4nL1prQ==}
+  '@girs/upowerglib-1.0@4.9.0':
+    resolution: {integrity: sha512-wGptYb4WqkVElyi55ThMcfEumwgx5io6dN1aGzKYyxtyamrPLCKHwt3NGRXYXDR9fKkTTpEA6IdYvLF7717lqQ==}
 
-  '@girs/xfixes-4.0@4.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-kWgv5+PskncaS2rWfibkzT6UzBYYoSjygApRr/ptF3Yp6jW+NSltgak32F338JPlEAE4mRenqMljpx1740d1Sg==}
+  '@girs/xfixes-4.0@4.9.0':
+    resolution: {integrity: sha512-vyCuTgWrgHAGSP3DYrNgP73nQ5AsyGvjjLLapjU06jUJkixxCd0wceXrkFnVJQsXjUT3nfU9yXgdy2vZsJnBVA==}
 
-  '@girs/xlib-2.0@2.0.0-4.0.0-rc.17':
-    resolution: {integrity: sha512-LaECgnppICePEdVOYvXSvUFe8V8NUvDp0aNDRHCSA9VmqzPVNQWcik4UI/75wNOp4Mz5I8N6XkM0PGZzPgpObA==}
+  '@girs/xlib-2.0@4.9.0':
+    resolution: {integrity: sha512-jOMEq91LT410DiJwDo7Xq5yLp5Al0seYZy+rF2YpGUvyfCxOgkmLPTWvhSc4IEJ4AMv+C4d/2suvGh3OUiTHJg==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -1285,61 +1173,37 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
-  '@girs/accountsservice-1.0@1.0.0-4.0.0-beta.38':
+  '@girs/accountsservice-1.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
-  '@girs/adw-1@1.9.0-4.0.0-beta.40':
+  '@girs/adw-1@4.9.0':
     dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gdk-4.0': 4.0.0-4.0.0-beta.40
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/graphene-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/gsk-4.0': 4.0.0-4.0.0-beta.40
-      '@girs/gtk-4.0': 4.20.3-4.0.0-beta.40
-      '@girs/harfbuzz-0.0': 11.5.1-4.0.0-beta.40
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.40
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-beta.40
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdk-4.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/gsk-4.0': 4.9.0
+      '@girs/gtk-4.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/pangocairo-1.0': 4.9.0
 
-  '@girs/atk-1.0@2.58.0-4.0.0-beta.38':
+  '@girs/atk-1.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/atk-1.0@2.60.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
-  '@girs/cairo-1.0@1.0.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/cairo-1.0@1.0.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/cairo-1.0@1.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/cairo-1.0@4.9.0':
     dependencies:
@@ -1347,66 +1211,43 @@ snapshots:
       '@girs/glib-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
 
-  '@girs/clutter-17@17.0.0-4.0.0-rc.17':
+  '@girs/clutter-17@4.9.0':
     dependencies:
-      '@girs/atk-1.0': 2.60.0-4.0.0-rc.17
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/cogl-17': 17.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gl-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/mtk-17': 17.0.0-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/cogl-17': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/mtk-17': 4.9.0
+      '@girs/pango-1.0': 4.9.0
 
-  '@girs/cogl-17@17.0.0-4.0.0-rc.17':
+  '@girs/cogl-17@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gl-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/mtk-17': 17.0.0-4.0.0-rc.17
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/mtk-17': 4.9.0
 
-  '@girs/cogl-2.0@2.0.0-4.0.0-rc.17':
+  '@girs/cogl-2.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gl-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
-  '@girs/freetype2-2.0@2.0.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/freetype2-2.0@2.0.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/freetype2-2.0@2.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/freetype2-2.0@4.9.0':
     dependencies:
       '@girs/gjs': 4.9.0
       '@girs/gobject-2.0': 4.9.0
-
-  '@girs/gck-2@4.4.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
 
   '@girs/gck-2@4.9.0':
     dependencies:
@@ -1415,15 +1256,6 @@ snapshots:
       '@girs/glib-2.0': 4.9.0
       '@girs/gmodule-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
-
-  '@girs/gcr-4@4.4.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gck-2': 4.4.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
 
   '@girs/gcr-4@4.9.0':
     dependencies:
@@ -1434,57 +1266,10 @@ snapshots:
       '@girs/gmodule-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
 
-  '@girs/gdesktopenums-3.0@3.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
   '@girs/gdesktopenums-3.0@4.9.0':
     dependencies:
       '@girs/gjs': 4.9.0
       '@girs/gobject-2.0': 4.9.0
-
-  '@girs/gdk-4.0@4.0.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/harfbuzz-0.0': 11.5.0-4.0.0-beta.38
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.38
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-beta.38
-
-  '@girs/gdk-4.0@4.0.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/harfbuzz-0.0': 11.5.1-4.0.0-beta.40
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.40
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-beta.40
-
-  '@girs/gdk-4.0@4.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-rc.17
 
   '@girs/gdk-4.0@4.9.0':
     dependencies:
@@ -1500,30 +1285,6 @@ snapshots:
       '@girs/pango-1.0': 4.9.0
       '@girs/pangocairo-1.0': 4.9.0
 
-  '@girs/gdkpixbuf-2.0@2.0.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/gdkpixbuf-2.0@2.0.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/gdkpixbuf-2.0@2.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
   '@girs/gdkpixbuf-2.0@4.9.0':
     dependencies:
       '@girs/gio-2.0': 4.9.0
@@ -1532,34 +1293,13 @@ snapshots:
       '@girs/gmodule-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
 
-  '@girs/gdm-1.0@1.0.0-4.0.0-rc.17':
+  '@girs/gdm-1.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
-  '@girs/gio-2.0@2.86.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/gio-2.0@2.86.4-4.0.0-beta.40':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/gio-2.0@2.88.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/gio-2.0@4.9.0':
     dependencies:
@@ -1568,34 +1308,13 @@ snapshots:
       '@girs/gmodule-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
 
-  '@girs/giounix-2.0@2.0.0-4.0.0-rc.17':
+  '@girs/giounix-2.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
-  '@girs/gjs@4.0.0-beta.38':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/gjs@4.0.0-beta.40':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/gjs@4.0.0-rc.17':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/gjs@4.9.0':
     dependencies:
@@ -1604,48 +1323,15 @@ snapshots:
       '@girs/glib-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
 
-  '@girs/gl-1.0@1.0.0-4.0.0-rc.17':
+  '@girs/gl-1.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
-  '@girs/glib-2.0@2.86.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/glib-2.0@2.86.4-4.0.0-beta.40':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/glib-2.0@2.88.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gjs': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/glib-2.0@4.9.0':
     dependencies:
       '@girs/gjs': 4.9.0
       '@girs/gobject-2.0': 4.9.0
-
-  '@girs/gmodule-2.0@2.0.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/gmodule-2.0@2.0.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/gmodule-2.0@2.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
 
   '@girs/gmodule-2.0@4.9.0':
     dependencies:
@@ -1655,30 +1341,30 @@ snapshots:
 
   '@girs/gnome-shell@49.1.0':
     dependencies:
-      '@girs/accountsservice-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/adw-1': 1.9.0-4.0.0-beta.40
-      '@girs/atk-1.0': 2.58.0-4.0.0-beta.38
-      '@girs/clutter-17': 17.0.0-4.0.0-rc.17
-      '@girs/cogl-2.0': 2.0.0-4.0.0-rc.17
+      '@girs/accountsservice-1.0': 4.9.0
+      '@girs/adw-1': 4.9.0
+      '@girs/atk-1.0': 4.9.0
+      '@girs/clutter-17': 4.9.0
+      '@girs/cogl-2.0': 4.9.0
       '@girs/gcr-4': 4.9.0
-      '@girs/gdm-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/giounix-2.0': 2.0.0-4.0.0-rc.17
+      '@girs/gdm-1.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/giounix-2.0': 4.9.0
       '@girs/gjs': 4.9.0
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
+      '@girs/glib-2.0': 4.9.0
       '@girs/gnomebg-4.0': 4.9.0
-      '@girs/gnomebluetooth-3.0': 3.0.0-4.0.0-rc.17
+      '@girs/gnomebluetooth-3.0': 4.9.0
       '@girs/gnomedesktop-4.0': 4.9.0
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gtk-4.0': 4.20.1-4.0.0-beta.38
-      '@girs/gvc-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/meta-17': 17.0.0-4.0.0-rc.17
-      '@girs/mtk-17': 17.0.0-4.0.0-rc.17
-      '@girs/polkit-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/shell-17': 17.0.0-4.0.0-rc.17
-      '@girs/shew-0': 0.0.0-4.0.0-rc.17
-      '@girs/st-17': 17.0.0-4.0.0-rc.17
-      '@girs/upowerglib-1.0': 0.99.1-4.0.0-beta.40
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/gtk-4.0': 4.9.0
+      '@girs/gvc-1.0': 4.9.0
+      '@girs/meta-17': 4.9.0
+      '@girs/mtk-17': 4.9.0
+      '@girs/polkit-1.0': 4.9.0
+      '@girs/shell-17': 4.9.0
+      '@girs/shew-0': 4.9.0
+      '@girs/st-17': 4.9.0
+      '@girs/upowerglib-1.0': 4.9.0
 
   '@girs/gnomebg-4.0@4.9.0':
     dependencies:
@@ -1697,13 +1383,13 @@ snapshots:
       '@girs/pango-1.0': 4.9.0
       '@girs/pangocairo-1.0': 4.9.0
 
-  '@girs/gnomebluetooth-3.0@3.0.0-4.0.0-rc.17':
+  '@girs/gnomebluetooth-3.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/gnomedesktop-4.0@4.9.0':
     dependencies:
@@ -1715,171 +1401,57 @@ snapshots:
       '@girs/gmodule-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
 
-  '@girs/gobject-2.0@2.86.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/gobject-2.0@2.86.4-4.0.0-beta.40':
-    dependencies:
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/gobject-2.0@2.88.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-
   '@girs/gobject-2.0@4.9.0':
     dependencies:
       '@girs/gjs': 4.9.0
       '@girs/glib-2.0': 4.9.0
 
-  '@girs/graphene-1.0@1.0.0-4.0.0-beta.38':
+  '@girs/graphene-1.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
-  '@girs/graphene-1.0@1.0.0-4.0.0-beta.40':
+  '@girs/gsk-4.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdk-4.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/pangocairo-1.0': 4.9.0
 
-  '@girs/graphene-1.0@1.0.0-4.0.0-rc.17':
+  '@girs/gtk-4.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdk-4.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/gsk-4.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/pangocairo-1.0': 4.9.0
 
-  '@girs/gsk-4.0@4.0.0-4.0.0-beta.38':
+  '@girs/gvc-1.0@4.9.0':
     dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gdk-4.0': 4.0.0-4.0.0-beta.38
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/graphene-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/harfbuzz-0.0': 11.5.0-4.0.0-beta.38
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.38
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-beta.38
-
-  '@girs/gsk-4.0@4.0.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gdk-4.0': 4.0.0-4.0.0-beta.40
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/graphene-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/harfbuzz-0.0': 11.5.1-4.0.0-beta.40
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.40
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-beta.40
-
-  '@girs/gsk-4.0@4.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gdk-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-rc.17
-
-  '@girs/gtk-4.0@4.20.1-4.0.0-beta.38':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gdk-4.0': 4.0.0-4.0.0-beta.38
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/graphene-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/gsk-4.0': 4.0.0-4.0.0-beta.38
-      '@girs/harfbuzz-0.0': 11.5.0-4.0.0-beta.38
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.38
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-beta.38
-
-  '@girs/gtk-4.0@4.20.3-4.0.0-beta.40':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gdk-4.0': 4.0.0-4.0.0-beta.40
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/graphene-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/gsk-4.0': 4.0.0-4.0.0-beta.40
-      '@girs/harfbuzz-0.0': 11.5.1-4.0.0-beta.40
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.40
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-beta.40
-
-  '@girs/gtk-4.0@4.23.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gdk-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/gsk-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-rc.17
-
-  '@girs/gvc-1.0@1.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
-  '@girs/harfbuzz-0.0@11.5.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-
-  '@girs/harfbuzz-0.0@11.5.1-4.0.0-beta.40':
-    dependencies:
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-
-  '@girs/harfbuzz-0.0@13.2.1-4.0.0-rc.17':
-    dependencies:
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/harfbuzz-0.0@4.9.0':
     dependencies:
@@ -1888,74 +1460,41 @@ snapshots:
       '@girs/glib-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
 
-  '@girs/meta-17@17.0.0-4.0.0-rc.17':
+  '@girs/meta-17@4.9.0':
     dependencies:
-      '@girs/atk-1.0': 2.60.0-4.0.0-rc.17
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/clutter-17': 17.0.0-4.0.0-rc.17
-      '@girs/cogl-17': 17.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gdesktopenums-3.0': 3.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gl-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/mtk-17': 17.0.0-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
-      '@girs/xfixes-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/xlib-2.0': 2.0.0-4.0.0-rc.17
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/clutter-17': 4.9.0
+      '@girs/cogl-17': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdesktopenums-3.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/mtk-17': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/xfixes-4.0': 4.9.0
+      '@girs/xlib-2.0': 4.9.0
 
-  '@girs/mtk-17@17.0.0-4.0.0-rc.17':
+  '@girs/mtk-17@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
 
-  '@girs/nm-1.0@1.56.0-4.0.0-rc.17':
+  '@girs/nm-1.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-
-  '@girs/pango-1.0@1.57.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/harfbuzz-0.0': 11.5.0-4.0.0-beta.38
-
-  '@girs/pango-1.0@1.57.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/harfbuzz-0.0': 11.5.1-4.0.0-beta.40
-
-  '@girs/pango-1.0@1.57.1-4.0.0-rc.17':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@girs/pango-1.0@4.9.0':
     dependencies:
@@ -1967,42 +1506,6 @@ snapshots:
       '@girs/gmodule-2.0': 4.9.0
       '@girs/gobject-2.0': 4.9.0
       '@girs/harfbuzz-0.0': 4.9.0
-
-  '@girs/pangocairo-1.0@1.0.0-4.0.0-beta.38':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.38
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gio-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gjs': 4.0.0-beta.38
-      '@girs/glib-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.38
-      '@girs/gobject-2.0': 2.86.0-4.0.0-beta.38
-      '@girs/harfbuzz-0.0': 11.5.0-4.0.0-beta.38
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.38
-
-  '@girs/pangocairo-1.0@1.0.0-4.0.0-beta.40':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-beta.40
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/harfbuzz-0.0': 11.5.1-4.0.0-beta.40
-      '@girs/pango-1.0': 1.57.0-4.0.0-beta.40
-
-  '@girs/pangocairo-1.0@1.0.0-4.0.0-rc.17':
-    dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
 
   '@girs/pangocairo-1.0@4.9.0':
     dependencies:
@@ -2016,112 +1519,112 @@ snapshots:
       '@girs/harfbuzz-0.0': 4.9.0
       '@girs/pango-1.0': 4.9.0
 
-  '@girs/polkit-1.0@1.0.0-4.0.0-rc.17':
+  '@girs/polkit-1.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
-  '@girs/polkitagent-1.0@1.0.0-4.0.0-rc.17':
+  '@girs/polkitagent-1.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/polkit-1.0': 1.0.0-4.0.0-rc.17
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/polkit-1.0': 4.9.0
 
-  '@girs/shell-17@17.0.0-4.0.0-rc.17':
+  '@girs/shell-17@4.9.0':
     dependencies:
-      '@girs/atk-1.0': 2.60.0-4.0.0-rc.17
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/clutter-17': 17.0.0-4.0.0-rc.17
-      '@girs/cogl-17': 17.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gck-2': 4.4.0-4.0.0-rc.17
-      '@girs/gcr-4': 4.4.0-4.0.0-rc.17
-      '@girs/gdesktopenums-3.0': 3.0.0-4.0.0-rc.17
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/giounix-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gl-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/gvc-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/meta-17': 17.0.0-4.0.0-rc.17
-      '@girs/mtk-17': 17.0.0-4.0.0-rc.17
-      '@girs/nm-1.0': 1.56.0-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
-      '@girs/polkit-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/polkitagent-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/st-17': 17.0.0-4.0.0-rc.17
-      '@girs/xfixes-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/xlib-2.0': 2.0.0-4.0.0-rc.17
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/clutter-17': 4.9.0
+      '@girs/cogl-17': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gck-2': 4.9.0
+      '@girs/gcr-4': 4.9.0
+      '@girs/gdesktopenums-3.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/giounix-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/gvc-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/meta-17': 4.9.0
+      '@girs/mtk-17': 4.9.0
+      '@girs/nm-1.0': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/polkit-1.0': 4.9.0
+      '@girs/polkitagent-1.0': 4.9.0
+      '@girs/st-17': 4.9.0
+      '@girs/xfixes-4.0': 4.9.0
+      '@girs/xlib-2.0': 4.9.0
 
-  '@girs/shew-0@0.0.0-4.0.0-rc.17':
+  '@girs/shew-0@4.9.0':
     dependencies:
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gdk-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/gsk-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/gtk-4.0': 4.23.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
-      '@girs/pangocairo-1.0': 1.0.0-4.0.0-rc.17
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdk-4.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/gsk-4.0': 4.9.0
+      '@girs/gtk-4.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/pangocairo-1.0': 4.9.0
 
-  '@girs/st-17@17.0.0-4.0.0-rc.17':
+  '@girs/st-17@4.9.0':
     dependencies:
-      '@girs/atk-1.0': 2.60.0-4.0.0-rc.17
-      '@girs/cairo-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/clutter-17': 17.0.0-4.0.0-rc.17
-      '@girs/cogl-17': 17.0.0-4.0.0-rc.17
-      '@girs/freetype2-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gdesktopenums-3.0': 3.0.0-4.0.0-rc.17
-      '@girs/gdkpixbuf-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gio-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gl-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/glib-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
-      '@girs/graphene-1.0': 1.0.0-4.0.0-rc.17
-      '@girs/harfbuzz-0.0': 13.2.1-4.0.0-rc.17
-      '@girs/meta-17': 17.0.0-4.0.0-rc.17
-      '@girs/mtk-17': 17.0.0-4.0.0-rc.17
-      '@girs/pango-1.0': 1.57.1-4.0.0-rc.17
-      '@girs/xfixes-4.0': 4.0.0-4.0.0-rc.17
-      '@girs/xlib-2.0': 2.0.0-4.0.0-rc.17
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/clutter-17': 4.9.0
+      '@girs/cogl-17': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdesktopenums-3.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/meta-17': 4.9.0
+      '@girs/mtk-17': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/xfixes-4.0': 4.9.0
+      '@girs/xlib-2.0': 4.9.0
 
-  '@girs/upowerglib-1.0@0.99.1-4.0.0-beta.40':
+  '@girs/upowerglib-1.0@4.9.0':
     dependencies:
-      '@girs/gio-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gjs': 4.0.0-beta.40
-      '@girs/glib-2.0': 2.86.4-4.0.0-beta.40
-      '@girs/gmodule-2.0': 2.0.0-4.0.0-beta.40
-      '@girs/gobject-2.0': 2.86.4-4.0.0-beta.40
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
-  '@girs/xfixes-4.0@4.0.0-4.0.0-rc.17':
+  '@girs/xfixes-4.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gjs': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
-  '@girs/xlib-2.0@2.0.0-4.0.0-rc.17':
+  '@girs/xlib-2.0@4.9.0':
     dependencies:
-      '@girs/gjs': 4.0.0-rc.17
-      '@girs/gobject-2.0': 2.88.0-4.0.0-rc.17
+      '@girs/gjs': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
 
   '@humanfs/core@0.19.2':
     dependencies:
