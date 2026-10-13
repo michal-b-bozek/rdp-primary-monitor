@@ -156,17 +156,17 @@ temporary primary stays until the client disconnects
 ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5).
 
 The extension runs in the `user` and `unlock-dialog` session modes, so locking the screen does not
-disable it. When the screen locks, a pending monitor check is dropped; while it is locked the
-extension starts nothing: gathered windows stay where they are, the snapshot is kept and the
-placement record is not updated. Focusing work already under way finishes, including a pending retry
-of the apply and gathering the windows, and so does a restore. An `enable()` while the screen is
-locked waits and runs in full at unlock. Otherwise, on unlock the extension first carries out a
-deferred rebuild of the placement record, if one is waiting, and then runs the monitor check. A
-client that disconnected while the screen was locked has its windows restored right away, unless a
-matching monitor also appeared meanwhile: the unlock check counts that as a reconnect and goes back
-to Focusing with the same snapshot
-([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md), part 3 and its consequences).
-A client that connected meanwhile goes to Focusing with the record as it stood when the screen
-locked, or as rebuilt at unlock if a restore finished while the screen was locked. The rebuilt
-record, like one built at `enable()`, already includes any moves Mutter made when the client
+disable it ([ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md)).
+When the screen locks, a pending monitor check is dropped; while it is locked the extension starts
+nothing: gathered windows stay where they are, the snapshot is kept and the placement record is not
+updated. Focusing work already under way finishes, including a pending retry of the apply and
+gathering the windows, and so does a restore. An `enable()` while the screen is locked waits and
+runs in full at unlock. Otherwise, on unlock the extension first carries out a deferred rebuild of
+the placement record, if one is waiting, and then runs the monitor check. A client that disconnected
+while the screen was locked has its windows restored right away, unless a matching monitor also
+appeared meanwhile: the unlock check counts that as a reconnect and goes back to Focusing with the
+same snapshot ([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md), part 3 and its
+consequences). A client that connected meanwhile goes to Focusing with the record as it stood when
+the screen locked, or as rebuilt at unlock if a restore finished while the screen was locked. The
+rebuilt record, like one built at `enable()`, already includes any moves Mutter made when the client
 connected.
