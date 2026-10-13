@@ -25,8 +25,8 @@ Everything it reads and changes is on the same machine:
   interface, called asynchronously from inside the Shell. `GetCurrentState` reads the layout;
   `ApplyMonitorsConfig` with the _temporary_ method changes which monitor is primary. A temporary
   configuration is never written to `~/.config/monitors.xml`.
-- **Window moves** (output): `Meta.Window` methods (`move_to_monitor`, `change_workspace`,
-  `move_resize_frame`, `set_maximize_flags` with `maximize`, `set_unmaximize_flags` with
+- **Window moves** (output): `Meta.Window` methods (`move_to_monitor`, `change_workspace`, `stick`,
+  `unstick`, `move_resize_frame`, `set_maximize_flags` with `maximize`, `set_unmaximize_flags` with
   `unmaximize`, `make_fullscreen`, `unmake_fullscreen`, `minimize`, `unminimize`).
 
 ## States
