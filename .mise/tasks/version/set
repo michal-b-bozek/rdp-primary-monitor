@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: MIT
+#MISE description="Write a release version into src/metadata.json's version-name and stage it (cog bump hook)"
+#USAGE arg "<version>" help="SemVer version without the v prefix, e.g. 0.1.0"
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+readonly METADATA="src/metadata.json"
+
+main() {
+  local version="${usage_version:?}"
+  # extensions.gnome.org limits version-name to 1-16 letters, digits, spaces and dots; a
+  # SemVer pre-release or build suffix (-rc.1, +x) would be rejected there.
+  if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || ${#version} -gt 16 ]]; then
+    printf 'error: %s is not a plain X.Y.Z version of at most 16 characters\n' \
+      "${version}" >&2
+    exit 64
+  fi
+  local count
+  # grep -c exits 1 when it counts 0; the count itself is the check.
+  count="$(grep -c '"version-name": "' "${METADATA}" || true)"
+  if [[ "${count}" != 1 ]]; then
+    printf 'error: %s has no single "version-name" line\n' "${METADATA}" >&2
+    exit 65
+  fi
+  sed -i -E "s/(\"version-name\": \")[^\"]*\"/\1${version}\"/" "${METADATA}"
+  grep -q "\"version-name\": \"${version}\"" "${METADATA}"
+  git add -- "${METADATA}"
+}
+
+main "$@"

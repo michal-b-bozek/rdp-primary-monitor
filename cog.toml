@@ -18,15 +18,14 @@ tag_prefix = "v"
 
 skip_ci = "[skip ci]"
 
-# Validate before anything mutates (cocogitto does not roll back hook side effects).
-# The metadata.json `version-name` sync is added here, after the validations, once
-# src/metadata.json exists.
+# Validate before anything mutates (cocogitto does not roll back hook side effects): the
+# checks first, then version:set writes the version into src/metadata.json's
+# `version-name` and stages it, so the bump commit and its tag carry it.
 # mise run check includes commits:check (cog check).
-pre_bump_hooks = ["mise run check"]
+pre_bump_hooks = ["mise run check", "mise run version:set {{version}}"]
 
 # No post_bump_hooks: the changelog is curated before anything is pushed. Release sequence:
-#   1. cog bump --auto (the first release: cog bump --version 0.1.0, because the history so
-#      far has no feat or fix commit)
+#   1. cog bump --auto (with no tag yet, the first feat makes it 0.1.0)
 #   2. Curate CHANGELOG.md: headings to `## [X.Y.Z] - date` and `###` sections, entries in
 #      user voice, reference links at the bottom (`[Unreleased]` compares from the new tag,
 #      plus a `[X.Y.Z]` release link). Unreleased stays empty: cocogitto is its only author.
