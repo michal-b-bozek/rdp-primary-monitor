@@ -1,0 +1,10 @@
+{
+  "uuid": "rdp-primary-monitor@michal-b-bozek.github.io",
+  "name": "RDP Primary Monitor",
+  "description": "Makes a GNOME Desktop Sharing (RDP) client's virtual monitor the primary one when the client connects and moves normal application windows onto it. When the client disconnects, the extension returns each moved window to where it was, if its original monitor still exists. The change is temporary; saved display settings are not modified. Needs Desktop Sharing in extend mode.",
+  "url": "https://github.com/michal-b-bozek/rdp-primary-monitor",
+  "shell-version": ["49", "50"],
+  "settings-schema": "org.gnome.shell.extensions.rdp-primary-monitor",
+  "session-modes": ["user", "unlock-dialog"],
+  "version-name": "0.0.0"
+}
