@@ -1,13 +1,14 @@
 # 4. Snapshot and restore windows
 
-- **Status:** accepted
+- **Status:** accepted; Last amended: 2026-10-13
 - **Date:** 2026-10-12
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0002](0002-match-the-virtual-monitor.md) (the session's monitor) and
   [ADR-0003](0003-apply-the-primary-temporarily.md) (the temporary primary; part 5 settles what
-  `disable()` does to it). ADR-0002 keeps no connector or serial from one session to the next;
-  that rule is about the virtual monitor, whose serial changes every session, and does not cover
-  the physical monitors this ADR stores.
+  `disable()` does to it). ADR-0002 keeps no connector or serial from one session to the next; that
+  rule is about the virtual monitor, whose serial changes every session, and does not cover the
+  physical monitors this ADR stores. [ADR-0005](0005-keep-the-session-through-the-lock-screen.md)
+  defers part 4's restore to unlock when the session's monitor goes while the screen is locked.
 
 ## Context
 
@@ -93,6 +94,12 @@ maximized, fullscreen, minimized. It does so whatever the remote user did to the
 session. A window that closed is skipped. A window whose original monitor is gone is left as it is,
 monitor, workspace and states alike: after a disconnect that is where Mutter parked it. The
 extension logs that once per window. A window opened during the session is not touched.
+
+> **Amendment (2026-10-13).** The gathered set carries over a reconnect, as the snapshot does
+> ([ADR-0002](0002-match-the-virtual-monitor.md) part 3): a window gathered before the client came
+> back is restored when the session ends, even if the reconnected session goes to Dismissed and
+> gathers nothing. Found in the review of the whole design set, where `docs/design.md` said nothing
+> moves after an apply that failed twice; `docs/design.md`'s Restoring paragraph changes with this.
 
 Explicitly not:
 

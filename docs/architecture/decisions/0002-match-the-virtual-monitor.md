@@ -62,7 +62,8 @@ reconnect in Restoring), the extension takes those that appeared at the most rec
 that added any; among them, the one with the lowest serial, read as a hexadecimal number. A monitor
 present when the extension is enabled counts as appearing at that first check, so at a late start
 the lowest serial of all of them wins. The same holds at unlock: monitors that appeared while the
-screen was locked all count as appearing at the unlock check, even if they came one after another.
+screen was locked all count as appearing at the unlock check, even if they came one after another
+(lock behaviour: [ADR-0005](0005-keep-the-session-through-the-lock-screen.md)).
 
 The newest arrival wins because the client that connected last is the most likely to belong to the
 person about to work. Revisit if users report that the longest-connected client should win.
@@ -102,8 +103,9 @@ that a second client should take over.
 ### 4. The session ends when its monitor goes
 
 "Virtual monitor gone" means the session's own monitor is gone, whether or not other virtual
-monitors remain. The extension restores the gathered windows; once the restore finishes, it runs
-the monitor check again (at unlock, if the screen is locked), and a virtual monitor still present
+monitors remain. The extension restores the gathered windows; once the restore finishes, it runs the
+monitor check again (at unlock, if the screen is locked;
+[ADR-0005](0005-keep-the-session-through-the-lock-screen.md)), and a virtual monitor still present
 starts a new session under part 2.
 
 Explicitly not waiting until every virtual monitor is gone: the windows would stay where Mutter

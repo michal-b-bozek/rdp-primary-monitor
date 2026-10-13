@@ -5,7 +5,8 @@
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0004](0004-snapshot-and-restore-windows.md), whose `disable()`
   restores the gathered windows, and on [ADR-0002](0002-match-the-virtual-monitor.md) part 3 (the
-  reconnect); ADR-0002's parts 2 and 4 rely on the unlock check set up here.
+  reconnect). ADR-0004's part 4 restore, when the session's monitor goes while the screen is locked,
+  runs at unlock (part 3 here); ADR-0002's parts 2 and 4 rely on the unlock check set up here.
   [ADR-0003](0003-apply-the-primary-temporarily.md)'s rules do not change; while the screen is
   locked, its retry (part 3) runs on the debounce timer.
 

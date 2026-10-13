@@ -22,13 +22,15 @@ use the setting has not persisted reliably from one remote session to the next.
 - On connect, the virtual monitor (vendor `MetaVendor`, product `Virtual remote monitor`) becomes
   primary as a temporary display configuration. `~/.config/monitors.xml` is never modified.
 - Normal application windows move to it, from all workspaces or only the current one.
-- On disconnect, each moved window returns to its original monitor, position, size and
-  maximized, fullscreen or minimized state, if that monitor still exists. Windows opened
-  during the session stay where GNOME puts them.
+- On disconnect, each moved window returns to its original workspace, monitor, position, size and
+  maximized, fullscreen or minimized state, if that monitor still exists. Windows opened during the
+  session stay where GNOME puts them.
+- If the user makes another monitor primary during a session, the extension stands aside until the
+  client disconnects.
 - With no virtual monitor present, the extension changes nothing.
 
-How it works, state by state: [docs/design.md](docs/design.md). The reasons behind it are being
-recorded in the [architecture decision records](docs/architecture/decisions/).
+How it works, state by state: [docs/design.md](docs/design.md). The reasons behind it are recorded
+in the [architecture decision records](docs/architecture/decisions/).
 
 ## Requirements
 

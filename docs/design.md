@@ -92,12 +92,12 @@ the session's own monitor.
 
 **Focused.** The remote user works on the virtual monitor, which now holds the top bar,
 notifications and the gathered windows. Windows opened during the session are left where GNOME
-places them and are not restored later. A client resizing its window changes the virtual monitor's
-mode, which is not a reason to act, and neither is any other change to positions, scales or modes.
-If the primary moves off the session's monitor while it is still present, the extension treats it as
-a deliberate rearrangement and moves to Dismissed. A virtual monitor that arrives in Focusing,
-Focused or Dismissed is ignored. The session ends only when its own monitor goes, even if other
-virtual monitors remain.
+places them and are not restored later. A client resizing its window is expected to change the
+virtual monitor's mode (a change not yet observed), which is not a reason to act, and neither is any
+other change to positions, scales or modes. If the primary moves off the session's monitor while it
+is still present, the extension treats it as a deliberate rearrangement and moves to Dismissed. A
+virtual monitor that arrives in Focusing, Focused or Dismissed is ignored. The session ends only
+when its own monitor goes, even if other virtual monitors remain.
 
 **Dismissed.** The session's monitor is present but the extension no longer acts on it: the apply
 failed twice, or the user took the primary back. It changes neither windows nor the layout while the
@@ -110,15 +110,16 @@ them. For each window it leaves fullscreen if the window is fullscreen now and w
 snapshot, then restores the workspace, the monitor, the maximized state, the frame rectangle (stored
 relative to its monitor) for windows that were not maximized, and the fullscreen and minimized
 states. It finds a window's original monitor by vendor, product and serial, and by connector only to
-choose among monitors that share all three
-([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the session ended
-before any apply succeeded, nothing was gathered and nothing moves. Windows that closed during the
-session are skipped, and so are windows whose original monitor no longer exists, which are left as
-they are; the extension logs each window whose monitor is gone, once. If the client reconnects
-before this finishes (a matching monitor appears during Restoring, or at the very monitor check that
-found the session's monitor gone), the extension goes back to Focusing with the same snapshot, so
-the windows still return to where they were before the first connect. A virtual monitor that was
-already present before the check that found the session's monitor gone does not count as a
+choose among monitors that share all three; if none of them has the stored connector, the monitor
+counts as gone ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the
+session ended before any windows were gathered, nothing moves. Windows gathered before a reconnect
+still count as gathered, even if the reconnected session goes to Dismissed. Windows that closed
+during the session are skipped, and so are windows whose original monitor no longer exists, which
+are left as they are; the extension logs each window whose monitor is gone, once. If the client
+reconnects before this finishes (a matching monitor appears during Restoring, or at the very monitor
+check that found the session's monitor gone), the extension goes back to Focusing with the same
+snapshot, so the windows still return to where they were before the first connect. A virtual monitor
+that was already present before the check that found the session's monitor gone does not count as a
 reconnect: once the restore finishes, the extension enters Idle, rebuilding the placement record
 from the restored windows, and runs the monitor check right away, so another client still connected
 gets a session of its own. If the screen is locked, both the rebuild and the check wait for unlock.
@@ -151,21 +152,22 @@ the virtual monitor arrived, including any moves Mutter made then, so a disconne
 to where they were at `enable()`. `disable()` disconnects every signal and removes every timeout.
 During a session it first puts the gathered windows back as Restoring does, synchronously, and drops
 the snapshot (a window whose original monitor is gone stays on the session's monitor until the
-client disconnects); it sends no display configuration and cancels an apply still in flight, so the
-temporary primary stays until the client disconnects
+client disconnects); it sends no display configuration, so the temporary primary stays until the
+client disconnects, and it cancels an apply still in flight
 ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5).
 
 The extension runs in the `user` and `unlock-dialog` session modes, so locking the screen does not
 disable it ([ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md)).
 When the screen locks, a pending monitor check is dropped; while it is locked the extension starts
 nothing: gathered windows stay where they are, the snapshot is kept and the placement record is not
-updated. Focusing work already under way finishes, including a pending retry of the apply and
-gathering the windows, and so does a restore. An `enable()` while the screen is locked waits and
-runs in full at unlock. Otherwise, on unlock the extension first carries out a deferred rebuild of
-the placement record, if one is waiting, and then runs the monitor check. A client that disconnected
-while the screen was locked has its windows restored right away, unless a matching monitor also
-appeared meanwhile: the unlock check counts that as a reconnect and goes back to Focusing with the
-same snapshot ([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md), part 3 and its
+updated. A `disable()` while the screen is locked still puts the gathered windows back, as above.
+Focusing work already under way finishes, including a pending retry of the apply and gathering the
+windows, and so does a restore. An `enable()` while the screen is locked waits and runs in full at
+unlock. Otherwise, on unlock the extension first carries out a deferred rebuild of the placement
+record, if one is waiting, and then runs the monitor check. A client that disconnected while the
+screen was locked has its windows restored right away, unless a matching monitor also appeared
+meanwhile: the unlock check counts that as a reconnect and goes back to Focusing with the same
+snapshot ([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md), part 3 and its
 consequences). A client that connected meanwhile goes to Focusing with the record as it stood when
 the screen locked, or as rebuilt at unlock if a restore finished while the screen was locked. The
 rebuilt record, like one built at `enable()`, already includes any moves Mutter made when the client

@@ -1,6 +1,6 @@
 # 1. Record architecture decisions
 
-- **Status:** accepted
+- **Status:** accepted; Last amended: 2026-10-13
 - **Date:** 2026-10-12
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** none; this is the first ADR.
@@ -82,8 +82,13 @@ ADR-NNNN`. Links to other ADRs are typed: supersedes, exception to, builds on.
 ## Tracked separately
 
 - Recording the decisions taken so far: the virtual-monitor matching rule, the temporary display
-  configuration (with the rule for a primary moved off the virtual monitor), window snapshot and
+  configuration (with the rule for a primary moved off the session's monitor), window snapshot and
   restore, the lock screen, and the language and tooling, one ADR each. The remaining decisions are
   settings defaults, routine tooling changes or test setup, which part 1 excludes. The
   language-and-tooling ADR covers the choice of language and type checking, which is not a routine
   tooling change: it shapes the shipped code.
+
+  > **Amendment (2026-10-13).** Settled by
+  > [ADR-0002](0002-match-the-virtual-monitor.md) to
+  > [ADR-0006](0006-plain-javascript-checked-with-typescript.md), one per decision listed here, as
+  > the review of the whole log confirmed; the item is closed. No rule of this ADR changes.

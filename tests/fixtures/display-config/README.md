@@ -55,11 +55,14 @@ after applying it. Tests must parse these files with their type (`GLib.Variant.p
 values with `equal()`, never the text, which pins incidental formatting such as the digits of the
 copied scale.
 
-They cover one topology: one monitor per logical monitor, no transform, one virtual monitor,
-logical layout. Riskier cases (two virtual monitors, a transform, a mirrored logical monitor)
-need fixtures of their own, captured or derived by hand and labelled as such here, and so do
-two states the design names: the virtual monitor's mode changing after the client resizes its
-window, and the primary moved off the virtual monitor while it is present.
+They cover one topology: one monitor per logical monitor, no transform, one virtual monitor, logical
+layout. Riskier cases (two virtual monitors, a transform, a mirrored logical monitor) need fixtures
+of their own, captured or derived by hand and labelled as such here
+([ADR-0002](../../../docs/architecture/decisions/0002-match-the-virtual-monitor.md) asks for the
+two-virtual-monitor case), and so do two states the design names
+([ADR-0003](../../../docs/architecture/decisions/0003-apply-the-primary-temporarily.md), part 4):
+the virtual monitor's mode changing after the client resizes its window, and the primary moved off
+the virtual monitor while it is present.
 
 The VMs carry no personal data: the QEMU heads report vendor `RHT`, product `QEMU Monitor` and
 serial `0x00000000`. Fixtures captured anywhere else follow the sanitizing rule in
