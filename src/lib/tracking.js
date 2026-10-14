@@ -11,7 +11,26 @@ import GLib from 'gi://GLib'
 import { isNormalWindow, presentMonitors, readWindow } from './gather.js'
 import { PlacementRecord } from './placement.js'
 
-/** @import Meta from 'gi://Meta' */
+/**
+ * @import Meta from 'gi://Meta'
+ * @import { Timers } from './placement.js'
+ */
+
+/**
+ * One-shot GLib timeouts on the default priority.
+ *
+ * @type {Readonly<Timers>}
+ */
+export const glibTimers = {
+  add: (ms, callback) =>
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, ms, () => {
+      callback()
+      return GLib.SOURCE_REMOVE
+    }),
+  remove: (id) => {
+    GLib.source_remove(id)
+  },
+}
 
 /**
  * The window signals that mean its placement may have changed (docs/design.md,
@@ -48,16 +67,7 @@ export function createRecord(settleMs) {
     (window) =>
       isNormalWindow(window) ? readWindow(window, presentMonitors()) : null,
     settleMs,
-    {
-      add: (ms, callback) =>
-        GLib.timeout_add(GLib.PRIORITY_DEFAULT, ms, () => {
-          callback()
-          return GLib.SOURCE_REMOVE
-        }),
-      remove: (id) => {
-        GLib.source_remove(id)
-      },
-    },
+    glibTimers,
   )
 }
 
@@ -116,28 +126,47 @@ export function trackWindows(record) {
     watched.delete(window)
   }
 
-  const created = global.display.connect(
-    'window-created',
-    (_display, window) => {
-      watch(window)
-    },
-  )
-  // Removing or reordering workspaces changes the index of the windows on the
-  // workspaces that moved, without a signal on the window
-  // (meta_workspace_index_changed).
-  const reindexed = () => {
-    for (const window of watched.keys()) update(window)
-  }
+  const display = global.display
   const workspaces = global.workspace_manager
-  const workspaceIds = [
-    workspaces.connect('workspace-removed', reindexed),
-    workspaces.connect('workspaces-reordered', reindexed),
-  ]
-  for (const window of global.display.list_all_windows()) watch(window)
-
-  return () => {
-    global.display.disconnect(created)
+  /** @type {number[]} */
+  const displayIds = []
+  /** @type {number[]} */
+  const workspaceIds = []
+  const untrack = () => {
+    for (const id of displayIds) display.disconnect(id)
     for (const id of workspaceIds) workspaces.disconnect(id)
     for (const window of [...watched.keys()]) unwatch(window)
   }
+
+  try {
+    displayIds.push(
+      display.connect('window-created', (_display, window) => {
+        watch(window)
+      }),
+    )
+    // Removing or reordering workspaces changes the index of the windows on
+    // the workspaces that moved, without a signal on the window
+    // (meta_workspace_index_changed).
+    const reindexed = () => {
+      for (const window of watched.keys()) update(window)
+    }
+    workspaceIds.push(
+      workspaces.connect('workspace-removed', reindexed),
+      workspaces.connect('workspaces-reordered', reindexed),
+    )
+    for (const window of display.list_all_windows()) watch(window)
+  } catch (error) {
+    // The caller gets no function to disconnect with, so nothing may stay.
+    try {
+      untrack()
+    } catch (cleanupError) {
+      throw new AggregateError(
+        [error, cleanupError],
+        'tracking windows failed, and so did undoing it',
+        { cause: cleanupError },
+      )
+    }
+    throw error
+  }
+  return untrack
 }

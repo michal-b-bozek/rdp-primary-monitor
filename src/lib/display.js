@@ -10,10 +10,15 @@
 import Gio from 'gi://Gio'
 import GLib from 'gi://GLib'
 
-import { buildPrimaryLayout, isPrimary, parseDisplayState } from './monitors.js'
+import {
+  buildPrimaryLayout,
+  findRemoteMonitors,
+  isPrimary,
+  parseDisplayState,
+} from './monitors.js'
 
 /** @import { DisplayState } from './monitors.js' */
-/** @import { ApplyResult } from './state.js' */
+/** @import { ApplyResult, RemoteMonitor } from './state.js' */
 
 const BUS_NAME = 'org.gnome.Mutter.DisplayConfig'
 const OBJECT_PATH = '/org/gnome/Mutter/DisplayConfig'
@@ -63,6 +68,23 @@ export async function readDisplayState(proxy, cancellable) {
   /** @type {unknown} */
   const unpacked = reply.recursiveUnpack()
   return parseDisplayState(unpacked)
+}
+
+/**
+ * Read the matching virtual monitors for a monitor check, each with whether it
+ * is primary now.
+ *
+ * @param {Gio.DBusProxy} proxy
+ * @param {Gio.Cancellable | null} cancellable
+ * @returns {Promise<RemoteMonitor[]>} The monitors, in the reply's order.
+ */
+export async function readRemoteMonitors(proxy, cancellable) {
+  const state = await readDisplayState(proxy, cancellable)
+  return findRemoteMonitors(state).map((m) => ({
+    connector: m.connector,
+    serial: m.serial,
+    primary: isPrimary(state, m.connector),
+  }))
 }
 
 /**

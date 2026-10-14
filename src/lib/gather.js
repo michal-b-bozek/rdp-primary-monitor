@@ -20,6 +20,14 @@ import { planRestore, toMonitorFrame } from './windows.js'
  */
 
 /**
+ * A window whose move or restore threw; the others still go ahead.
+ *
+ * @typedef {object} WindowFailure
+ * @property {Meta.Window} window
+ * @property {unknown} error
+ */
+
+/**
  * Tell whether the extension handles a window: a normal window that is not
  * skipped from the taskbar.
  *
@@ -117,48 +125,60 @@ export function readNormalWindows() {
  * `move_to_monitor()`, which keeps each window's workspace and states
  * (ADR-0004 part 2). With `current-workspace`, only windows on the active
  * workspace move, including those on all workspaces. Windows that closed, or
- * are on that monitor already, are not moved.
+ * are on that monitor already, are not moved. A window whose move throws is
+ * reported and the rest still move, so the caller learns every window that
+ * did.
  *
  * @param {Iterable<Meta.Window>} windows The snapshot's windows.
  * @param {string} connector The connector of the session's monitor.
  * @param {GatherMode} mode The `gather-mode` setting, read right before the
  *   call.
- * @returns {Meta.Window[]} The windows moved, for the gathered set; none when
- *   the monitor is gone or `mode` is `off`.
+ * @returns {{ moved: Meta.Window[], failed: WindowFailure[] }} The windows
+ *   moved, for the gathered set (none when the monitor is gone or `mode` is
+ *   `off`), and those whose move threw.
  */
 export function gather(windows, connector, mode) {
-  if (mode === 'off') return []
+  /** @type {Meta.Window[]} */
+  const moved = []
+  /** @type {WindowFailure[]} */
+  const failed = []
+  if (mode === 'off') return { moved, failed }
   const target = global.backend
     .get_monitor_manager()
     .get_monitor_for_connector(connector)
-  if (target < 0) return []
+  if (target < 0) return { moved, failed }
   const active = global.workspace_manager.get_active_workspace()
 
-  /** @type {Meta.Window[]} */
-  const moved = []
   for (const window of windows) {
-    if (isGone(window) || window.get_monitor() === target) continue
-    if (
-      mode === 'current-workspace' &&
-      !window.is_on_all_workspaces() &&
-      window.get_workspace() !== active
-    ) {
-      continue
+    try {
+      if (isGone(window) || window.get_monitor() === target) continue
+      if (
+        mode === 'current-workspace' &&
+        !window.is_on_all_workspaces() &&
+        window.get_workspace() !== active
+      ) {
+        continue
+      }
+      window.move_to_monitor(target)
+      moved.push(window)
+    } catch (error) {
+      failed.push({ window, error })
     }
-    window.move_to_monitor(target)
-    moved.push(window)
   }
-  return moved
+  return { moved, failed }
 }
 
 /**
  * Put gathered windows back where their snapshot says (ADR-0004 part 4).
  * Windows that closed are skipped; a window whose original monitor is gone is
- * left as it is and returned, for the caller to log.
+ * left as it is and returned, for the caller to log; a window whose restore
+ * threw, possibly part-way, is returned too, and the others are still
+ * restored.
  *
  * @param {Iterable<readonly [Meta.Window, WindowRecord]>} gathered Each
  *   gathered window with its snapshot record.
- * @returns {Meta.Window[]} The windows whose original monitor is gone.
+ * @returns {{ monitorGone: Meta.Window[], failed: WindowFailure[] }} The
+ *   windows whose original monitor is gone, and those whose restore threw.
  */
 export function restore(gathered) {
   const present = presentMonitors()
@@ -166,23 +186,29 @@ export function restore(gathered) {
 
   /** @type {Meta.Window[]} */
   const monitorGone = []
+  /** @type {WindowFailure[]} */
+  const failed = []
   for (const [window, record] of gathered) {
-    if (isGone(window)) continue
-    /** @satisfies {CurrentWindow} */
-    const current = {
-      workspace: workspaceOf(window),
-      maximizeFlags: window.get_maximize_flags(),
-      fullscreen: window.is_fullscreen(),
-      minimized: window.minimized,
+    try {
+      if (isGone(window)) continue
+      /** @satisfies {CurrentWindow} */
+      const current = {
+        workspace: workspaceOf(window),
+        maximizeFlags: window.get_maximize_flags(),
+        fullscreen: window.is_fullscreen(),
+        minimized: window.minimized,
+      }
+      const steps = planRestore(record, current, present, workspaceCount)
+      if (steps === null) {
+        monitorGone.push(window)
+        continue
+      }
+      for (const step of steps) runStep(window, step)
+    } catch (error) {
+      failed.push({ window, error })
     }
-    const steps = planRestore(record, current, present, workspaceCount)
-    if (steps === null) {
-      monitorGone.push(window)
-      continue
-    }
-    for (const step of steps) runStep(window, step)
   }
-  return monitorGone
+  return { monitorGone, failed }
 }
 
 /**
