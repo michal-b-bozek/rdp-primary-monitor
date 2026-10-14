@@ -135,9 +135,11 @@ restores the fullscreen and minimized states. With `org.gnome.mutter workspaces-
 (the default), Mutter keeps every window on a monitor other than the primary on all workspaces; the
 snapshot records such a window as having no workspace of its own, and the restore sets none: Mutter
 keeps the window on all workspaces while it is off the primary monitor and puts it on the active
-workspace if it lands on the primary. The extension finds a window's original monitor by vendor,
-product and serial, and by connector only to choose among monitors that share all three; if none of
-them has the stored connector, the monitor counts as gone
+workspace if it lands on the primary. A window whose snapshot gives it a workspace but whose
+original monitor is no longer primary stays on all workspaces too, as Mutter keeps it there, and
+loses that workspace. The extension finds a window's original monitor by vendor, product and
+serial, and by connector only to choose among monitors that share all three; if none of them has
+the stored connector, the monitor counts as gone
 ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the session ended
 before any windows were gathered, nothing moves. Windows gathered before a reconnect still count as
 gathered, even if the reconnected session goes to Dismissed. Windows that closed during the session
@@ -200,9 +202,9 @@ flight: the proxy being created, a monitor check and an apply
 ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5). A window put back
 on the monitor that was primary before the session is then on a monitor that is not primary. With
 `workspaces-only-on-primary` on, Mutter keeps it on all workspaces while the client stays connected,
-so it loses its workspace; where Mutter puts it once that monitor is primary again is not settled:
-one earlier run on GNOME Shell 50.5 left such windows on all workspaces, and the current restore has
-not been tested in this case.
+so it loses its workspace. In the test VMs (GNOME Shell 49.10 and 50.5) such windows stayed on all
+workspaces after the client disconnected too: Mutter did not re-evaluate a window that did not move,
+so it keeps that state until it moves onto the primary monitor from another or the setting changes.
 
 The extension runs in the `user` and `unlock-dialog` session modes, so locking the screen does not
 disable it ([ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md)).

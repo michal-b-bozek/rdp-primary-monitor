@@ -178,6 +178,19 @@ is cancelled; if Mutter has applied it already, its primary stays like any other
 > given there. Revisit if users report windows left on all workspaces after turning the extension
 > off during a session. `docs/design.md`'s Lifecycle section changes with this.
 
+> **Amendment (2026-10-14).** In the test VMs (GNOME Shell 49.10 and 50.5 alike), with the restore
+> as part 4's amendment of this date describes it, a `disable()` during a session and a disconnect
+> left five of the nine test windows on all workspaces. They were the windows `disable()` had put
+> back on the monitor that was primary before the session, which was primary again after the
+> disconnect; the amendment above expected them on the active workspace. None of them had asked to
+> be there: turning `workspaces-only-on-primary` off put each one on the active workspace. On both
+> versions Mutter did not re-evaluate whether a window that did not move belonged on all workspaces,
+> also when only the primary changed and no client was involved; windows that moved onto the primary
+> monitor, as at a gather, did get a workspace. Such a window therefore stays on all workspaces
+> until it moves onto the primary monitor from another or the setting changes. Part 5 and its
+> rejections stand; the cost under Consequences gets an amendment. `docs/design.md`'s Lifecycle
+> section changes with this.
+
 Explicitly not:
 
 - also restoring the primary: it needs an asynchronous `ApplyMonitorsConfig` from `disable()`,
@@ -220,6 +233,9 @@ restored too.
   > monitor that was primary before the session lose their workspace as well (part 5's amendment of
   > this date).
 
+  > **Amendment (2026-10-14).** In the test VMs those windows also stayed on all workspaces after
+  > the client disconnected (part 5's second amendment of this date).
+
 ## Tracked separately
 
 - Windows on several workspaces, and the effect of `org.gnome.mutter workspaces-only-on-primary`
@@ -229,6 +245,15 @@ restored too.
   > which led to the amendments of parts 2 and 4; still to test: the restore as those amendments
   > describe it, a `disable()` during a session with that restore (part 5's amendment), and the
   > setting off.
+
+  > **Amendment (2026-10-14).** Tested in the test VMs (GNOME Shell 49.10 and 50.5), with nine
+  > windows over three workspaces, among them one on all workspaces of its own accord and three with
+  > no workspace of their own: the restore put every window back with no difference from the
+  > snapshot, with the setting on and with it off; a snapshot taken while the virtual monitor was
+  > primary left no window asking to be on all workspaces after the restore; for a `disable()`
+  > during a session, see part 5's second amendment of this date. Changing the primary without
+  > moving a window changed no window's workspace on either version. The cases this item names have
+  > run; the item is closed.
 
 - Whether real monitors are moved by a connect as the QEMU heads were; part 1's revisit trigger.
 - Tiled (half-screen) windows and applications with several windows; the spike covered neither.
