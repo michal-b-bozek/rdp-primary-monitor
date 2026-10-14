@@ -1,6 +1,6 @@
 # 5. Keep the session through the lock screen
 
-- **Status:** accepted
+- **Status:** accepted; Last amended: 2026-10-14
 - **Date:** 2026-10-13
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0004](0004-snapshot-and-restore-windows.md), whose `disable()`
@@ -53,6 +53,18 @@ is locked enters Idle without rebuilding the record; the rebuild waits for unloc
 while the screen is locked still restores as ADR-0004 part 5 says, since nothing may outlive it.
 Work already under way when the screen locks finishes: a Focusing apply with its one retry, the
 gather that follows it, and a restore.
+
+> **Amendment (2026-10-14).** "No update of the placement record" means no new placements: a window
+> that closes, or stops being a normal window, still leaves the record while the screen is locked.
+> Dropping it records no state the user did not see, and keeping it would leave a window the record
+> no longer covers in a later snapshot. Windows that changed while the screen was locked, or whose
+> change was still settling when it locked, are read again once the unlock check has left the
+> extension in Idle, so the record catches up on what the user can now see; this is a step after
+> part 3's unlock check. An unlock check that starts a session reads nothing again, and a record
+> kept through the lock keeps the layout from before it. The cost: a window moved within the settle
+> period before the screen locks goes back to where it was before that move if a client connects
+> during the lock. Found in the review of the placement record (`src/lib/placement.js`);
+> `docs/design.md`'s Idle paragraph, placement record and Lifecycle sections change with this.
 
 Explicitly not acting behind the lock: the user would meet the result without having seen it happen.
 Explicitly not cancelling work under way: a half-gathered or half-restored set of windows is worse

@@ -58,8 +58,8 @@ finishing or failing._
 
 **Idle.** No session. Usually no virtual monitor is present; right after a restore one may be, until
 the monitor check that follows. The extension keeps the placement record (next section) up to date;
-it does so only in Idle, and only while the screen is unlocked (see [Lifecycle inside the
-Shell](#lifecycle-inside-the-shell)). On entering Idle it rebuilds the record from the current
+it records new placements only in Idle, and only while the screen is unlocked (see [Lifecycle inside
+the Shell](#lifecycle-inside-the-shell)). On entering Idle it rebuilds the record from the current
 placement of every normal window, as `enable()` does; if the screen is locked then, the rebuild is
 deferred to unlock.
 
@@ -144,15 +144,28 @@ same monitor change. The extension therefore keeps a continuous record of where 
 window last _settled_:
 
 - it listens to each window's position, size, workspace, maximized, fullscreen and minimized
-  changes, and to window creation and removal;
+  changes, to window creation and removal, to changes that make a window normal or not, and to
+  workspaces being removed or reordered, which changes the workspace index of windows that did not
+  move;
 - a change is committed to the record only after the window has been still for a short period
   (the settle setting);
 - the first `monitors-changed` of a burst discards every change not yet committed and stops commits
-  until the monitor check has run, so moves Mutter makes during a monitor change never reach the
-  record, however late in the burst they come.
+  until the monitor check has run, so moves Mutter makes during a monitor change, however late in
+  the burst they come, cannot reach the record before the check decides whether a session starts;
+- if the check leaves the extension in Idle, each window that changed during the burst, or whose
+  change was discarded, is read again once it has been still for the settle period, so the record
+  follows a dock, an undock or any other monitor change that starts no session;
+- locking the screen in Idle works like a burst that lasts until the unlock check: changes not yet
+  committed are discarded, nothing is committed while the screen is locked, and if the unlock check
+  leaves the extension in Idle, each window that changed in the meantime, or whose change was
+  discarded, is read again once it has been still for the settle period.
+
+A window that closes, or stops being a normal window, leaves the record at once, also in other
+states and while the screen is locked: dropping it records no placement.
 
 A window moved by the user within the settle period before a client connects is restored to its
-previous position; that is the cost of the rule.
+previous position; that is the cost of the rule. If the client connects while the screen is locked,
+the same holds for a window moved within the settle period before the screen locked.
 
 ## Lifecycle inside the Shell
 
@@ -171,16 +184,18 @@ client disconnects, and it cancels an apply still in flight
 The extension runs in the `user` and `unlock-dialog` session modes, so locking the screen does not
 disable it ([ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md)).
 When the screen locks, a pending monitor check is dropped; while it is locked the extension starts
-nothing: gathered windows stay where they are, the snapshot is kept and the placement record is not
-updated. A `disable()` while the screen is locked still puts the gathered windows back, as above.
-Focusing work already under way finishes, including a pending retry of the apply and gathering the
-windows, and so does a restore. An `enable()` while the screen is locked waits and runs in full at
-unlock. Otherwise, on unlock the extension first carries out a deferred rebuild of the placement
-record, if one is waiting, and then runs the monitor check. A client that disconnected while the
-screen was locked has its windows restored right away, unless a matching monitor also appeared
-meanwhile: the unlock check counts that as a reconnect and goes back to Focusing with the same
-snapshot ([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md), part 3 and its
-consequences). A client that connected meanwhile goes to Focusing with the record as it stood when
-the screen locked, or as rebuilt at unlock if a restore finished while the screen was locked. The
-rebuilt record, like one built at `enable()`, already includes any moves Mutter made when the client
-connected.
+nothing: gathered windows stay where they are, the snapshot is kept and the placement record takes
+no new placements (a window that closes, or stops being a normal window, still leaves it; see [The
+placement record](#the-placement-record) for what happens at unlock). A `disable()` while the screen
+is locked still puts the gathered windows back, as above. Focusing work already under way finishes,
+including a pending retry of the apply and gathering the windows, and so does a restore. An
+`enable()` while the screen is locked waits and runs in full at unlock. Otherwise, on unlock the
+extension first carries out a deferred rebuild of the placement record, if one is waiting, and then
+runs the monitor check. A client that disconnected while the screen was locked has its windows
+restored right away, unless a matching monitor also appeared meanwhile: the unlock check counts that
+as a reconnect and goes back to Focusing with the same snapshot
+([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md), part 3 and its consequences).
+A client that connected meanwhile goes to Focusing with the placements recorded before the screen
+locked, or with the record rebuilt at unlock if a restore finished while the screen was locked.
+The rebuilt record, like one built at `enable()`, already includes any moves Mutter made when the
+client connected.
