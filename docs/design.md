@@ -126,14 +126,18 @@ client stays connected, even if the primary returns to the session's monitor.
 **Restoring.** The client disconnected. Mutter removes the virtual monitor and returns to the
 previous layout by itself; it parks the gathered windows on the remaining primary monitor. Unless
 the restore setting is off, the extension then puts back each window it gathered, and only those,
-whatever the remote user did to them. For each window it leaves fullscreen if the window is
-fullscreen now and was not in the snapshot, then restores the workspace and the monitor. It leaves
-the maximized state if the window is maximized in a direction the snapshot does not have, sets the
-frame rectangle (stored relative to its monitor) unless the snapshot has it maximized in both
-directions, and maximizes it in the snapshot's directions; then it restores the fullscreen and
-minimized states. It finds a window's original monitor by vendor, product and serial, and by
-connector only to choose among monitors that share all three; if none of them has the stored
-connector, the monitor counts as gone
+whatever the remote user did to them, with one exception for the workspace, below. For each window
+it leaves fullscreen if the window is fullscreen now and was not in the snapshot, then restores the
+monitor and the workspace. It leaves the maximized state if the window is maximized in a direction
+the snapshot does not have, sets the frame rectangle (stored relative to its monitor) unless the
+snapshot has it maximized in both directions, and maximizes it in the snapshot's directions; then it
+restores the fullscreen and minimized states. With `org.gnome.mutter workspaces-only-on-primary` on
+(the default), Mutter keeps every window on a monitor other than the primary on all workspaces; the
+snapshot records such a window as having no workspace of its own, and the restore sets none: Mutter
+keeps the window on all workspaces while it is off the primary monitor and puts it on the active
+workspace if it lands on the primary. The extension finds a window's original monitor by vendor,
+product and serial, and by connector only to choose among monitors that share all three; if none of
+them has the stored connector, the monitor counts as gone
 ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the session ended
 before any windows were gathered, nothing moves. Windows gathered before a reconnect still count as
 gathered, even if the reconnected session goes to Dismissed. Windows that closed during the session
@@ -193,15 +197,25 @@ the restore setting off, and drops the snapshot (a window whose original monitor
 the session's monitor until the client disconnects); it sends no display configuration, so the
 temporary primary stays until the client disconnects, and it cancels every D-Bus call still in
 flight: the proxy being created, a monitor check and an apply
-([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5).
+([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5). A window put back
+on the monitor that was primary before the session is then on a monitor that is not primary. With
+`workspaces-only-on-primary` on, Mutter keeps it on all workspaces while the client stays connected,
+so it loses its workspace; where Mutter puts it once that monitor is primary again is not settled:
+one earlier run on GNOME Shell 50.5 left such windows on all workspaces, and the current restore has
+not been tested in this case.
 
 The extension runs in the `user` and `unlock-dialog` session modes, so locking the screen does not
 disable it ([ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md)).
-The Shell can still disable and re-enable it when the screen locks: with each extension it disables
-for the lock screen, it also disables and re-enables every extension enabled after that one, as it
-does whenever an extension is turned off. A `disable()` that comes this way puts the gathered
-windows back behind the lock, and the `enable()` after it gathers them again at unlock; whether to
-avoid that is open (ADR-0005, part 1 and its amendment).
+This matters only where the RDP session itself survives the lock: stock GNOME 49 and 50 end it when
+the screen locks, so there a lock is a disconnect and the windows are restored at unlock. At login
+the Shell enables extensions that run in more session modes first, so a lock after login leaves this
+one running. If the extension was enabled during the session (turned on, installed or reloaded), the
+Shell can still disable and re-enable it when the screen locks: with each extension it disables for
+the lock screen, it also disables and re-enables every extension enabled after that one, as it does
+whenever an extension is turned off. After the unlock that follows, the extension comes before the
+extensions that list only `user` again. A `disable()` caused by the extension order puts the
+gathered windows back behind the lock, and the `enable()` after it gathers them again at unlock;
+whether to avoid that is open (ADR-0005, part 1 and its amendments).
 
 When the screen locks, a pending monitor check is dropped; while it is locked the extension starts
 no new work: gathered windows stay where they are, the snapshot is kept and the placement record

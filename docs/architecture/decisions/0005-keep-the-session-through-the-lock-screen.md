@@ -55,6 +55,22 @@ and the snapshot is kept. The extension draws nothing, so it shows nothing on th
 > `src/extension.js`); the first Good consequence and Tracked separately change with this, and so
 > does `docs/design.md`'s Lifecycle section.
 
+> **Amendment (2026-10-14).** The amendment above is wrong about when the lock calls this
+> extension's `disable()`: "as after login it can be" does not hold. Before enabling the extensions
+> at login, GNOME Shell 49 and 50 sort them by the number of session modes they list, most first
+> (`_compareExtensions`, used by `_getEnabledExtensions` and `_loadExtensions` in
+> `js/ui/extensionSystem.js`), so this extension, which lists two, is enabled before every extension
+> that lists `user` only, and a lock after login does not disable it. It comes after such an
+> extension only when it is enabled during the session (turned on, installed, or reloaded): the
+> Shell adds an extension enabled then to the end of its order (`_callExtensionEnable`). The next
+> lock then disables and re-enables it as the amendment above describes, and after that unlock it
+> comes before those extensions again. In the test VMs (GNOME Shell 49.10 and 50.5, with this
+> extension listed after two others in `enabled-extensions`), a lock after login left the extension
+> running. After it was turned off and on again with `gnome-extensions`, the next lock made the
+> Shell call its `disable()` and then `enable()`, as its debug log showed. Whether to carry a
+> session across that `disable()` stays open (Tracked separately). `docs/design.md`'s Lifecycle
+> section and the first Good consequence change with this.
+
 Explicitly not `user` only: every lock would restore the gathered windows and every unlock would
 gather them again. Explicitly not ending the session when the screen locks: the same restore and
 re-gather, without the `disable()`. Revisit if the extensions.gnome.org review refuses the
@@ -134,6 +150,10 @@ would then have to make the virtual monitor primary behind the lock.
   > lock (part 1 and its amendment): the windows are then put back behind the lock and gathered
   > again at unlock, so the remote user's arrangement is lost.
 
+  > **Amendment (2026-10-14).** The Shell disables and re-enables this extension at the lock only
+  > after it was enabled during the session, not after login (part 1's second amendment of this
+  > date).
+
 - **Good:** apart from Mutter's own parking of the windows when a client disconnects, what the user
   meets at unlock comes from one of three sources: what the extension did before the lock, work it
   had under way when the screen locked, or the unlock check.
@@ -155,5 +175,17 @@ would then have to make the virtual monitor primary behind the lock.
 - Whether stock GNOME 49 and 50 keep an RDP session through a lock without "Allow Locked Remote
   Desktop", or end it; if they end it, every lock is a disconnect and the windows come back at
   unlock.
+
+  > **Amendment (2026-10-14).** They end it. In the test VMs (GNOME Shell 49.10 and 50.5, no "Allow
+  > Locked Remote Desktop"), locking the screen ended the FreeRDP client's session and the virtual
+  > monitor went; nothing moved behind the lock, and the unlock check restored the gathered windows
+  > with no difference from the snapshot. On stock GNOME, then, a lock is a disconnect, and part 1
+  > matters only where something keeps the RDP session through the lock. `docs/design.md`'s
+  > Lifecycle section changes with this.
+
 - Whether to carry a session across a `disable()` that the Shell's extension order causes at the
   lock (part 1 amendment); to be settled on the test VMs with a typical set of extensions.
+
+  > **Amendment (2026-10-14).** The test VMs showed that this `disable()` happens only after the
+  > extension was enabled during the session (part 1's second amendment of this date), not after
+  > login; the question stays open.

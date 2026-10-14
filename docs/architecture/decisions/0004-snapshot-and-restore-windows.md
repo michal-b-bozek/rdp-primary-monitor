@@ -1,6 +1,6 @@
 # 4. Snapshot and restore windows
 
-- **Status:** accepted; Last amended: 2026-10-13
+- **Status:** accepted; Last amended: 2026-10-14
 - **Date:** 2026-10-12
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0002](0002-match-the-virtual-monitor.md) (the session's monitor) and
@@ -70,6 +70,20 @@ vendor, product, serial and connector; its frame rectangle relative to that moni
 maximize flags; whether it is fullscreen; whether it is minimized. Gathering moves each window
 with `move_to_monitor()` only, so it keeps its workspace and its states.
 
+> **Amendment (2026-10-14).** The workspace takes one of three forms: a workspace, all workspaces,
+> or none of the window's own. With `org.gnome.mutter workspaces-only-on-primary` on, the default,
+> Mutter 49 and 50 keep every window that is not on the primary monitor on all workspaces
+> (`should_be_on_all_workspaces` in `src/core/window.c`), and offer no getter that tells whether the
+> window also asked to be on all of them. A window on all workspaces counts as being there of its
+> own accord if it is on the primary monitor, has no monitor, or the setting is off; otherwise it
+> has no workspace of its own. In the test VMs, the snapshot as first written recorded such windows
+> as on all workspaces, and the restore then made each of them ask to be on all workspaces, which
+> keeps it there on every monitor until someone unsticks it: three windows snapshotted while the
+> virtual monitor was primary came back on all workspaces on both versions. No rule of part 2 is
+> reversed; the snapshot records one more distinction. Part 4's amendment of the same date says what
+> the restore does with each form; the snapshot code (`src/lib/gather.js`, `src/lib/windows.js`) and
+> `docs/design.md`'s Restoring paragraph change with this.
+
 Explicitly not the frame in global coordinates: a layout change during the session would put the
 window somewhere else on its monitor, or off it.
 
@@ -117,6 +131,19 @@ extension logs that once per window. A window opened during the session is not t
 > which Mutter records as maximized vertically, take the same steps and stay under Tracked
 > separately. `docs/design.md`'s Restoring paragraph changes with this.
 
+> **Amendment (2026-10-14).** The order above becomes: leave fullscreen, monitor, workspace, and the
+> rest as before; the workspace is restored only for a window whose snapshot gives it a workspace or
+> all workspaces (part 2's amendment of the same date). A window with no workspace of its own gets
+> no workspace from the restore, so it keeps any change the remote user made to it: an
+> exception to "keeping what the remote user changed" below, because the snapshot has no workspace
+> to put back, not because the change is wanted. A window that comes onto the primary monitor from
+> another stops being on all workspaces, and Mutter then puts it on the active workspace
+> (`meta_window_on_all_workspaces_changed`, Mutter 49 and 50), which would undo a workspace set
+> before the move. A window whose snapshot gives it a workspace but whose original monitor is no
+> longer primary stays on all workspaces, as Mutter keeps it. Found in the same VM test as part 2's
+> amendment, and checked in Mutter's source; `src/lib/windows.js` and `docs/design.md`'s Restoring
+> paragraph change with this.
+
 Explicitly not:
 
 - keeping what the remote user changed: the user at the workstation expects the layout they left,
@@ -135,6 +162,21 @@ client disconnects, Mutter moves it to a monitor that remains. `disable()` sends
 configuration: the temporary primary stays until the client disconnects, when Mutter drops it. A
 restore under way is finished synchronously in `disable()`. An `ApplyMonitorsConfig` still in flight
 is cancelled; if Mutter has applied it already, its primary stays like any other temporary primary.
+
+> **Amendment (2026-10-14).** Because the temporary primary stays, the windows that `disable()` puts
+> back on the monitor that was primary before the session are then on a monitor that is not primary.
+> With `org.gnome.mutter workspaces-only-on-primary` on, the default, Mutter keeps them on all
+> workspaces and ignores part 4's workspace step (part 4's amendment of this date), so they lose the
+> workspace the snapshot gave them; once the client disconnects and that monitor is primary again,
+> Mutter is expected to put them on the active workspace, by part 4's amendment. In the test VMs,
+> after a `disable()` during a session and a disconnect, three such windows were still on all
+> workspaces on GNOME Shell 50.5, which does not match that expectation; that run used the snapshot
+> as first written, before part 2's amendment of this date, and why the windows stayed there was not
+> established. The current restore has not been run in this case (Tracked separately). The
+> maintainer chose to keep part 5 and accept this as a cost (Consequences) over restoring the
+> primary from `disable()` or leaving the windows gathered, both rejected below for the reasons
+> given there. Revisit if users report windows left on all workspaces after turning the extension
+> off during a session. `docs/design.md`'s Lifecycle section changes with this.
 
 Explicitly not:
 
@@ -174,10 +216,20 @@ restored too.
 - **Cost:** after `disable()` during a session, the remote user keeps the top bar but loses the
   gathered windows, which go back to monitors they cannot see.
 
+  > **Amendment (2026-10-14).** With `workspaces-only-on-primary` on, the windows put back on the
+  > monitor that was primary before the session lose their workspace as well (part 5's amendment of
+  > this date).
+
 ## Tracked separately
 
 - Windows on several workspaces, and the effect of `org.gnome.mutter workspaces-only-on-primary`
   when the primary changes; the spike covered one workspace only.
+
+  > **Amendment (2026-10-14).** The test VMs ran windows on two workspaces with the setting on,
+  > which led to the amendments of parts 2 and 4; still to test: the restore as those amendments
+  > describe it, a `disable()` during a session with that restore (part 5's amendment), and the
+  > setting off.
+
 - Whether real monitors are moved by a connect as the QEMU heads were; part 1's revisit trigger.
 - Tiled (half-screen) windows and applications with several windows; the spike covered neither.
 - Part 4's cases the spike did not run: windows the remote user moved, resized, maximized, made
