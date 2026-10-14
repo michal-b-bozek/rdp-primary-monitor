@@ -17,12 +17,14 @@ Everything it reads and changes is on the same machine:
   `Virtual remote monitor`, sized to the client window.
 - **The monitor list** (input): `global.backend.get_monitor_manager().get_monitors()` gives each
   monitor's vendor, product, serial and connector; `get_monitor_for_connector()` maps a connector to
-  the monitor index that the window API uses.
+  the monitor index that the window API uses. The extension reads it to record, gather and restore
+  windows.
 - **Window placement** (input): `global.display.list_all_windows()` and each `Meta.Window`'s frame,
   monitor, workspace and maximized, fullscreen and minimized state. The extension handles only
   _normal windows_ (`Meta.WindowType.NORMAL`, not skipped from the taskbar).
 - **Display configuration** (input and output): Mutter's `org.gnome.Mutter.DisplayConfig` D-Bus
-  interface, called asynchronously from inside the Shell. `GetCurrentState` reads the layout;
+  interface, called asynchronously from inside the Shell. `GetCurrentState` reads the layout, and
+  the monitor check takes from it the matching monitors and which of them is primary;
   `ApplyMonitorsConfig` with the _temporary_ method changes which monitor is primary. A temporary
   configuration is never written to `~/.config/monitors.xml`.
 - **Window moves** (output): `Meta.Window` methods (`move_to_monitor`, `change_workspace_by_index`,
@@ -33,7 +35,13 @@ Everything it reads and changes is on the same machine:
 
 Monitor changes arrive in bursts (a connecting client produces several), so the extension acts on
 `monitors-changed` only after a quiet period set by the debounce setting. What it does then is the
-_monitor check_, which also runs at `enable()`, on unlock and once a restore finishes.
+_monitor check_, which also runs at `enable()`, on unlock and once a restore finishes. A check due
+while the quiet period after a monitor change is running waits for it, and one check answers both. A
+check whose reply comes after another monitor change, or after an unlock, is dropped, and the check
+that follows answers instead. A check that fails is logged and changes nothing: if it ran at
+`enable()`, or after a monitor change or an unlock, the placement record takes no new placements
+until a later check; if the session's monitor went, the windows are restored only at that later
+check.
 
 ```mermaid
 stateDiagram-v2
@@ -89,8 +97,11 @@ chosen monitor is the session's own until it goes
    moved too and keep their state.
 
 Settings can turn off making the monitor primary (step 2), gathering (step 4) and the restore when
-the session ends. Each step reads its setting when it runs, so a change during a session takes
-effect at the next step that uses it and moves nothing by itself.
+the session ends. By default all three are on, gathering takes windows from all workspaces, the
+debounce period is 500 ms and the settle period 250 ms; a hidden debug-logging setting, off by
+default, adds a journal line for each state change, apply and gather. Each step reads its setting
+when it runs, so a change during a session takes effect at the next step that uses it and moves
+nothing by itself.
 
 Mutter does not remember a temporary configuration, so the extension applies it again on every
 connect. The virtual monitor's serial changes with each session. Matching ignores it; the
@@ -127,12 +138,14 @@ connector, the monitor counts as gone
 before any windows were gathered, nothing moves. Windows gathered before a reconnect still count as
 gathered, even if the reconnected session goes to Dismissed. Windows that closed during the session
 are skipped, and so are windows whose original monitor no longer exists, which are left as they are;
-the extension logs each window whose monitor is gone, once. If the client reconnects before this
-finishes (a matching monitor appears during Restoring, or at the very monitor check that found the
-session's monitor gone), the extension goes back to Focusing with the same snapshot, so the windows
-still return to where they were before the first connect. A virtual monitor that was already present
-before the check that found the session's monitor gone does not count as a reconnect: once the
-restore finishes, the extension enters Idle, rebuilding the placement record from the restored
+the extension logs each window whose monitor is gone, once. A window whose move throws is logged
+while the others still move: when gathering it stays where it is, and when restoring it can be left
+part-way back. A window that could not be gathered is not restored. If the client reconnects before
+this finishes (a matching monitor appears during Restoring, or at the very monitor check that found
+the session's monitor gone), the extension goes back to Focusing with the same snapshot, so the
+windows still return to where they were before the first connect. A virtual monitor that was already
+present before the check that found the session's monitor gone does not count as a reconnect: once
+the restore finishes, the extension enters Idle, rebuilding the placement record from the restored
 windows, and runs the monitor check right away, so another client still connected gets a session of
 its own. If the screen is locked, both the rebuild and the check wait for unlock.
 
@@ -175,27 +188,44 @@ extension was enabled, or the user logged in, with a client connected), it goes 
 and takes the placement record it has just built as the snapshot. That record shows the layout after
 the virtual monitor arrived, including any moves Mutter made then, so a disconnect restores windows
 to where they were at `enable()`. `disable()` disconnects every signal and removes every timeout.
-During a session it first puts the gathered windows back as Restoring does, synchronously, and drops
-the snapshot (a window whose original monitor is gone stays on the session's monitor until the
-client disconnects); it sends no display configuration, so the temporary primary stays until the
-client disconnects, and it cancels an apply still in flight
+During a session it first puts the gathered windows back as Restoring does, synchronously, even with
+the restore setting off, and drops the snapshot (a window whose original monitor is gone stays on
+the session's monitor until the client disconnects); it sends no display configuration, so the
+temporary primary stays until the client disconnects, and it cancels every D-Bus call still in
+flight: the proxy being created, a monitor check and an apply
 ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5).
 
 The extension runs in the `user` and `unlock-dialog` session modes, so locking the screen does not
 disable it ([ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md)).
+The Shell can still disable and re-enable it when the screen locks: with each extension it disables
+for the lock screen, it also disables and re-enables every extension enabled after that one, as it
+does whenever an extension is turned off. A `disable()` that comes this way puts the gathered
+windows back behind the lock, and the `enable()` after it gathers them again at unlock; whether to
+avoid that is open (ADR-0005, part 1 and its amendment).
+
 When the screen locks, a pending monitor check is dropped; while it is locked the extension starts
-nothing: gathered windows stay where they are, the snapshot is kept and the placement record takes
-no new placements (a window that closes, or stops being a normal window, still leaves it; see [The
-placement record](#the-placement-record) for what happens at unlock). A `disable()` while the screen
-is locked still puts the gathered windows back, as above. Focusing work already under way finishes,
-including a pending retry of the apply and gathering the windows, and so does a restore. An
-`enable()` while the screen is locked waits and runs in full at unlock. Otherwise, on unlock the
+no new work: gathered windows stay where they are, the snapshot is kept and the placement record
+takes no new placements (a window that closes, or stops being a normal window, still leaves it; see
+[The placement record](#the-placement-record) for what happens at unlock). A `disable()` while the
+screen is locked still puts the gathered windows back, as above. A restore under way finishes; so
+does Focusing work already under way while the session's monitor is present, including a pending
+retry of the apply and gathering the windows.
+
+Monitor changes while the screen is locked still lead to monitor checks, which start no new work and
+only follow the session's own monitor: they note no new monitors. In Focusing, such a check lets a
+gather that waits for the apply's layout change go ahead or, if the primary has already left the
+session's monitor by then, ends Focusing in Dismissed instead. If it finds the session's monitor
+gone, it cancels the apply, retry or gather still pending, since there is nothing left to work on,
+and leaves the session to the unlock check.
+
+An `enable()` while the screen is locked waits and runs in full at unlock. Otherwise, on unlock the
 extension first carries out a deferred rebuild of the placement record, if one is waiting, and then
 runs the monitor check. A client that disconnected while the screen was locked has its windows
 restored right away, unless a matching monitor also appeared meanwhile: the unlock check counts that
 as a reconnect and goes back to Focusing with the same snapshot
 ([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md), part 3 and its consequences).
-A client that connected meanwhile goes to Focusing with the placements recorded before the screen
-locked, or with the record rebuilt at unlock if a restore finished while the screen was locked.
-The rebuilt record, like one built at `enable()`, already includes any moves Mutter made when the
-client connected.
+If the session's monitor, found gone at a check while the screen was locked, is present again at the
+unlock check, Focusing starts the apply over. A client that connected meanwhile goes to Focusing
+with the placements recorded before the screen locked, or with the record rebuilt at unlock if a
+restore finished while the screen was locked. The rebuilt record, like one built at `enable()`,
+already includes any moves Mutter made when the client connected.
