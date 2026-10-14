@@ -101,6 +101,22 @@ extension logs that once per window. A window opened during the session is not t
 > gathers nothing. Found in the review of the whole design set, where `docs/design.md` said nothing
 > moves after an apply that failed twice; `docs/design.md`'s Restoring paragraph changes with this.
 
+> **Amendment (2026-10-13).** A window maximized in one direction gets its frame rectangle back too,
+> for the direction that is not maximized. Mutter 49 and 50 leave the free direction where it is
+> when they maximize a window in one direction (`meta_window_set_maximize_flags`), so without the
+> frame a window maximized vertically would keep the position and width it had on the session's
+> monitor. The maximized state is therefore restored in three steps: the extension leaves it only if
+> the window is maximized in a direction the snapshot does not have, sets the frame unless the
+> snapshot has it maximized in both directions, and then maximizes the window in the snapshot's
+> directions, which adds any that are missing. Leaving it in every other case would send the window
+> to the rectangle Mutter saved when it was maximized, which Mutter does not move with the window
+> (`meta_window_set_unmaximize_flags`, `meta_window_move_to_monitor`), so it can lie on the
+> session's monitor, now gone. Found in the code review of the restore (`src/lib/windows.js`,
+> `src/lib/gather.js`) and checked in Mutter's source; the spike maximized windows in both
+> directions only, so these steps have not been run yet (see Tracked separately). Tiled windows,
+> which Mutter records as maximized vertically, take the same steps and stay under Tracked
+> separately. `docs/design.md`'s Restoring paragraph changes with this.
+
 Explicitly not:
 
 - keeping what the remote user changed: the user at the workstation expects the layout they left,
@@ -167,3 +183,9 @@ restored too.
 - Part 4's cases the spike did not run: windows the remote user moved, resized, maximized, made
   fullscreen or minimized; windows opened or closed during the session; an original monitor that
   is gone at restore.
+
+  > **Amendment (2026-10-13).** Also windows maximized in one direction, restored in part 4's
+  > amended steps; the spike maximized windows in both directions only. Among them, a window
+  > maximized vertically in the snapshot that the remote user tiled to one side: it is not
+  > unmaximized, and maximizing it vertically again leaves the tile in place, so it may come back
+  > tiled.

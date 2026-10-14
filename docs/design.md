@@ -107,11 +107,13 @@ client stays connected, even if the primary returns to the session's monitor.
 previous layout by itself; it parks the gathered windows on the remaining primary monitor. The
 extension then puts back each window it gathered, and only those, whatever the remote user did to
 them. For each window it leaves fullscreen if the window is fullscreen now and was not in the
-snapshot, then restores the workspace, the monitor, the maximized state, the frame rectangle (stored
-relative to its monitor) for windows that were not maximized, and the fullscreen and minimized
-states. It finds a window's original monitor by vendor, product and serial, and by connector only to
-choose among monitors that share all three; if none of them has the stored connector, the monitor
-counts as gone ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the
+snapshot, then restores the workspace and the monitor. It leaves the maximized state if the window is
+maximized in a direction the snapshot does not have, sets the frame rectangle (stored relative to its
+monitor) unless the snapshot has it maximized in both directions, and maximizes it in the snapshot's
+directions; then it restores the fullscreen and minimized states. It finds a window's original
+monitor by vendor, product and serial, and by connector only to choose among monitors that share all
+three; if none of them has the stored connector, the monitor counts as gone
+([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the
 session ended before any windows were gathered, nothing moves. Windows gathered before a reconnect
 still count as gathered, even if the reconnected session goes to Dismissed. Windows that closed
 during the session are skipped, and so are windows whose original monitor no longer exists, which
