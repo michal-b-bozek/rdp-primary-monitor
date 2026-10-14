@@ -71,6 +71,18 @@ and the snapshot is kept. The extension draws nothing, so it shows nothing on th
 > session across that `disable()` stays open (Tracked separately). `docs/design.md`'s Lifecycle
 > section and the first Good consequence change with this.
 
+> **Amendment (2026-10-14).** The extension does not carry a session across a `disable()` caused by
+> the extension order: that `disable()` restores the gathered windows and drops the snapshot like
+> any other (ADR-0004 part 5), and the `enable()` after it gathers them again, at unlock if the
+> screen is locked, at once if not. The maintainer accepted this as a cost (Consequences). At the
+> lock it happens only at the first lock after the extension was enabled during the session, and
+> matters only where the RDP session survives the lock, which it did not on GNOME Shell 49.10 and
+> 50.5 in the test VMs (Tracked separately, the amendment on stock GNOME). Explicitly not keeping
+> the snapshot and the gathered windows in module-level state that outlives `disable()`: the
+> extensions.gnome.org review rule of full cleanup in `disable()` rules it out. Revisit if users who
+> keep the RDP session through the lock report losing the remote arrangement. `docs/design.md`'s
+> Lifecycle section changes with this.
+
 Explicitly not `user` only: every lock would restore the gathered windows and every unlock would
 gather them again. Explicitly not ending the session when the screen locks: the same restore and
 re-gather, without the `disable()`. Revisit if the extensions.gnome.org review refuses the
@@ -166,6 +178,11 @@ would then have to make the virtual monitor primary behind the lock.
 - **Cost:** the extension has to track lock state, defer the record rebuild and `enable()`, and
   drop pending checks: more states than an extension that is disabled on lock.
 
+  > **Amendment (2026-10-14).** Also a cost: at the first lock after the extension was enabled
+  > during the session, the Shell can disable and re-enable it, which puts the gathered windows back
+  > behind the lock and gathers them again at unlock, so the remote user's arrangement is lost
+  > (part 1's third amendment of this date).
+
 ## Tracked separately
 
 - Whether a remote user who connects while the screen is locked can see and use the unlock dialog on
@@ -189,3 +206,6 @@ would then have to make the virtual monitor primary behind the lock.
   > **Amendment (2026-10-14).** The test VMs showed that this `disable()` happens only after the
   > extension was enabled during the session (part 1's second amendment of this date), not after
   > login; the question stays open.
+
+  > **Amendment (2026-10-14).** Settled: the session is not carried across it (part 1's third
+  > amendment of this date).

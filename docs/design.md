@@ -216,8 +216,9 @@ Shell can still disable and re-enable it when the screen locks: with each extens
 the lock screen, it also disables and re-enables every extension enabled after that one, as it does
 whenever an extension is turned off. After the unlock that follows, the extension comes before the
 extensions that list only `user` again. A `disable()` caused by the extension order puts the
-gathered windows back behind the lock, and the `enable()` after it gathers them again at unlock;
-whether to avoid that is open (ADR-0005, part 1 and its amendments).
+gathered windows back behind the lock, and the `enable()` after it gathers them again at unlock,
+so the remote user's arrangement is lost; the extension accepts that rather than keep a session
+past `disable()` (ADR-0005, part 1 and its amendments).
 
 When the screen locks, a pending monitor check is dropped; while it is locked the extension starts
 no new work: gathered windows stay where they are, the snapshot is kept and the placement record
