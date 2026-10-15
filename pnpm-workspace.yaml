@@ -23,49 +23,69 @@ allowBuilds:
 # from three generations (its ranges resolved to beta.38 and beta.40, meta-17 pins rc.17) while
 # @girs/gjs 4.9.0 pulls 4.9.0, so up to four copies of GLib, Gio and GObject (one per generation)
 # were installed and types from one copy were rejected by APIs typed with another (GLib.Variant
-# into Gio.DBusProxy.call). Every library that @girs/gnome-shell 49.1.0 or the GNOME Shell 50 set
-# (@girs/gnome-shell-50, an alias of @girs/gnome-shell 50.0.4) lists is pinned to 4.9.0, the
-# generation of the pinned @girs/gjs. The 50 set's ranges (^4.1.0) resolve to 4.9.0 today; the
-# *-18 entries in this list are a guard, so that a later 4.x of one of them cannot bring a second
-# generation back when the lockfile is next resolved. The guard covers only the libraries the two
-# gnome-shell packages list directly (e.g. cogl-17, pulled in by clutter-17 and meta-17, is not).
+# into Gio.DBusProxy.call). Every @girs library in the lockfile is pinned to 4.9.0, the generation
+# of the pinned @girs/gjs (@girs/gnome-shell itself is pinned in package.json): those that
+# @girs/gnome-shell 49.1.0 or the GNOME Shell 50 set (@girs/gnome-shell-50, an alias of
+# @girs/gnome-shell 50.0.4) lists, and those they pull in (cairo, pango, cogl-17 and the rest).
+# The 50 set's ranges (^4.1.0) and the libraries' ranges among themselves (^4.9.0) resolve to
+# 4.9.0 today; those entries are a guard, so that a later 4.x of one of them cannot bring a second
+# generation back when the lockfile is next resolved. A new @girs library in the lockfile gets an
+# entry here.
 # Trade-off: the 4.9.0 base-library types (GLib, Gio, GObject 2.89, Gtk 4.23) are newer than
 # GNOME 49's GLib 2.86 and Gtk 4.20, so tsc accepts base API that GNOME 49 may lack; the
 # Shell-level types (meta, mtk, st, shell, clutter and cogl, 17 and 18) stay their own release's.
 # Both sets use the same 4.9.0 base libraries, Gtk and Adw included, so the two runs check
 # prefs.js against the same Gtk and Adw types.
-# Date: 2026-10-13; the GNOME Shell 50 entries 2026-10-15. Bump @girs/gjs in package.json
-# together with this list, which also pins it.
+# Date: 2026-10-13; the entries for the GNOME Shell 50 set and the pulled-in libraries 2026-10-15.
+# Bump @girs/gjs in package.json together with this list, which also pins it.
 # Re-evaluate when @girs/gnome-shell, @girs/gnome-shell-50 or @girs/gjs is bumped, and drop the
 # list once each set's types depend on one generation themselves.
 overrides:
   '@girs/accountsservice-1.0': 4.9.0
   '@girs/adw-1': 4.9.0
   '@girs/atk-1.0': 4.9.0
+  '@girs/cairo-1.0': 4.9.0
   '@girs/clutter-17': 4.9.0
   '@girs/clutter-18': 4.9.0
+  '@girs/cogl-17': 4.9.0
   '@girs/cogl-18': 4.9.0
   '@girs/cogl-2.0': 4.9.0
+  '@girs/freetype2-2.0': 4.9.0
+  '@girs/gck-2': 4.9.0
   '@girs/gcr-4': 4.9.0
+  '@girs/gdesktopenums-3.0': 4.9.0
+  '@girs/gdk-4.0': 4.9.0
+  '@girs/gdkpixbuf-2.0': 4.9.0
   '@girs/gdm-1.0': 4.9.0
   '@girs/gio-2.0': 4.9.0
   '@girs/giounix-2.0': 4.9.0
   '@girs/gjs': 4.9.0
+  '@girs/gl-1.0': 4.9.0
   '@girs/glib-2.0': 4.9.0
+  '@girs/gmodule-2.0': 4.9.0
   '@girs/gnomebg-4.0': 4.9.0
   '@girs/gnomebluetooth-3.0': 4.9.0
   '@girs/gnomedesktop-4.0': 4.9.0
   '@girs/gobject-2.0': 4.9.0
+  '@girs/graphene-1.0': 4.9.0
+  '@girs/gsk-4.0': 4.9.0
   '@girs/gtk-4.0': 4.9.0
   '@girs/gvc-1.0': 4.9.0
+  '@girs/harfbuzz-0.0': 4.9.0
   '@girs/meta-17': 4.9.0
   '@girs/meta-18': 4.9.0
   '@girs/mtk-17': 4.9.0
   '@girs/mtk-18': 4.9.0
+  '@girs/nm-1.0': 4.9.0
+  '@girs/pango-1.0': 4.9.0
+  '@girs/pangocairo-1.0': 4.9.0
   '@girs/polkit-1.0': 4.9.0
+  '@girs/polkitagent-1.0': 4.9.0
   '@girs/shell-17': 4.9.0
   '@girs/shell-18': 4.9.0
   '@girs/shew-0': 4.9.0
   '@girs/st-17': 4.9.0
   '@girs/st-18': 4.9.0
   '@girs/upowerglib-1.0': 4.9.0
+  '@girs/xfixes-4.0': 4.9.0
+  '@girs/xlib-2.0': 4.9.0
