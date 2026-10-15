@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
  * The placement record (docs/design.md, The placement record; ADR-0004

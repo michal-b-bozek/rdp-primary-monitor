@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 // Ambient GJS / GNOME Shell types for `tsc` (dev only, never shipped): `gi://…` and
 // `resource:///org/gnome/shell/…` imports, and the GJS globals (`global`, `log`, …).

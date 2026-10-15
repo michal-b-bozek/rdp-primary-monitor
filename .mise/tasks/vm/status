@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
 #MISE description="Show the test VMs: state, forwarded ports, state directory"
 set -euo pipefail

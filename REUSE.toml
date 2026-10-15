@@ -1,0 +1,19 @@
+# Licence and copyright for the files without an SPDX header (REUSE 3.3): plain JSON and the GVariant
+# fixtures (no comment syntax), generated files (lockfiles, mise's dependency locks) and
+# Markdown (kept free of header comments). Every other file has the header itself.
+# Checked by `mise run spdx:check` (reuse lint).
+version = 1
+
+[[annotations]]
+path = [
+  "**.md",
+  ".mise/locks/**",
+  ".prettierrc.json",
+  "mise.lock",
+  "package.json",
+  "pnpm-lock.yaml",
+  "src/metadata.json",
+  "tests/fixtures/**",
+]
+SPDX-FileCopyrightText = "2026 Michał Bogusław Bożek"
+SPDX-License-Identifier = "MIT"

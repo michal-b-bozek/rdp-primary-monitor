@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
 # Kickstart for the RDP Primary Monitor test VMs (Fedora Workstation, GNOME). A template:
 # `mise run vm:build` fills the @…@ placeholders into a temporary copy and injects it into the

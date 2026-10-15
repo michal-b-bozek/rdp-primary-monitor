@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
 #MISE description="Delete a test VM: its domain, disk and generated credentials"
 #MISE confirm="Delete the test VM, its disk and its credentials?"

@@ -17,7 +17,8 @@ Ground rules for this repo:
   hostnames and usernames in captured `GetCurrentState` output with neutral placeholders before
   committing it.
 - **Extension review rules apply to all shipped code.** No work at module import time, full
-  cleanup in `disable()`, async D-Bus only, SPDX header
-  (`// SPDX-License-Identifier: MIT`) in every source file.
+  cleanup in `disable()`, async D-Bus only.
+- **Every file is REUSE-compliant** (`mise run spdx:check`); README's Development section says
+  which files take the SPDX header and which `REUSE.toml` covers.
 - **Architecture decisions are recorded in the ADR log** at `docs/architecture/decisions/`; read
   it before reopening a design question.

@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
  * Runs the state machine (`state.js`) against the world: feeds it monitor

@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
 # cog.toml — cocogitto 7.x, single package.
 # Verify:  mise run commits:check
 # Bump:    cog bump --auto   (on main or release/** only; runs mise run check first)

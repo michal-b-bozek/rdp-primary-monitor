@@ -70,7 +70,13 @@ mise run check            # all quality gates
 
 `mise run schemas:check` (part of `check`) uses `glib-compile-schemas`, and `mise run pack`, which
 writes the extension zip to `build/`, uses `gnome-extensions`; both come from the host (Fedora:
-`glib2` and `gnome-shell`), not from mise. `mise tasks` lists every task. Commits follow
+`glib2` and `gnome-shell`), not from mise. `mise run spdx:check` (part of `check`) runs
+[`reuse lint`](https://reuse.software/), which needs the host's libmagic (Fedora: `file-libs`). A
+new file carries the `SPDX-FileCopyrightText` and `SPDX-License-Identifier` lines at the top,
+unless it is Markdown, plain JSON, generated or a fixture, which [REUSE.toml](REUSE.toml) covers
+instead (add a path there if none of its patterns matches the file). `reuse` installs only on
+the platforms named next to its pin in `mise.toml`, so `mise run check` passes only there.
+`mise tasks` lists every task. Commits follow
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/); `mise run check`
 verifies them.
 
@@ -91,5 +97,7 @@ mise run vm:connect f43   # RDP client window; the guest gains a virtual monitor
 
 ## Project
 
-- **Licence:** MIT; the text is in [LICENSE](LICENSE).
+- **Licence:** MIT; the text is in [LICENSE](LICENSE). Every file's licence is declared in the
+  [REUSE](https://reuse.software/) format (in its header or in REUSE.toml), and
+  [LICENSES/](LICENSES) holds the same text for REUSE tooling.
 - **Changes:** see [CHANGELOG](CHANGELOG.md).

@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
  * The extension's settings as the rest of the code reads them: one getter per

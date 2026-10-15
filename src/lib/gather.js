@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
  * The window side of a session, on `Meta.Window`: read normal windows into

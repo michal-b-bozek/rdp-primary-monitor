@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
  * Mutter's `org.gnome.Mutter.DisplayConfig` over D-Bus: read the display state

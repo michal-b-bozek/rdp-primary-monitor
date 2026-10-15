@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
 # pnpm settings — strict defaults. The pinned pnpm 12 reads these here and ignores
 # them in .npmrc, which is left for per-user registry auth only (~/.npmrc, never committed).
 # Single package: no `packages:` list.

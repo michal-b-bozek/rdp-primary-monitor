@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 // ESLint flat config — strict defaults, adapted for plain ESM
 // JavaScript that runs under GJS (by design, no TypeScript sources):

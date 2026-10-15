@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
 #MISE description="Boot a test VM and wait until its Desktop Sharing (RDP) server listens"
 #USAGE arg "<vm>" help="f43 (Fedora 43, GNOME 49) or f44 (Fedora 44, GNOME 50)" {

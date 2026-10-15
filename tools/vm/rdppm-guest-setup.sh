@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
 # rdppm-guest-setup — runs inside a test VM, never on the host. The kickstart installs it as
 # /usr/local/libexec/rdppm-guest-setup with an autostart entry; at tester's first GNOME login it

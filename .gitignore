@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
 # --- Credentials — never commit them. -------------------------------------
 # pnpm settings live in pnpm-workspace.yaml (the pinned pnpm 12 reads them there), so a project
 # .npmrc could only carry registry auth — keep that in ~/.npmrc.

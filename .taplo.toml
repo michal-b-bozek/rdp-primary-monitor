@@ -1,0 +1,5 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+# Taplo (format:check, format:fix, lint). mise writes .mise/locks/ and records its digest in
+# mise.lock, so no formatter may rewrite it.
+exclude = [".mise/locks/**"]

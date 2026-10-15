@@ -1,11 +1,15 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
 # RDP Primary Monitor — pinned dev tools and quality tasks.
 # Nothing here ships in the extension: the zip holds plain JavaScript, metadata and the schema.
 # Gate tasks are added as the thing they check lands — no placeholder tasks that always pass
 # (typecheck is the exception: a no-op until src/ exists). test arrives with the tests.
-# schemas:check and pack use host tools (glib2, GNOME Shell) that mise cannot pin.
+# schemas:check and pack use host tools (glib2, GNOME Shell) that mise cannot pin; so does
+# spdx:check (libmagic, loaded by reuse).
 
-# mise.lock uses lock format v2; this is the oldest mise verified to read and write it.
-min_version = "2026.9.14"
+# The oldest mise verified to read and write mise.lock (lock format v2) and the locked
+# dependencies of the pipx tool (.mise/locks/); an older one may install them unlocked.
+min_version = "2026.10.3"
 
 [settings]
 lockfile = true
@@ -26,6 +30,15 @@ lychee = "0.24.2"
 taplo = "0.10.0"
 shellcheck = "0.11.0"
 shfmt = "3.14.1"
+# reuse (spdx:check) is a Python package: mise installs it with uv into the pinned Python and
+# locks its dependencies, with hashes, in .mise/locks/. Every reuse 6.x wheel is pure Python but
+# tagged cp310-cp310-manylinux_2_41_x86_64 (a packaging quirk), and mise installs wheels only
+# (uv --no-build), so reuse needs CPython 3.10 and installs only on x86-64 Linux with glibc 2.41
+# or later. CPython 3.10 is end of life from October 2026; move to a supported Python when reuse
+# ships a py3-none-any wheel. The pin also puts this Python on PATH inside the repository.
+uv = "0.12.23"
+python = "3.10.22"
+"pipx:reuse" = "6.2.0"
 
 [env]
 # Dev tools installed by pnpm (package.json) run from the project, never from a global install.
@@ -79,6 +92,10 @@ run = [
   "gnome-extensions pack src --extra-source=lib --out-dir=build --force",
 ]
 
+[tasks."spdx:check"]
+description = "Check that every file has copyright and licence information (reuse lint, REUSE.toml)"
+run = "reuse lint"
+
 [tasks."docs:check"]
 description = "Check Markdown links and anchors (lychee, lychee.toml)"
 run = "lychee ."
@@ -110,6 +127,7 @@ depends = [
   "lint",
   "typecheck",
   "schemas:check",
+  "spdx:check",
   "pins:check",
   "docs:check",
   "commits:check",

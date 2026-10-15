@@ -1,4 +1,5 @@
 # shellcheck shell=bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
 # tools/vm/lib.sh — settings and helpers shared by the vm:* mise tasks (.mise/tasks/vm/).
 # Sourced, never executed. The test VMs live in the unprivileged libvirt session

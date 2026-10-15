@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
 # Markdown link & anchor checker — invoked by `mise run docs:check`.
 #
 # Checks both relative paths (including `#anchor` fragments inside

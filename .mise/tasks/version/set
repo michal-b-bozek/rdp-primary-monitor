@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
 #MISE description="Write a release version into src/metadata.json's version-name and stage it (cog bump hook)"
 #USAGE arg "<version>" help="SemVer version without the v prefix, e.g. 0.1.0"
