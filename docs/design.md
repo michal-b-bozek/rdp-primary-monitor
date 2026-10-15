@@ -94,7 +94,10 @@ chosen monitor is the session's own until it goes
    gathers nothing; if no check comes by then, it gathers anyway;
 4. moves each snapshotted normal window (all workspaces or only the current one, per a setting) to
    the session's monitor with `move_to_monitor`. Maximized, fullscreen and minimized windows are
-   moved too and keep their state.
+   moved too and keep their state. If `org.gnome.mutter workspaces-only-on-primary` is on and the
+   session's monitor is not primary, as when the setting that makes it primary is off, Mutter puts
+   the moved windows on all workspaces while they stay on that monitor, and dynamic workspaces they
+   leave empty go away.
 
 Settings can turn off making the monitor primary (step 2), gathering (step 4) and the restore when
 the session ends. By default all three are on, gathering takes windows from all workspaces, the
@@ -128,8 +131,8 @@ client stays connected, even if the primary returns to the session's monitor.
 **Restoring.** The client disconnected. Mutter removes the virtual monitor and returns to the
 previous layout by itself; it parks the gathered windows on the remaining primary monitor. Unless
 the restore setting is off, the extension then puts back each window it gathered, and only those,
-whatever the remote user did to them, with one exception for the workspace, below. For each window
-it leaves fullscreen if the window is fullscreen now and was not in the snapshot, then restores the
+whatever the remote user did to them, with exceptions for the workspace, below. For each window it
+leaves fullscreen if the window is fullscreen now and was not in the snapshot, then restores the
 monitor and the workspace. It leaves the maximized state if the window is maximized in a direction
 the snapshot does not have, sets the frame rectangle (stored relative to its monitor) unless the
 snapshot has it maximized in both directions, and maximizes it in the snapshot's directions; then it
@@ -139,9 +142,11 @@ snapshot records such a window as having no workspace of its own, and the restor
 keeps the window on all workspaces while it is off the primary monitor and puts it on the active
 workspace if it lands on the primary. A window whose snapshot gives it a workspace but whose
 original monitor is no longer primary stays on all workspaces too, as Mutter keeps it there, and
-loses that workspace. The extension finds a window's original monitor by vendor, product and
-serial, and by connector only to choose among monitors that share all three; if none of them has
-the stored connector, the monitor counts as gone
+loses that workspace. The workspace is restored by its index; a window whose index is past the last
+workspace, for instance because dynamic workspaces went away while the gathered windows were on all
+of them, stays where it is: on its current workspace, or on all of them. The extension finds a
+window's original monitor by vendor, product and serial, and by connector only to choose among
+monitors that share all three; if none of them has the stored connector, the monitor counts as gone
 ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md)). If the session ended
 before any windows were gathered, nothing moves. Windows gathered before a reconnect still count as
 gathered, even if the reconnected session goes to Dismissed. Windows that closed during the session
