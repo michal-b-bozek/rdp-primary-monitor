@@ -28,9 +28,26 @@ use the setting has not persisted reliably from one remote session to the next.
 - If the user makes another monitor primary during a session, the extension stands aside until the
   client disconnects.
 - With no virtual monitor present, the extension changes nothing.
+- The preferences can turn off making the monitor primary or putting windows back, and limit moving
+  windows to the current workspace or turn it off.
 
 How it works, state by state: [docs/design.md](docs/design.md). The reasons behind it are recorded
 in the [architecture decision records](docs/architecture/decisions/).
+
+## Settings
+
+The preferences window shows the three settings above. Hidden settings set the timings and turn on
+debug lines in the journal. The schema is installed with the extension, so `gsettings` needs its
+directory:
+
+```sh
+ext=~/.local/share/gnome-shell/extensions/rdp-primary-monitor@michal-b-bozek.github.io
+gsettings --schemadir "$ext/schemas" \
+  set org.gnome.shell.extensions.rdp-primary-monitor debug-logging true
+```
+
+Every key, with its default and range, is in
+[the schema](src/schemas/org.gnome.shell.extensions.rdp-primary-monitor.gschema.xml).
 
 ## Requirements
 
@@ -51,7 +68,9 @@ mise run hooks:install    # git hooks (lefthook): secrets, lint, format, commit 
 mise run check            # all quality gates
 ```
 
-`mise tasks` lists every task. Commits follow
+`mise run schemas:check` (part of `check`) uses `glib-compile-schemas`, and `mise run pack`, which
+writes the extension zip to `build/`, uses `gnome-extensions`; both come from the host (Fedora:
+`glib2` and `gnome-shell`), not from mise. `mise tasks` lists every task. Commits follow
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/); `mise run check`
 verifies them.
 

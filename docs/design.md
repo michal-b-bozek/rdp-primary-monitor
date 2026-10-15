@@ -101,7 +101,9 @@ the session ends. By default all three are on, gathering takes windows from all 
 debounce period is 500 ms and the settle period 250 ms; a hidden debug-logging setting, off by
 default, adds a journal line for each state change, apply and gather. Each step reads its setting
 when it runs, so a change during a session takes effect at the next step that uses it and moves
-nothing by itself.
+nothing by itself. Only the primary, gathering and restore settings appear in the preferences; the
+keys, defaults and ranges are in the
+[GSettings schema](../src/schemas/org.gnome.shell.extensions.rdp-primary-monitor.gschema.xml).
 
 Mutter does not remember a temporary configuration, so the extension applies it again on every
 connect. The virtual monitor's serial changes with each session. Matching ignores it; the

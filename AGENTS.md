@@ -4,7 +4,7 @@ GNOME Shell extension (`rdp-primary-monitor@michal-b-bozek.github.io`, GNOME She
 MIT) that makes a Desktop Sharing RDP client's virtual monitor primary while it is
 connected; the behaviour is in [README.md](README.md) and [docs/design.md](docs/design.md).
 Plain ESM JavaScript; Node and pnpm exist only for lint, format and type-checking. Pre-release:
-the extension code is being written; the GSettings schema and preferences are not there yet.
+the extension code is being written.
 
 Ground rules for this repo:
 

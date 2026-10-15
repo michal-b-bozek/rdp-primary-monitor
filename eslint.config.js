@@ -220,6 +220,50 @@ export default defineConfig(
     rules: { 'import-x/no-default-export': 'off' },
   },
   {
+    // The preferences run in their own GTK process, the rest in the Shell; neither side may load
+    // the other's libraries (GNOME extension review rules).
+    files: ['src/prefs.js'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              // Also with a version, as in gi://St?version=…
+              regex: '^gi://(Clutter|Meta|Mtk|Shell|St)(\\?|$)',
+              message: 'Shell-only library; prefs.js runs outside the Shell.',
+            },
+            {
+              regex: '^resource:///org/gnome/shell/',
+              // The preferences' own modules live under /org/gnome/Shell/Extensions/.
+              caseSensitive: true,
+              message: 'Shell module; prefs.js runs outside the Shell.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/**/*.js'],
+    ignores: ['src/prefs.js'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              // Also with a version, as in gi://Gtk?version=4.0.
+              regex: '^gi://(Adw|Gdk|Gtk)(\\?|$)',
+              message:
+                'GTK library; only prefs.js may load it, the Shell must not.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
     // Tests: deliberate type-invalid usage and structural fakes are fine.
     files: ['tests/**/*.js'],
     rules: {

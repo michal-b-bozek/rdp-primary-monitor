@@ -17,7 +17,7 @@ import {
 } from './lib/display.js'
 import { gather, readNormalWindows, restore } from './lib/gather.js'
 import { Session } from './lib/session.js'
-import { defaultSettings } from './lib/settings.js'
+import { settingsFrom } from './lib/settings.js'
 import { createRecord, glibTimers, trackWindows } from './lib/tracking.js'
 
 /**
@@ -50,7 +50,10 @@ export default class RdpPrimaryMonitor extends Extension {
    */
   enable() {
     if (this.#teardown !== null) throw new Error('enable() called twice')
-    const settings = defaultSettings()
+    // Throws if the schema is missing, before anything is wired. Nothing
+    // connects to the settings (a change triggers nothing by itself), so
+    // disable() releases them by dropping the teardown that holds them.
+    const settings = settingsFrom(this.getSettings())
     const log = createLog(this.getLogger(), settings)
     /** @type {(() => void)[]} Undo steps, run last first. */
     const undo = []

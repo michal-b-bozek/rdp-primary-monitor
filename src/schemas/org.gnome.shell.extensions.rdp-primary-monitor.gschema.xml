@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: MIT -->
+<!--
+  The extension's settings (docs/design.md, Focusing). The preferences window shows
+  make-primary, gather-mode and restore-on-disconnect; the other keys are hidden and are set with
+  gsettings and its schemadir option (README, Settings).
+-->
+<schemalist>
+  <enum id="org.gnome.shell.extensions.rdp-primary-monitor.GatherMode">
+    <value nick="all-workspaces" value="0"/>
+    <value nick="current-workspace" value="1"/>
+    <value nick="off" value="2"/>
+  </enum>
+
+  <schema id="org.gnome.shell.extensions.rdp-primary-monitor"
+          path="/org/gnome/shell/extensions/rdp-primary-monitor/">
+    <key name="make-primary" type="b">
+      <default>true</default>
+      <summary>Make the client’s virtual monitor primary</summary>
+      <description>
+        When a client connects, make its virtual monitor the primary monitor for as long as it
+        stays connected.
+      </description>
+    </key>
+
+    <key name="gather-mode" enum="org.gnome.shell.extensions.rdp-primary-monitor.GatherMode">
+      <default>'all-workspaces'</default>
+      <summary>Which windows to move to the client’s virtual monitor</summary>
+      <description>
+        When a client connects, move the normal windows of all workspaces
+        (“all-workspaces”), of the current workspace only (“current-workspace”), or none
+        (“off”) to its virtual monitor. Every window keeps its workspace while that monitor is
+        primary; on a monitor that is not, GNOME shows it on all workspaces (while
+        org.gnome.mutter workspaces-only-on-primary is on, its default).
+      </description>
+    </key>
+
+    <key name="restore-on-disconnect" type="b">
+      <default>true</default>
+      <summary>Put windows back when the client disconnects</summary>
+      <description>
+        When the client disconnects, put each window the extension moved back on the monitor and
+        workspace, with the position, size and state it had before, if that monitor still exists.
+      </description>
+    </key>
+
+    <key name="debounce-ms" type="u">
+      <range min="100" max="5000"/>
+      <default>500</default>
+      <summary>Debounce period, in milliseconds</summary>
+      <description>
+        The extension acts on monitor changes only after this long without another one. It is
+        also the longest wait for the layout change after making the monitor primary, and the
+        longest wait before trying again when that fails. Not shown in the preferences.
+      </description>
+    </key>
+
+    <key name="settle-ms" type="u">
+      <range min="0" max="5000"/>
+      <default>250</default>
+      <summary>Settle period of the placement record, in milliseconds</summary>
+      <description>
+        A window's change of placement is recorded only after the window has been still for this
+        long. Not shown in the preferences.
+      </description>
+    </key>
+
+    <key name="debug-logging" type="b">
+      <default>false</default>
+      <summary>Log each state change, apply and gather</summary>
+      <description>
+        Add a journal line for each state change, display configuration apply and gather.
+        Warnings and errors are always logged. Not shown in the preferences.
+      </description>
+    </key>
+  </schema>
+</schemalist>
