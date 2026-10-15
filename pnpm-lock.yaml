@@ -167,6 +167,8 @@ overrides:
   '@girs/adw-1': 4.9.0
   '@girs/atk-1.0': 4.9.0
   '@girs/clutter-17': 4.9.0
+  '@girs/clutter-18': 4.9.0
+  '@girs/cogl-18': 4.9.0
   '@girs/cogl-2.0': 4.9.0
   '@girs/gcr-4': 4.9.0
   '@girs/gdm-1.0': 4.9.0
@@ -181,11 +183,15 @@ overrides:
   '@girs/gtk-4.0': 4.9.0
   '@girs/gvc-1.0': 4.9.0
   '@girs/meta-17': 4.9.0
+  '@girs/meta-18': 4.9.0
   '@girs/mtk-17': 4.9.0
+  '@girs/mtk-18': 4.9.0
   '@girs/polkit-1.0': 4.9.0
   '@girs/shell-17': 4.9.0
+  '@girs/shell-18': 4.9.0
   '@girs/shew-0': 4.9.0
   '@girs/st-17': 4.9.0
+  '@girs/st-18': 4.9.0
   '@girs/upowerglib-1.0': 4.9.0
 
 importers:
@@ -201,6 +207,9 @@ importers:
       '@girs/gnome-shell':
         specifier: 49.1.0
         version: 49.1.0
+      '@girs/gnome-shell-50':
+        specifier: npm:@girs/gnome-shell@50.0.4
+        version: '@girs/gnome-shell@50.0.4'
       eslint:
         specifier: 10.11.0
         version: 10.11.0
@@ -314,8 +323,14 @@ packages:
   '@girs/clutter-17@4.9.0':
     resolution: {integrity: sha512-W3+3EW51J9zPW47N6M79EKWHxl2xlTpKt7KYSOlpIDIF7ixyZmvgddm1weg+1w1kzh43qo3iOIGZZL5u3iQWaA==}
 
+  '@girs/clutter-18@4.9.0':
+    resolution: {integrity: sha512-sJNixTPIrnB5hR7KyazsuB7QyOOPafh+j3uvXD3sohyxpWNKnhUErWMtAl2umybLRLZfgW9pXVgdirvCPZ87Lg==}
+
   '@girs/cogl-17@4.9.0':
     resolution: {integrity: sha512-R2hOTtdXCA83tsVaKKU/44bvAW8Wg7Al/uR8AjgDH2vHCI0aITwywbBpK7h4tJMgAY+PPudakkaYujo+We0mGA==}
+
+  '@girs/cogl-18@4.9.0':
+    resolution: {integrity: sha512-p2AEpE7p51Bg85FztwIXbURFFRa+flwrmeiqngj7jMuJ6qbUBdS28TCEHQkruXT4+NTibZPqxm59Q12TNjX9Pw==}
 
   '@girs/cogl-2.0@4.9.0':
     resolution: {integrity: sha512-qjA0UaeCCqNpLISa8Ni9sPRvhZ3eXoy9ooNJVOXB8Lxfx0a/VrOmuHnF1w6Bck6OD5q/BLto/9A0tgnfJZCW6A==}
@@ -362,6 +377,9 @@ packages:
   '@girs/gnome-shell@49.1.0':
     resolution: {integrity: sha512-14Re6+DIrozWOErzW9fqvTAn0o9/1rMZuSDQ7BPIC+MYxmNmIlqzjo0kecbkXMN4ZY1zRpgfahbkiFwjJYZmfQ==}
 
+  '@girs/gnome-shell@50.0.4':
+    resolution: {integrity: sha512-69phtdJHMPUBxVRDqfE4JWSZeauTIl0zFuILMIkJbqyHOb1U9sxN7yN59x+pJWGxVTktFz/Y9uXKjDzOcHlYFA==}
+
   '@girs/gnomebg-4.0@4.9.0':
     resolution: {integrity: sha512-aMveqDMtQ6rR4xAH00Jtgk2diiD0CIzJKwlVeiuYFRXfFC4MnIQIqxvtHGnpA8Xa/nU7LeubWlMatXFVYLzjTg==}
 
@@ -392,8 +410,14 @@ packages:
   '@girs/meta-17@4.9.0':
     resolution: {integrity: sha512-4lBT63PwNTdnI3zvV+sJM2+2U93ddv+WYXkM68CsMtmH9JwvasqahOr4lF4ySbaT/ZL4YTKBu7lUt/Hg568ScA==}
 
+  '@girs/meta-18@4.9.0':
+    resolution: {integrity: sha512-RxE/sMdMv8wBf3BqDEDWGNcCTK2Ifp96WD5eqhpi3N7eqGfV7Jc6yonogX4LDXcRUC35i6s1Ihp25AAKPtCu8w==}
+
   '@girs/mtk-17@4.9.0':
     resolution: {integrity: sha512-SyWQCqHyeewDLBEf7XG6OH3MCeIJPicSylhBgyHz+f5JGPMBoIVjllvugOL0o2G7w/v4oYvk5vVnluL7fGSFpw==}
+
+  '@girs/mtk-18@4.9.0':
+    resolution: {integrity: sha512-np1v0eSs0Rg9Vafw8IR0VRVNaU4rvEztBW35P4AxjvnxQYX1pvb05mwmlM6CvFtgPvdBUc3NkfZ2JutaeFe/kA==}
 
   '@girs/nm-1.0@4.9.0':
     resolution: {integrity: sha512-/h7siAsQl39e8OC2eDMotMh7QbiXfcgprDFV+YYRHdH3h6PgBrl2wY7sd6y0J9VRoIWD9C+X6XnAcDuC+GU9gw==}
@@ -413,11 +437,17 @@ packages:
   '@girs/shell-17@4.9.0':
     resolution: {integrity: sha512-Am7xwQO+C07TaSgWGXge6r446ALBQPvG0wu1kUOoxjqo72mDuRWl6NPE8qq70T4piLm4IR/9zBwk4+wVSJhL9g==}
 
+  '@girs/shell-18@4.9.0':
+    resolution: {integrity: sha512-nqoBZlo0BRE3OsKskzCej6Fp09ZWXS3ZvWNeVEiLwvci3KImsIW6AkEv+NrvlUYO3E9UF5aYDHABFNWvHZLZEA==}
+
   '@girs/shew-0@4.9.0':
     resolution: {integrity: sha512-fW4pl8JDRll47YQMAmqEUSQDCZhk4scEEvRsvExLGrWc6MygdwRbFA+04ra+zgRO365k4j7t5gFC1R1/0X99OQ==}
 
   '@girs/st-17@4.9.0':
     resolution: {integrity: sha512-pdYiFJQnyAVQngZTumQIWsi3yFEDPHRePK3ovVW6n024JdMpmMm+/7vjeubAyX2xwejjMZ7AKcmZVzAr9EURYA==}
+
+  '@girs/st-18@4.9.0':
+    resolution: {integrity: sha512-VMdgmklmH2wDc0CgASmUQDtruTmQCdIqWm8/5F6Ks5URDkP3FRucrq88avXlaerWRN/dwikYT0UQfJPT+Dw8IQ==}
 
   '@girs/upowerglib-1.0@4.9.0':
     resolution: {integrity: sha512-wGptYb4WqkVElyi55ThMcfEumwgx5io6dN1aGzKYyxtyamrPLCKHwt3NGRXYXDR9fKkTTpEA6IdYvLF7717lqQ==}
@@ -1228,6 +1258,23 @@ snapshots:
       '@girs/mtk-17': 4.9.0
       '@girs/pango-1.0': 4.9.0
 
+  '@girs/clutter-18@4.9.0':
+    dependencies:
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/cogl-18': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/mtk-18': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+
   '@girs/cogl-17@4.9.0':
     dependencies:
       '@girs/gjs': 4.9.0
@@ -1236,6 +1283,15 @@ snapshots:
       '@girs/gobject-2.0': 4.9.0
       '@girs/graphene-1.0': 4.9.0
       '@girs/mtk-17': 4.9.0
+
+  '@girs/cogl-18@4.9.0':
+    dependencies:
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/mtk-18': 4.9.0
 
   '@girs/cogl-2.0@4.9.0':
     dependencies:
@@ -1366,6 +1422,33 @@ snapshots:
       '@girs/st-17': 4.9.0
       '@girs/upowerglib-1.0': 4.9.0
 
+  '@girs/gnome-shell@50.0.4':
+    dependencies:
+      '@girs/accountsservice-1.0': 4.9.0
+      '@girs/adw-1': 4.9.0
+      '@girs/atk-1.0': 4.9.0
+      '@girs/clutter-18': 4.9.0
+      '@girs/cogl-18': 4.9.0
+      '@girs/gcr-4': 4.9.0
+      '@girs/gdm-1.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/giounix-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gnomebg-4.0': 4.9.0
+      '@girs/gnomebluetooth-3.0': 4.9.0
+      '@girs/gnomedesktop-4.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/gtk-4.0': 4.9.0
+      '@girs/gvc-1.0': 4.9.0
+      '@girs/meta-18': 4.9.0
+      '@girs/mtk-18': 4.9.0
+      '@girs/polkit-1.0': 4.9.0
+      '@girs/shell-18': 4.9.0
+      '@girs/shew-0': 4.9.0
+      '@girs/st-18': 4.9.0
+      '@girs/upowerglib-1.0': 4.9.0
+
   '@girs/gnomebg-4.0@4.9.0':
     dependencies:
       '@girs/cairo-1.0': 4.9.0
@@ -1481,7 +1564,35 @@ snapshots:
       '@girs/xfixes-4.0': 4.9.0
       '@girs/xlib-2.0': 4.9.0
 
+  '@girs/meta-18@4.9.0':
+    dependencies:
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/clutter-18': 4.9.0
+      '@girs/cogl-18': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdesktopenums-3.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/mtk-18': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/xfixes-4.0': 4.9.0
+      '@girs/xlib-2.0': 4.9.0
+
   '@girs/mtk-17@4.9.0':
+    dependencies:
+      '@girs/gjs': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+
+  '@girs/mtk-18@4.9.0':
     dependencies:
       '@girs/gjs': 4.9.0
       '@girs/glib-2.0': 4.9.0
@@ -1567,6 +1678,37 @@ snapshots:
       '@girs/xfixes-4.0': 4.9.0
       '@girs/xlib-2.0': 4.9.0
 
+  '@girs/shell-18@4.9.0':
+    dependencies:
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/clutter-18': 4.9.0
+      '@girs/cogl-18': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gck-2': 4.9.0
+      '@girs/gcr-4': 4.9.0
+      '@girs/gdesktopenums-3.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/giounix-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/gvc-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/meta-18': 4.9.0
+      '@girs/mtk-18': 4.9.0
+      '@girs/nm-1.0': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/polkit-1.0': 4.9.0
+      '@girs/polkitagent-1.0': 4.9.0
+      '@girs/st-18': 4.9.0
+      '@girs/xfixes-4.0': 4.9.0
+      '@girs/xlib-2.0': 4.9.0
+
   '@girs/shew-0@4.9.0':
     dependencies:
       '@girs/cairo-1.0': 4.9.0
@@ -1604,6 +1746,29 @@ snapshots:
       '@girs/harfbuzz-0.0': 4.9.0
       '@girs/meta-17': 4.9.0
       '@girs/mtk-17': 4.9.0
+      '@girs/pango-1.0': 4.9.0
+      '@girs/xfixes-4.0': 4.9.0
+      '@girs/xlib-2.0': 4.9.0
+
+  '@girs/st-18@4.9.0':
+    dependencies:
+      '@girs/atk-1.0': 4.9.0
+      '@girs/cairo-1.0': 4.9.0
+      '@girs/clutter-18': 4.9.0
+      '@girs/cogl-18': 4.9.0
+      '@girs/freetype2-2.0': 4.9.0
+      '@girs/gdesktopenums-3.0': 4.9.0
+      '@girs/gdkpixbuf-2.0': 4.9.0
+      '@girs/gio-2.0': 4.9.0
+      '@girs/gjs': 4.9.0
+      '@girs/gl-1.0': 4.9.0
+      '@girs/glib-2.0': 4.9.0
+      '@girs/gmodule-2.0': 4.9.0
+      '@girs/gobject-2.0': 4.9.0
+      '@girs/graphene-1.0': 4.9.0
+      '@girs/harfbuzz-0.0': 4.9.0
+      '@girs/meta-18': 4.9.0
+      '@girs/mtk-18': 4.9.0
       '@girs/pango-1.0': 4.9.0
       '@girs/xfixes-4.0': 4.9.0
       '@girs/xlib-2.0': 4.9.0

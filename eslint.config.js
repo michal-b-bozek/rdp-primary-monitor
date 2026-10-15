@@ -4,7 +4,8 @@
 // JavaScript that runs under GJS (by design, no TypeScript sources):
 //
 // - Type-aware rules run on .js files: tsconfig.json type-checks them (checkJs) against the
-//   @girs GNOME types, so typescript-eslint's project service can see their types.
+//   @girs GNOME types, so typescript-eslint's project service can see their types. It reads
+//   tsconfig.json only, so type-aware rules see the GNOME Shell 49 types; tsc checks 50.
 // - Rules that need TypeScript syntax are off for .js (they cannot be satisfied by JSDoc).
 // - eslint-plugin-import-x replaces eslint-plugin-import: the latter has no ESLint 10
 //   support and ESLint 9 is end-of-life. Same rules, `import-x/` prefix.
@@ -315,6 +316,13 @@ export default defineConfig(
       '@typescript-eslint/no-explicit-any': 'off',
       'no-secrets/no-secrets': 'off',
     },
+  },
+  {
+    // The GNOME Shell 50 ambient types are outside tsconfig.json (one ambient set per tsc
+    // program), so the project service cannot type them; they hold only imports.
+    files: ['types50/**/*.d.ts'],
+    extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: { parserOptions: { projectService: false } },
   },
   {
     // Tool config files run under Node, not GJS, and stay out of tsconfig.json (as in the

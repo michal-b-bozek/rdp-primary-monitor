@@ -1,0 +1,11 @@
+// SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+// SPDX-License-Identifier: MIT
+// The GNOME Shell 50 type-check: tsconfig.json's options against the 50 ambient types
+// (types50/). Each program loads exactly one ambient set. With both, tsc reports nothing under
+// skipLibCheck, and one set silently wins; which one depends on the order in which tsc reads the
+// files. `extends` does not merge arrays: keep `include` in step with tsconfig.json, with
+// types50/ in place of types/.
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*.js", "tests/**/*.js", "types50/**/*.d.ts"]
+}

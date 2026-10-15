@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+#MISE description="Type-check against one GNOME Shell release's types and fail if tsc loads another release's"
+#MISE hide=true
+#USAGE arg "<release>" help="GNOME Shell release" {
+#USAGE   choices "49" "50"
+#USAGE }
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+# A tsc program that loads both releases' ambient types passes silently (tsconfig.gnome50.json
+# says why), so the program's file list is searched for the other release's packages. The
+# patterns match pnpm's isolated store paths (node_modules/.pnpm/@girs+<name>@<version>/); the
+# run must also find its own release there, so a layout the patterns cannot read fails the
+# task instead of passing it.
+main() {
+  local release="${usage_release:?}"
+  local config own other
+  case "${release}" in
+    49)
+      config="tsconfig.json"
+      own='@girs\+gnome-shell@49\.'
+      other='@girs\+(gnome-shell@50\.|[a-z-]+-18@)'
+      ;;
+    50)
+      config="tsconfig.gnome50.json"
+      own='@girs\+gnome-shell@50\.'
+      other='@girs\+(gnome-shell@49\.|[a-z-]+-17@)'
+      ;;
+    *)
+      printf 'error: unknown GNOME Shell release %s (expected 49 or 50)\n' "${release}" >&2
+      exit 64
+      ;;
+  esac
+
+  local rc=0
+  tsc -p "${config}" || rc=$?
+  if ((rc != 0)); then
+    printf 'error: tsc failed against the GNOME Shell %s types (%s)\n' "${release}" "${config}" >&2
+    exit "${rc}"
+  fi
+
+  # A second, parse-only pass: --listFiles would mix the file list into the diagnostics.
+  local files
+  files="$(tsc -p "${config}" --listFilesOnly)"
+  rc=0
+  grep -qE "${own}" <<< "${files}" || rc=$?
+  case "${rc}" in
+    0) ;;
+    1)
+      printf 'error: no GNOME Shell %s types found in the files %s loads (pnpm layout changed?)\n' \
+        "${release}" "${config}" >&2
+      exit 70
+      ;;
+    *) exit "${rc}" ;;
+  esac
+  local leaks
+  rc=0
+  leaks="$(grep -E "${other}" <<< "${files}")" || rc=$?
+  case "${rc}" in
+    0)
+      local count examples
+      count="$(wc -l <<< "${leaks}")"
+      examples="$(head -n 3 <<< "${leaks}")"
+      printf 'error: %s loads another GNOME Shell release'\''s types (%s files), e.g.:\n%s\n' \
+        "${config}" "${count}" "${examples}" >&2
+      exit 65
+      ;;
+    1) ;;
+    *) exit "${rc}" ;;
+  esac
+}
+
+main "$@"
