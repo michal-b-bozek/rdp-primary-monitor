@@ -1,6 +1,6 @@
 # 6. Plain JavaScript, checked with TypeScript
 
-- **Status:** accepted
+- **Status:** accepted; Last amended: 2026-10-15
 - **Date:** 2026-10-13
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0001](0001-record-architecture-decisions.md), which names this
@@ -47,6 +47,34 @@ Every source file is type-checked by `tsc` with `checkJs` and the strict flags, 
 carrying the types. `tsc` emits nothing. A GNOME 50-only API, which the pinned types lack, is used
 through a JSDoc type declared for it in the project and a runtime check, never through `any`.
 
+> **Amendment (2026-10-15).** The sources are checked against the `@girs/*` types of each supported
+> release, GNOME Shell 49 and 50, in two separate `tsc` programs (`mise run typecheck:49` and
+> `typecheck:50`; `typecheck` runs both). The 50 set is a second pinned package next to the 49 one,
+> `@girs/gnome-shell-50`, an alias of `@girs/gnome-shell` 50.x, with its own ambient file
+> (`types50/ambient.d.ts`) and `tsconfig.gnome50.json`. A program that loads both releases' ambient
+> types reports no error and checks against one of them, depending on the order in which `tsc` reads
+> its files: a 50 config that also included `types/` passed with 196 files of the 49 set loaded.
+> `.mise/tasks/typecheck/release` therefore fails a run whose file list contains the other release's
+> types, and fails the leaking config with exit 65. ESLint's type-aware rules read `tsconfig.json`
+> only, so they see the GNOME Shell 49 types.
+>
+> The project-declared JSDoc type now covers a method or function that one of the two releases
+> lacks. The type declares the member optional (`Partial<…>`), written as a property
+> (`name: (…) => …`; the method form fails `jsdoc/valid-types`). The object is cast to it with
+> `/** @type {Partial<…>} */ (object)`; a `@type` annotation is rejected by the release without the
+> API. The runtime check is `typeof … === 'function'` on that member, so both programs type the call
+> and the fallback. The signature is copied exactly from the `@girs` types of the release that has
+> the API: there the cast fails (TS2352) only when neither signature fits the other, so a wider or
+> narrower one passes unnoticed.
+>
+> A bare `'name' in object` check does not work: one program types the member `unknown`, the other
+> narrows the fallback branch to `never`. `@ts-expect-error` cannot mark such a call either: the
+> program that has the API fails on the unused directive (TS2578).
+>
+> Adds `types50/ambient.d.ts`, `tsconfig.gnome50.json` and `.mise/tasks/typecheck/release`; changes
+> `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `eslint.config.js`, `mise.toml`,
+> `README.md` and `AGENTS.md`.
+
 Explicitly not untyped JavaScript: the spike's removed and changed Mutter calls would reach the
 compositor unnoticed. Revisit if the `@girs/*` packages stop following GNOME releases.
 
@@ -83,3 +111,5 @@ and no lint, which leaves part 2 without a tool. Revisit if both a type checker 
 
 - Type-checking against GNOME Shell 50 as well as 49: a second set of `@girs` types next to the
   pinned 49 ones, checked in a separate `tsc` run.
+
+  > **Amendment (2026-10-15).** Done in the amendment to part 2; the item is closed.

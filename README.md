@@ -76,6 +76,11 @@ new file carries the `SPDX-FileCopyrightText` and `SPDX-License-Identifier` line
 unless it is Markdown, plain JSON, generated or a fixture, which [REUSE.toml](REUSE.toml) covers
 instead (add a path there if none of its patterns matches the file). `reuse` installs only on
 the platforms named next to its pin in `mise.toml`, so `mise run check` passes only there.
+`mise run typecheck` checks the sources against the GNOME Shell 49 and 50 types in
+two separate runs (`typecheck:49`, `typecheck:50`); ESLint's type-aware rules see the 49 types only.
+An API that only one of the two releases has is used through a JSDoc cast to a type that declares
+it optional (`/** @type {Partial<…>} */ (object)`) and a `typeof` check on it, as
+[ADR-0006](docs/architecture/decisions/0006-plain-javascript-checked-with-typescript.md) says.
 `mise tasks` lists every task. Commits follow
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/); `mise run check`
 verifies them.
