@@ -42,6 +42,17 @@ const gjsGlobals = {
   clearInterval: 'readonly',
 }
 
+const registerClassCall =
+  'CallExpression[callee.object.name="GObject"][callee.property.name="registerClass"]'
+
+// A call, `new`, `await`, tagged template or `import()` that runs when the module is imported:
+// anywhere except inside a function body or an instance field (static fields and blocks run at
+// import), and except GObject.registerClass with its arguments.
+const importTimeWork =
+  'Program :matches(CallExpression, NewExpression, AwaitExpression, TaggedTemplateExpression, ImportExpression)' +
+  ':not(:function *):not(PropertyDefinition[static=false] *)' +
+  `:not(${registerClassCall}):not(${registerClassCall} *)`
+
 // A method of a class expression passed to a call, as in GObject.registerClass(class … {}).
 const registeredClassMethod =
   'CallExpression > ClassExpression > ClassBody > MethodDefinition'
@@ -260,6 +271,34 @@ export default defineConfig(
                 'GTK library; only prefs.js may load it, the Shell must not.',
             },
           ],
+        },
+      ],
+    },
+  },
+  {
+    // GNOME extension review rules: no work at module import time, no synchronous calls (in the
+    // Shell they block the compositor; prefs.js follows the same rule). GObject.registerClass is
+    // allowed, arguments included, as the review rules let a module register its classes; work
+    // placed in its arguments is left to review. Only calls named `*_sync` are caught; other
+    // blocking calls (GLib.file_get_contents, Gio.File.load_contents) are left to review too.
+    files: ['src/**/*.js'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        ...[
+          // Top-level expression statements that are not themselves a call (assignments, x++, …).
+          'Program > ExpressionStatement:not([expression.type=/^(CallExpression|NewExpression|AwaitExpression|TaggedTemplateExpression|ImportExpression|ChainExpression)$/])',
+          importTimeWork,
+        ].map((selector) => ({
+          selector,
+          message:
+            'Runs at module import time; move it into enable() or fillPreferencesWindow() (GNOME extension review rules).',
+        })),
+        {
+          selector:
+            'CallExpression:matches([callee.property.name=/_sync$/], [callee.name=/_sync$/])',
+          message:
+            'Synchronous call; use the async variant (GNOME extension review rules).',
         },
       ],
     },
