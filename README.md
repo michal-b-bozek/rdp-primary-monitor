@@ -71,7 +71,8 @@ mise run check            # all quality gates
 `mise run schemas:check` (part of `check`) uses `glib-compile-schemas`, and `mise run pack`, which
 writes the extension zip to `build/`, uses `gnome-extensions`; both come from the host (Fedora:
 `glib2` and `gnome-shell`), not from mise. `mise run test` (part of `check`) runs the tests under
-`tests/` (`*.test.js`, through `tests/run.js`) with the host's `gjs` (Fedora: `gjs`).
+`tests/` (`*.test.js`, through `tests/run.js`) with the host's `gjs` (Fedora: `gjs`); the
+settings tests compile the schema with `glib-compile-schemas`.
 `mise run spdx:check` (part of `check`) runs [`reuse lint`](https://reuse.software/), which needs
 the host's libmagic (Fedora: `file-libs`). A new file carries the `SPDX-FileCopyrightText` and
 `SPDX-License-Identifier` lines at the top, unless it is Markdown, plain JSON, generated or a
