@@ -53,7 +53,8 @@ argument, the logical monitors and properties of the call above (type `(a(iiduba
 the expected output of the build for `connected`. `primary-applied` is the state Mutter reports
 after applying it. Tests must parse these files with their type (`GLib.Variant.parse`) and compare
 values with `equal()`, never the text, which pins incidental formatting such as the digits of the
-copied scale.
+copied scale. [`tests/fixtures.js`](../../fixtures.js) loads them that way; the tests of the
+monitor matching and the layout are in [`tests/lib/monitors.test.js`](../../lib/monitors.test.js).
 
 They cover one topology: one monitor per logical monitor, no transform, one virtual monitor, logical
 layout. Riskier cases (two virtual monitors, a transform, a mirrored logical monitor) need fixtures

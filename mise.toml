@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: MIT
 # RDP Primary Monitor — pinned dev tools and quality tasks.
 # Nothing here ships in the extension: the zip holds plain JavaScript, metadata and the schema.
-# Gate tasks are added as the thing they check lands — no placeholder tasks that always pass;
-# test arrives with the tests.
-# schemas:check and pack use host tools (glib2, GNOME Shell) that mise cannot pin; so does
-# spdx:check (libmagic, loaded by reuse).
+# Gate tasks are added as the thing they check lands — no placeholder tasks that always pass.
+# schemas:check and pack use host tools (glib2, GNOME Shell) that mise cannot pin; so do the test
+# task (gjs) and spdx:check (libmagic, loaded by reuse).
 
 # The oldest mise verified to read and write mise.lock (lock format v2) and the locked
 # dependencies of the pipx tool (.mise/locks/); an older one may install them unlocked.
@@ -90,6 +89,10 @@ run = [{ task = "typecheck:release 49" }]
 description = "Type-check against the GNOME Shell 50 types (tsc, tsconfig.gnome50.json)"
 run = [{ task = "typecheck:release 50" }]
 
+[tasks.test]
+description = "Run the tests in GJS (tests/run.js, the host's gjs)"
+run = "gjs -m tests/run.js"
+
 [tasks."schemas:check"]
 description = "Check the GSettings schema strictly without writing a compiled one (glib-compile-schemas, from the host's glib2)"
 run = "glib-compile-schemas --strict --dry-run src/schemas"
@@ -136,6 +139,7 @@ depends = [
   "format:check",
   "lint",
   "typecheck",
+  "test",
   "schemas:check",
   "spdx:check",
   "pins:check",
