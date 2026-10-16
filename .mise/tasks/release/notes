@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+#MISE description="Print a release's section of CHANGELOG.md (the GitHub Release notes)"
+#USAGE arg "<version>" help="SemVer version without the v prefix, e.g. 0.1.0"
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+readonly CHANGELOG="CHANGELOG.md"
+
+main() {
+  local version="${usage_version:?}"
+  if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    printf 'error: %s is not a plain X.Y.Z version\n' "${version}" >&2
+    exit 64
+  fi
+  local notes
+  # The section runs from its curated `## [X.Y.Z] - date` heading to the next `## ` heading,
+  # cocogitto's `- - -` separator or the link reference definitions at the bottom; blank
+  # lines around it are dropped. A section with headings but no entries prints nothing.
+  notes="$(awk -v heading="## [${version}]" '
+    index($0, heading) == 1 && (length($0) == length(heading) || substr($0, length(heading) + 1, 3) == " - ") {
+      inside = 1
+      next
+    }
+    inside && (/^## / || /^- - -[[:space:]]*$/ || /^\[[^]]+\]: /) { exit }
+    inside {
+      lines[++n] = $0
+      if ($0 !~ /^[[:space:]]*$/ && $0 !~ /^#/) entries++
+    }
+    END {
+      if (!entries) exit
+      first = 1
+      while (first <= n && lines[first] ~ /^[[:space:]]*$/) first++
+      while (n >= first && lines[n] ~ /^[[:space:]]*$/) n--
+      for (i = first; i <= n; i++) print lines[i]
+    }
+  ' "${CHANGELOG}")"
+  if [[ -z "${notes}" ]]; then
+    printf 'error: %s has no curated "## [%s] - date" section with entries\n' \
+      "${CHANGELOG}" "${version}" >&2
+    exit 65
+  fi
+  printf '%s\n' "${notes}"
+}
+
+main "$@"

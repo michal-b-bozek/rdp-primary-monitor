@@ -60,7 +60,9 @@ format = "detailed"
 # a comment naming each host and why it is excluded.
 exclude = [
   # This repository is private until publication: unauthenticated requests get 404.
-  # Remove this entry when the repository goes public.
+  # Remove this entry when the repository goes public, but keep one for
+  # `/(compare|releases/tag)/` URLs: the curated CHANGELOG.md links to the new tag before it is
+  # pushed (cog.toml release sequence, steps 3 and 4).
   "^https://github\\.com/michal-b-bozek/rdp-primary-monitor(/|$)",
 ]
 

@@ -1,0 +1,158 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+# Release — on a pushed vX.Y.Z or vX.Y.Z-rc.N tag: build the release files (read-only), run
+# the CI gate (ci.yml, both GNOME Shell releases), then create a draft GitHub Release with the
+# zip, its SHA-256 and the curated CHANGELOG.md section as notes. Publish the draft by hand
+# after a look.
+# A release candidate (-rc.N) becomes a draft pre-release: it tries the release flow and the zip
+# before the bump, so it may come from any commit, keeps metadata.json's version-name and has no
+# CHANGELOG.md section of its own.
+# Only the publish job holds a token that can write, and it runs no project code.
+#
+# The tag comes from the release sequence in cog.toml. Actions are pinned by commit SHA, the tag
+# in a comment.
+
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  # First, so a wrong tag fails before the CI gate runs.
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      prerelease: ${{ steps.tag.outputs.prerelease }}
+    # gnome-extensions pack comes from the newest Fedora in ci.yml's matrix (move both together).
+    # The zip holds only sources, so the Shell version does not change it.
+    container: registry.fedoraproject.org/fedora:44
+    steps:
+      # git before checkout (see ci.yml); gnome-extensions comes with gnome-shell.
+      - name: Install the host tools
+        run: >-
+          dnf --assumeyes --setopt=install_weak_deps=False --setopt=retries=5 install
+          git-core tar gzip zstd xz
+          gjs glib2 gnome-shell
+
+      # Full history, so the tagged commit can be checked against main.
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up mise
+        uses: ./.github/actions/setup-mise
+
+      # Releases come from main, and version:set wrote the version into metadata.json during
+      # the bump: a release tag elsewhere, or a hand-made one, fails here.
+      - name: Check the tag
+        id: tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$ ]]; then
+            prerelease=true
+          elif [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            prerelease=false
+            if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+              printf 'error: tag %s is not on main\n' "$GITHUB_REF_NAME" >&2
+              exit 65
+            fi
+            if ! grep --fixed-strings --quiet "\"version-name\": \"${version}\"" \
+              src/metadata.json; then
+              printf 'error: tag %s does not match version-name in src/metadata.json\n' \
+                "$GITHUB_REF_NAME" >&2
+              exit 65
+            fi
+          else
+            printf 'error: tag %s is neither vX.Y.Z nor vX.Y.Z-rc.N\n' "$GITHUB_REF_NAME" >&2
+            exit 65
+          fi
+          printf 'VERSION=%s\nPRERELEASE=%s\n' "$version" "$prerelease" >> "$GITHUB_ENV"
+          printf 'prerelease=%s\n' "$prerelease" >> "$GITHUB_OUTPUT"
+
+      - name: Pack
+        run: mise run pack
+
+      # --output interleave: the notes file gets the task's stdout only, never a task-name prefix.
+      - name: Write the checksum and the notes
+        run: |
+          : "${VERSION:?}" "${PRERELEASE:?}"
+          zips=(build/*.shell-extension.zip)
+          if [[ ${#zips[@]} -ne 1 || ! -f ${zips[0]} ]]; then
+            printf 'error: expected one zip in build/, found: %s\n' "${zips[*]}" >&2
+            exit 65
+          fi
+          zip_name="${zips[0]##*/}"
+          (cd build && sha256sum -- "$zip_name" > "$zip_name.sha256")
+          if [[ "$PRERELEASE" == true ]]; then
+            # One line per paragraph: GitHub shows a line break in release notes as a break.
+            {
+              printf 'Release candidate %s, built from %s for testing.\n\n' "$VERSION" "$GITHUB_SHA"
+              printf '%s %s; %s\n' \
+                'Its zip keeps the version-name from metadata.json at that commit, not' "$VERSION" \
+                'the changes are listed with the release that follows.'
+            } > build/notes.md
+          else
+            mise run --output interleave release:notes "$VERSION" > build/notes.md
+          fi
+
+      - name: Keep the release files
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release
+          path: |
+            build/*.shell-extension.zip
+            build/*.shell-extension.zip.sha256
+            build/notes.md
+          if-no-files-found: error
+          retention-days: 7
+
+  check:
+    needs: build
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  # The only job with a token that can write: no checkout, no mise, no container; gh is the
+  # runner's preinstalled copy.
+  publish:
+    needs: [build, check]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Fetch the release files
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release
+          path: release
+
+      - name: Create the draft release
+        run: |
+          : "${PRERELEASE:?}"
+          flags=(--draft --verify-tag)
+          if [[ "$PRERELEASE" == true ]]; then flags+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" "${flags[@]}" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release/notes.md \
+            release/*.shell-extension.zip release/*.shell-extension.zip.sha256
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PRERELEASE: ${{ needs.build.outputs.prerelease }}
