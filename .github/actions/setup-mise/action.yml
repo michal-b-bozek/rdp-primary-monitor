@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+# The one place CI pins mise; workflows use it right after their checkout.
+
+name: Set up mise
+description: Trust the checkout, then install the pinned mise and the tools in mise.lock
+
+runs:
+  using: composite
+  steps:
+    # The checkout belongs to the runner's user, the container runs as root: cocogitto
+    # (libgit2) and gitleaks refuse the repository unless it is a safe.directory. mise ignores
+    # an untrusted mise.toml. Both use $GITHUB_WORKSPACE because in a container job the
+    # github.workspace context holds the runner's path, not the container's.
+    - name: Trust the checkout
+      shell: bash
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        printf 'MISE_TRUSTED_CONFIG_PATHS=%s\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
+
+    # mise is pinned by version and by the SHA-256 of its linux-x64 binary (the same in the
+    # .tar.gz and .tar.zst assets of that release). The version equals min_version in
+    # mise.toml (mise run pins:check); recompute the hash when bumping both. With mise.lock
+    # present the action runs `mise install --locked`, so a tool missing from the lock fails.
+    - name: Install mise and the pinned tools
+      uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
+      with:
+        version: 2026.10.3
+        sha256: 8d48bc510b7d844fad0bc7156c0855c2a1e7230c51e498a7f6b63b021f8b57c5

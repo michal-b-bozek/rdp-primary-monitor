@@ -1,0 +1,89 @@
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+# CI — the local quality gate (mise run check) and the zip build (mise run pack), once per
+# supported GNOME Shell: Fedora 43 ships 49, Fedora 44 ships 50.
+#
+# Everything runs inside the Fedora containers, not on the Ubuntu runner: test, schemas:check,
+# pack and spdx:check use host tools mise cannot pin (gjs, dbus-daemon, glib2, gnome-extensions,
+# libmagic), and reuse installs only on glibc 2.41 or later (Ubuntu 24.04 has 2.39).
+#
+# Secrets and commit messages are checked by the mise-pinned gitleaks and cocogitto inside
+# `check` (secrets:scan, commits:check), so CI, the git hooks and a laptop run the same versions;
+# no gitleaks or cocogitto action. Actions are pinned by commit SHA, the tag in a comment.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push cancels a pull request's run; every run on main finishes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# bash -eo pipefail, not the plain bash -e a run step gets by default.
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check:
+    name: check (Fedora ${{ matrix.fedora }}, GNOME Shell ${{ matrix.shell }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - fedora: '43'
+            shell: '49'
+          - fedora: '44'
+            shell: '50'
+    # A tag, not a digest: the packages below come from the live Fedora repositories either way.
+    container: registry.fedoraproject.org/fedora:${{ matrix.fedora }}
+    steps:
+      # git before checkout, or actions/checkout falls back to a tarball without history.
+      # tar, gzip, zstd and xz unpack mise and the archives it downloads; the rest are the host
+      # tools named above.
+      - name: Install the host tools
+        run: >-
+          dnf --assumeyes --setopt=install_weak_deps=False --setopt=retries=5 install
+          git-core tar gzip zstd xz
+          gjs dbus-daemon glib2 gnome-shell file-libs
+
+      # The packages float with the Fedora release, so fail if it no longer ships the Shell the
+      # job is named after, and log what was tested.
+      - name: Check the GNOME Shell version
+        run: |
+          rpm --query gnome-shell gjs glib2
+          gnome-shell --version | grep --fixed-strings 'GNOME Shell ${{ matrix.shell }}.'
+
+      # Full history: commits:check walks every commit (cog.toml from_latest_tag = false) and
+      # secrets:scan scans the whole history.
+      - name: Check out
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Trusts the checkout for git and mise, installs the pinned mise and mise.lock's tools.
+      - name: Set up mise
+        uses: ./.github/actions/setup-mise
+
+      - name: Install the dev dependencies
+        run: mise run deps:install
+
+      - name: Check
+        run: mise run --output prefix check
+        env:
+          # lychee (docs:check) authenticates its GitHub requests to avoid the rate limit.
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Pack
+        run: mise run pack

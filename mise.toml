@@ -125,12 +125,14 @@ run = [
 ]
 
 [tasks."pins:check"]
-description = "Check that package.json pins the same node and pnpm as mise.toml"
+description = "Check that package.json pins the same node and pnpm as mise.toml, and CI the same mise as min_version"
 run = '''
 want="$(mise current node)"; got="$(node -p "require('./package.json').engines.node")"
 [ "$got" = "$want" ] || { printf 'error: package.json engines.node is %s, mise.toml pins node %s\n' "$got" "$want" >&2; exit 65; }
 want="pnpm@$(mise current pnpm)"; got="$(node -p "require('./package.json').packageManager")"
 [ "$got" = "$want" ] || { printf 'error: package.json packageManager is %s, mise.toml pins %s\n' "$got" "$want" >&2; exit 65; }
+want="$(sed -n 's/^min_version = "\(.*\)"$/\1/p' mise.toml)"; got="$(sed -n 's/^ *version: \([^ ]*\)$/\1/p' .github/actions/setup-mise/action.yml)"
+[ -n "$want" ] && [ "$got" = "$want" ] || { printf 'error: .github/actions/setup-mise pins mise %s, mise.toml min_version is %s\n' "$got" "$want" >&2; exit 65; }
 '''
 
 [tasks.check]
