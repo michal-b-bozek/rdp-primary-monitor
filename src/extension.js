@@ -156,6 +156,16 @@ export default class RdpPrimaryMonitor extends Extension {
   }
 
   /**
+   * The extension also runs in the `unlock-dialog` session mode (ADR-0005
+   * part 1 and its amendments). Without it, where the RDP connection survives
+   * the lock ("Allow Locked Remote Desktop"), locking the screen would call
+   * disable(), which puts the gathered windows back while the client is still
+   * connected, and the unlock would gather them again. With it, the session
+   * survives the lock: the windows stay gathered and the client's monitor
+   * stays primary, except at the first lock after the extension was enabled
+   * mid-session, when the Shell still disables and re-enables it. The
+   * extension draws nothing and connects no keyboard signals.
+   *
    * @override
    * @returns {void}
    */
