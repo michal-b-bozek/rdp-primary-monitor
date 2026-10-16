@@ -6,17 +6,20 @@
  * amendments set.
  */
 
+import { parseDisplayState } from '../../src/lib/monitors.js'
 import {
   findOriginalMonitor,
   planRestore,
   toMonitorFrame,
 } from '../../src/lib/windows.js'
+import { derivedState } from '../fixtures.js'
 import { assertEqual, test } from '../harness.js'
 
 /**
  * @import {
  *   CurrentWindow, MonitorKey, PresentMonitor, RestoreStep, WindowRecord,
  * } from '../../src/lib/windows.js'
+ * @import { DerivedStateName } from '../fixtures.js'
  */
 
 /** `Meta.MaximizeFlags`. */
@@ -137,6 +140,40 @@ test('among monitors of the same model the serial decides, whatever the connecto
   const moved = { ...EXTERNAL, connector: 'DP-7' }
 
   assertEqual(findOriginalMonitor(key, [sibling, moved]), moved)
+})
+
+/**
+ * @param {DerivedStateName} name
+ * @returns {PresentMonitor[]} The fixture's monitors in the reply's order,
+ *   with a zero geometry, which findOriginalMonitor does not read.
+ */
+function presentIn(name) {
+  return parseDisplayState(derivedState(name).recursiveUnpack()).monitors.map(
+    (m, index) => ({
+      vendor: m.vendor,
+      product: m.product,
+      serial: m.serial,
+      connector: m.connector,
+      index,
+      geometry: { x: 0, y: 0, width: 0, height: 0 },
+    }),
+  )
+}
+
+test("after a re-dock moves one monitor's connector name to another, each monitor is found under its new name", () => {
+  const before = presentIn('desk-connected')
+  const after = presentIn('desk-redocked-connected')
+
+  const found = Object.fromEntries(
+    before.map((m) => [m.connector, findOriginalMonitor(m, after)?.connector]),
+  )
+
+  assertEqual(found, {
+    'eDP-1': 'eDP-1',
+    'DP-6': 'DP-8',
+    'DP-8': 'DP-12',
+    'Meta-0': 'Meta-0',
+  })
 })
 
 test('among monitors with the same identity the stored connector decides', () => {

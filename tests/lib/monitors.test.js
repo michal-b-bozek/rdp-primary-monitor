@@ -15,7 +15,13 @@ import {
   isPrimary,
   parseDisplayState,
 } from '../../src/lib/monitors.js'
-import { RELEASES, applyArgs, displayState } from '../fixtures.js'
+import {
+  RELEASES,
+  applyArgs,
+  derivedApplyArgs,
+  derivedState,
+  displayState,
+} from '../fixtures.js'
 import { assertEqual, assertThrows, assertTrue, test } from '../harness.js'
 
 /** @import { Release, StateName } from '../fixtures.js' */
@@ -91,6 +97,61 @@ for (const release of RELEASES) {
     )
   })
 }
+
+for (const layout of /** @type {const} */ ([
+  'single',
+  'desk',
+  'desk-redocked',
+])) {
+  test(`${layout}: the built layout makes Meta-0 primary and keeps every other monitor's position, scale, rotation and mode`, () => {
+    const state = parseDisplayState(
+      derivedState(`${layout}-connected`).recursiveUnpack(),
+    )
+
+    const built = new GLib.Variant(
+      'a(iiduba(ssa{sv}))',
+      buildPrimaryLayout(state, 'Meta-0'),
+    )
+
+    const expected = derivedApplyArgs(layout).get_child_value(0)
+    assertTrue(
+      built.equal(expected),
+      `built ${built.print(true)}\n  expected ${expected.print(true)}`,
+    )
+  })
+}
+
+test("two clients: both virtual monitors match, in the reply's order", () => {
+  const state = parseDisplayState(
+    derivedState('two-clients-connected').recursiveUnpack(),
+  )
+
+  assertEqual(
+    findRemoteMonitors(state).map((m) => [m.connector, m.serial]),
+    [
+      ['Meta-0', '0x000001'],
+      ['Meta-1', '0x000002'],
+    ],
+  )
+})
+
+test('two clients: the built layout makes only the chosen monitor primary', () => {
+  const state = parseDisplayState(
+    derivedState('two-clients-connected').recursiveUnpack(),
+  )
+
+  const layout = buildPrimaryLayout(state, 'Meta-1')
+
+  assertEqual(
+    layout.map(([, , , , primary, monitors]) => [monitors[0]?.[0], primary]),
+    [
+      ['Virtual-2', false],
+      ['Virtual-1', false],
+      ['Meta-0', false],
+      ['Meta-1', true],
+    ],
+  )
+})
 
 test('a reply of the wrong shape is rejected', () => {
   assertThrows(() => parseDisplayState([1, [], []]), TypeError, /reply/)

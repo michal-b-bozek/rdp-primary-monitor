@@ -56,15 +56,37 @@ values with `equal()`, never the text, which pins incidental formatting such as 
 copied scale. [`tests/fixtures.js`](../../fixtures.js) loads them that way; the tests of the
 monitor matching and the layout are in [`tests/lib/monitors.test.js`](../../lib/monitors.test.js).
 
-They cover one topology: one monitor per logical monitor, no transform, one virtual monitor, logical
-layout. Riskier cases (two virtual monitors, a transform, a mirrored logical monitor) need fixtures
-of their own, captured or derived by hand and labelled as such here
-([ADR-0002](../../../docs/architecture/decisions/0002-match-the-virtual-monitor.md) asks for the
-two-virtual-monitor case), and so do two states the design names
+The captures cover one topology: one monitor per logical monitor, no transform, one virtual
+monitor, logical layout. The `derived-*` files were **written by hand** for layouts the VMs cannot
+show. They follow the captures' shape but are not Mutter output, and their lists of supported scales
+are made up:
+
+- `derived-single-connected.gvariant`: the laptop panel `eDP-1` alone and primary, at scale 1.5,
+  its current mode not the first listed; a client's `Meta-0` beside it.
+- `derived-desk-connected.gvariant`: the panel and two docked monitors of one model, `DP-6` primary
+  at scale 1.25 and `DP-8` rotated 90° (transform 1); `Meta-0` beside them.
+- `derived-desk-redocked-connected.gvariant`: the same desk after a re-dock. The monitor that was
+  `DP-8` is now `DP-12`, and `DP-8` now belongs to the one that was `DP-6`.
+- `derived-two-clients-connected.gvariant`: the VMs' two heads, `Virtual-2` primary, with two
+  virtual monitors, `Meta-0` (`0x000001`) and `Meta-1` (`0x000002`), neither of them primary.
+
+Each of the first three has a `derived-<layout>-apply-args.gvariant`: the `ApplyMonitorsConfig`
+argument that makes `Meta-0` primary, with every other position, scale, transform and mode
+unchanged. The tests compare its logical monitors only; the call's properties (`layout-mode`) are
+checked on the captures, in the tests of `display.js`.
+
+A dock renames its connectors on a re-dock
+([ADR-0004](../../../docs/architecture/decisions/0004-snapshot-and-restore-windows.md)), so a name
+seen before can belong to another monitor afterwards; the re-dock file has that case, where matching
+by the old name would find the wrong monitor. The two-client file is the case
+[ADR-0002](../../../docs/architecture/decisions/0002-match-the-virtual-monitor.md) asks for.
+
+Still without a fixture: a mirrored logical monitor, and two states the design names
 ([ADR-0003](../../../docs/architecture/decisions/0003-apply-the-primary-temporarily.md), part 4):
 the virtual monitor's mode changing after the client resizes its window, and the primary moved off
 the virtual monitor while it is present.
 
 The VMs carry no personal data: the QEMU heads report vendor `RHT`, product `QEMU Monitor` and
-serial `0x00000000`. Fixtures captured anywhere else follow the sanitizing rule in
-[AGENTS.md](../../../AGENTS.md).
+serial `0x00000000`. The single and desk files use the placeholder vendor `VND` and serials
+`SERIAL-1` to `SERIAL-3`; the two-client file reuses the VMs' values. Fixtures captured anywhere
+else follow the sanitizing rule in [AGENTS.md](../../../AGENTS.md).

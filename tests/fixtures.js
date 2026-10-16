@@ -16,6 +16,13 @@ import GLib from 'gi://GLib'
  *   | 'reconnected'} StateName
  */
 
+/** @typedef {'single' | 'desk' | 'desk-redocked'} DerivedLayout */
+
+/**
+ * @typedef {`${DerivedLayout}-connected` | 'two-clients-connected'}
+ *   DerivedStateName
+ */
+
 /** Both releases the fixtures were captured on. */
 export const RELEASES = /** @type {const} */ (['gnome49', 'gnome50'])
 
@@ -49,6 +56,29 @@ export function displayState(release, name) {
  */
 export function applyArgs(release) {
   return load(`${release}-apply-args.gvariant`, APPLY_ARGS_TYPE)
+}
+
+/**
+ * A `GetCurrentState` reply written by hand for a layout the test VMs cannot
+ * show.
+ *
+ * @param {DerivedStateName} name
+ * @returns {GLib.Variant} The reply.
+ */
+export function derivedState(name) {
+  return load(`derived-${name}.gvariant`, STATE_TYPE)
+}
+
+/**
+ * The logical monitors and properties, written by hand, that
+ * `ApplyMonitorsConfig` takes to make the virtual monitor of the
+ * `<layout>-connected` state primary.
+ *
+ * @param {DerivedLayout} layout
+ * @returns {GLib.Variant} The arguments.
+ */
+export function derivedApplyArgs(layout) {
+  return load(`derived-${layout}-apply-args.gvariant`, APPLY_ARGS_TYPE)
 }
 
 /**
