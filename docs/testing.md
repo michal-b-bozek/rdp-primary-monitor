@@ -44,9 +44,8 @@ below, so that your own shell expands nothing in it (`~` above all).
      mise run vm:ssh f44 -- 'sudo systemctl restart gdm'
      ```
 
-   - **Workstation:** `gnome-extensions install --force` the zip, log out and in,
-     `gnome-extensions enable rdp-primary-monitor@michal-b-bozek.github.io`, then log out and in
-     once more.
+   - **Workstation:** `mise run ext:install`, which packs too, so skip step 1. It enables the
+     extension for the next login, so one log out and in is enough.
 
 3. Turn on the debug lines and follow them in a second terminal. Each state change logs a line
    such as `idle -> focusing on check`; applies and gathers log too.

@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+#MISE description="Install the packed extension for this user and enable it from the next login (gnome-extensions, gsettings)"
+#MISE depends=["pack"]
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+readonly UUID="rdp-primary-monitor@michal-b-bozek.github.io"
+readonly ZIP="build/${UUID}.shell-extension.zip"
+
+# read_list <key> — print each UUID in org.gnome.shell <key>, one per line. UUIDs hold no
+# quotes, so every single-quoted item in gsettings' output is one; "@as []" has none. Any other
+# shape stops the task: read as empty, the list would be written back without its entries.
+read_list() {
+  local value list_shape='^(@as )?\[.*\]$'
+  value="$(gsettings get org.gnome.shell "$1")"
+  if [[ ! "${value}" =~ ${list_shape} ]]; then
+    printf 'error: org.gnome.shell %s is not a string list: %s\n' "$1" "${value}" >&2
+    exit 65
+  fi
+  # grep exits 1 on an empty list; any other failure stops the task.
+  grep -oE "'[^']*'" <<< "${value}" | tr -d "'" || [[ $? -eq 1 ]]
+}
+
+# write_list <key> [uuid...] — set org.gnome.shell <key> to exactly these UUIDs.
+write_list() {
+  local key="$1" list="" uuid
+  shift
+  for uuid in "$@"; do list+="${list:+, }'${uuid}'"; done
+  gsettings set org.gnome.shell "${key}" "[${list}]"
+}
+
+main() {
+  local cmd
+  for cmd in gnome-extensions gsettings; do
+    if ! command -v "${cmd}" > /dev/null; then
+      printf 'error: %s not found; it comes with GNOME Shell\n' "${cmd}" >&2
+      exit 69
+    fi
+  done
+  local user_off
+  user_off="$(gsettings get org.gnome.shell disable-user-extensions)"
+  if [[ "${user_off}" == true ]]; then
+    printf 'error: user extensions are turned off (org.gnome.shell disable-user-extensions)\n' >&2
+    exit 78
+  fi
+
+  # Both lists are read before anything changes, each into a variable: a failed gsettings
+  # inside < <(…) would read as an empty list, and writing it back would drop every other
+  # extension. An empty list stays an empty array, not one empty item.
+  local -a enabled=() disabled=() kept=()
+  local uuid lines
+  lines="$(read_list enabled-extensions)"
+  if [[ -n "${lines}" ]]; then mapfile -t enabled <<< "${lines}"; fi
+  lines="$(read_list disabled-extensions)"
+  if [[ -n "${lines}" ]]; then mapfile -t disabled <<< "${lines}"; fi
+  for uuid in "${disabled[@]}"; do
+    if [[ "${uuid}" != "${UUID}" ]]; then kept+=("${uuid}"); fi
+  done
+  # Copies the files and compiles the schema. A Shell already running the extension keeps the
+  # old code until the next login.
+  gnome-extensions install --force "${ZIP}"
+
+  # On Wayland the Shell finds a newly installed extension only at login, so
+  # `gnome-extensions enable` fails now; listed in enabled-extensions, the extension is enabled
+  # when the next session starts. Only this UUID is added or removed; the other entries stay.
+  local enabled_already=false
+  for uuid in "${enabled[@]}"; do
+    if [[ "${uuid}" == "${UUID}" ]]; then enabled_already=true; fi
+  done
+  if [[ "${enabled_already}" == false ]]; then
+    write_list enabled-extensions "${enabled[@]}" "${UUID}"
+  fi
+  if ((${#kept[@]} != ${#disabled[@]})); then
+    write_list disabled-extensions "${kept[@]}"
+  fi
+
+  if [[ "${enabled_already}" == true ]]; then
+    printf 'installed; already enabled. Log out and in to run this version.\n' >&2
+  else
+    printf 'installed and enabled from the next login. Log out and in to start it.\n' >&2
+  fi
+}
+
+main "$@"

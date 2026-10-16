@@ -89,6 +89,11 @@ it optional (`/** @type {Partial<…>} */ (object)`) and a `typeof` check on it,
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/); `mise run check`
 verifies them.
 
+To run the working tree in your own session, `mise run ext:install` packs the extension, installs
+it for your user and adds it to `org.gnome.shell enabled-extensions` (and drops it from
+`disabled-extensions`; other entries stay), using the host's `gsettings`. It stops if user
+extensions are turned off. Log out and in to load it, and again after every reinstall.
+
 ### Test VMs
 
 The `vm:*` tasks build disposable Fedora 43 (GNOME 49) and Fedora 44 (GNOME 50) VMs with
