@@ -104,6 +104,9 @@ mise run vm:start f43     # boot and wait for Desktop Sharing
 mise run vm:connect f43   # RDP client window; the guest gains a virtual monitor
 ```
 
+Before a release, run the [manual test protocol](docs/testing.md) in these VMs and on a workstation
+with real monitors.
+
 ## Project
 
 - **Licence:** MIT; the text is in [LICENSE](LICENSE). Every file's licence is declared in the
