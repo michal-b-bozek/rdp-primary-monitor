@@ -4,9 +4,9 @@
 # Verify:  mise run commits:check
 # Bump:    cog bump --auto   (on main or release/** only; runs mise run check first)
 
-# No SemVer tag exists yet, so walk the whole history. Flip to true right after v0.1.0 is
-# tagged, with no rc tag left behind (from_latest_tag needs at least one tag).
-from_latest_tag = false
+# Check and bump only the commits since the latest tag; a leftover rc tag would count as that
+# tag, hence step 0 below.
+from_latest_tag = true
 
 # Merge-button merge commits and fixup!/squash! commits are not Conventional Commits.
 ignore_merge_commits = true
@@ -29,7 +29,7 @@ pre_bump_hooks = ["mise run check", "mise run version:set {{version}}"]
 # No post_bump_hooks: the changelog is curated before anything is pushed. Release sequence:
 #   0. Delete every vX.Y.Z-rc.N tag, local and remote (git push origin :refs/tags/<tag>), and its
 #      draft pre-release (gh release delete <tag>): cog would start the changelog range there.
-#   1. cog bump --auto (with no tag yet, the first feat makes it 0.1.0)
+#   1. cog bump --auto
 #   2. Curate CHANGELOG.md: `## [X.Y.Z] - date` and `###` sections, entries in user voice, and
 #      reference links at the bottom (`[Unreleased]` compares from the new tag; a `[X.Y.Z]`
 #      release link). Unreleased stays empty: cocogitto is its only author.
