@@ -64,8 +64,8 @@ jobs:
           rpm --query gnome-shell gjs glib2
           gnome-shell --version | grep --fixed-strings 'GNOME Shell ${{ matrix.shell }}.'
 
-      # Full history: commits:check walks every commit (cog.toml from_latest_tag = false) and
-      # secrets:scan scans the whole history.
+      # Full history: commits:check needs the tags to find the latest one (cog.toml
+      # from_latest_tag), and secrets:scan scans the whole history.
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
