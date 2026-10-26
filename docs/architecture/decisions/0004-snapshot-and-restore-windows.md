@@ -159,6 +159,15 @@ session's monitor goes while the screen is locked,
 > amendment, and checked in Mutter's source; `src/lib/windows.js` and `docs/design.md`'s Restoring
 > paragraph change with this.
 
+> **Amendment (2026-10-26).** A window maximized in one direction gets its frame again after the
+> maximize. In the test VMs (GNOME Shell 49.10 and 50.6), a window maximized vertically that the
+> remote user unmaximized and then made fullscreen came back at x 0 instead of its snapshot's x:
+> with leaving fullscreen still pending (Wayland), the maximize took the other direction from the
+> fullscreen rectangle, not the frame set just before it. Horizontally the same happened to y and
+> the height. Setting the frame again after the maximize put both back on both versions, and changes
+> nothing for a window that was not fullscreen. Found in the release test protocol;
+> `src/lib/windows.js` and `docs/design.md`'s Restoring paragraph change with this.
+
 Explicitly not:
 
 - keeping what the remote user changed: the user at the workstation expects the layout they left,
