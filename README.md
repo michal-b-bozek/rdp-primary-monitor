@@ -53,6 +53,9 @@ sha256sum -c rdp-primary-monitor@michal-b-bozek.github.io.shell-extension.zip.sh
 gnome-extensions install --force rdp-primary-monitor@michal-b-bozek.github.io.shell-extension.zip
 ```
 
+For releases after 0.1.0, `gh attestation verify <zip> --repo michal-b-bozek/rdp-primary-monitor`
+also shows that this repository's release workflow attested the zip at the tagged commit.
+
 From a clone, with [mise](https://mise.jdx.dev/):
 
 ```sh
