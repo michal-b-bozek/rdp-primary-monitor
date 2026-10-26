@@ -75,5 +75,5 @@ Every key, with its default and range:
   [architecture decision records](docs/architecture/decisions/).
 - Development, tests and test VMs: [docs/development.md](docs/development.md); before a release:
   [manual test protocol](docs/testing.md).
-- Changes: [CHANGELOG](CHANGELOG.md).
+- Changes: [CHANGELOG](CHANGELOG.md). Security reports: [SECURITY.md](SECURITY.md).
 - Licence: [MIT](LICENSE); every file is [REUSE](https://reuse.software/)-compliant.
