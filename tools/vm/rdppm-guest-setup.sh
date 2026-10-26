@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# rdppm-guest-setup — runs inside a test VM, never on the host. The kickstart installs it as
-# /usr/local/libexec/rdppm-guest-setup with an autostart entry; at tester's first GNOME login it
-# turns on Desktop Sharing over RDP (extend mode comes from the system dconf defaults) with
-# the credentials vm:build generated, then deletes the credentials file and its autostart
-# entry. Diagnostics go to stderr, which the session journal keeps.
+# Runs inside a test VM, never on the host: at tester's first GNOME login it turns on Desktop
+# Sharing over RDP with the credentials vm:build generated, then deletes them and its autostart
+# entry. Extend mode comes from the system dconf defaults. Diagnostics go to stderr, which the
+# session journal keeps.
 set -euo pipefail
 shopt -s inherit_errexit
 IFS=$'\n\t'

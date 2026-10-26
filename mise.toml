@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MIT
 # RDP Primary Monitor — pinned dev tools and quality tasks.
 # Nothing here ships in the extension: the zip holds plain JavaScript, metadata and the schema.
-# Gate tasks are added as the thing they check lands — no placeholder tasks that always pass.
 # schemas:check and pack use host tools (glib2, GNOME Shell) that mise cannot pin; so do the test
 # task (gjs) and spdx:check (libmagic, loaded by reuse).
 
@@ -12,13 +11,13 @@ min_version = "2026.10.3"
 
 [settings]
 lockfile = true
-# Supply-chain hardening — refuse releases younger than a week. Override one invocation with
-# MISE_MINIMUM_RELEASE_AGE=0 in an emergency.
+# Refuse releases younger than a week. In an emergency, override one invocation with
+# MISE_MINIMUM_RELEASE_AGE=0.
 minimum_release_age = "168h"
 
 [tools]
-# Dev tools only. Exact pins; bump through a
-# reviewed build(deps) commit. pnpm must match package.json "packageManager".
+# Exact pins; bump in a reviewed build(deps) commit. pnpm must match package.json
+# "packageManager".
 node = "24.21.0"
 pnpm = "12.8.2"
 cocogitto = "7.0.0"
@@ -29,12 +28,12 @@ lychee = "0.24.2"
 taplo = "0.10.0"
 shellcheck = "0.11.0"
 shfmt = "3.14.1"
-# reuse (spdx:check) is a Python package: mise installs it with uv into the pinned Python and
-# locks its dependencies, with hashes, in .mise/locks/. Every reuse 6.x wheel is pure Python but
-# tagged cp310-cp310-manylinux_2_41_x86_64 (a packaging quirk), and mise installs wheels only
-# (uv --no-build), so reuse needs CPython 3.10 and installs only on x86-64 Linux with glibc 2.41
-# or later. CPython 3.10 is end of life from October 2026; move to a supported Python when reuse
-# ships a py3-none-any wheel. The pin also puts this Python on PATH inside the repository.
+# reuse (spdx:check) installs with uv into the pinned Python; its dependencies are locked, with
+# hashes, in .mise/locks/. Every reuse 6.x wheel is pure Python but tagged
+# cp310-cp310-manylinux_2_41_x86_64, and mise installs wheels only (uv --no-build): reuse needs
+# CPython 3.10 and x86-64 Linux with glibc 2.41+. CPython 3.10 is end of life from October 2026;
+# move to a supported Python when reuse ships a py3-none-any wheel. The pin also puts this Python
+# on PATH inside the repository.
 uv = "0.12.23"
 python = "3.10.22"
 "pipx:reuse" = "6.2.0"

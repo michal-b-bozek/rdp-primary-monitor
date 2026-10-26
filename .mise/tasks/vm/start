@@ -17,7 +17,7 @@ source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
 readonly BOOT_TIMEOUT=300
 readonly RDP_TIMEOUT=120
 
-# wait_rdp — the RDP listener appears once the autologin session has run rdppm-guest-setup.
+# The RDP listener appears once the autologin session has run rdppm-guest-setup.
 wait_rdp() {
   local started="${SECONDS}" listeners
   while true; do

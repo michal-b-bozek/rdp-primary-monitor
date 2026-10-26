@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# pnpm settings — strict defaults. The pinned pnpm 12 reads these here and ignores
-# them in .npmrc, which is left for per-user registry auth only (~/.npmrc, never committed).
-# Single package: no `packages:` list.
+# pnpm 12 reads its settings here and ignores them in .npmrc, which is for per-user registry auth
+# only (~/.npmrc, never committed). Single package: no `packages:` list.
 
 # engines.node becomes a hard install-time gate.
 engineStrict: true
@@ -10,36 +9,25 @@ engineStrict: true
 saveExact: true
 autoInstallPeers: true
 dedupePeerDependents: true
-# Supply-chain cooldown, as in mise.toml: refuse versions younger than a week (minutes).
+# Refuse versions younger than a week (in minutes), as mise.toml does.
 minimumReleaseAge: 10080
 
-# Build-script gate. Each entry is a reviewed decision.
 allowBuilds:
-  # postinstall = napi-postinstall: fetches a native binding only when the optional
-  # @unrs/resolver-binding-* package for the platform is missing. Not needed — denied.
+  # Its postinstall fetches a native binding only when the optional @unrs/resolver-binding-*
+  # package for the platform is missing; that package is present, so the build is denied.
   unrs-resolver: false
 
-# Version unification (overrides): @girs/gnome-shell 49.1.0 depends on @girs libraries
-# from three generations (its ranges resolved to beta.38 and beta.40, meta-17 pins rc.17) while
-# @girs/gjs 4.9.0 pulls 4.9.0, so up to four copies of GLib, Gio and GObject (one per generation)
-# were installed and types from one copy were rejected by APIs typed with another (GLib.Variant
-# into Gio.DBusProxy.call). Every @girs library in the lockfile is pinned to 4.9.0, the generation
-# of the pinned @girs/gjs (@girs/gnome-shell itself is pinned in package.json): those that
-# @girs/gnome-shell 49.1.0 or the GNOME Shell 50 set (@girs/gnome-shell-50, an alias of
-# @girs/gnome-shell 50.0.4) lists, and those they pull in (cairo, pango, cogl-17 and the rest).
-# The 50 set's ranges (^4.1.0) and the libraries' ranges among themselves (^4.9.0) resolve to
-# 4.9.0 today; those entries are a guard, so that a later 4.x of one of them cannot bring a second
-# generation back when the lockfile is next resolved. A new @girs library in the lockfile gets an
-# entry here.
-# Trade-off: the 4.9.0 base-library types (GLib, Gio, GObject 2.89, Gtk 4.23) are newer than
-# GNOME 49's GLib 2.86 and Gtk 4.20, so tsc accepts base API that GNOME 49 may lack; the
-# Shell-level types (meta, mtk, st, shell, clutter and cogl, 17 and 18) stay their own release's.
-# Both sets use the same 4.9.0 base libraries, Gtk and Adw included, so the two runs check
-# prefs.js against the same Gtk and Adw types.
-# Date: 2026-10-13; the entries for the GNOME Shell 50 set and the pulled-in libraries 2026-10-15.
-# Bump @girs/gjs in package.json together with this list, which also pins it.
-# Re-evaluate when @girs/gnome-shell, @girs/gnome-shell-50 or @girs/gjs is bumped, and drop the
-# list once each set's types depend on one generation themselves.
+# Every @girs library in the lockfile is pinned to 4.9.0, the generation of the pinned
+# @girs/gjs, so tsc sees one copy of GLib, Gio and GObject. @girs/gnome-shell 49.1.0 pulls
+# several generations, and types from one copy are rejected by APIs typed with another
+# (GLib.Variant into Gio.DBusProxy.call). Entries that resolve to 4.9.0 anyway are a guard
+# against a later 4.x bringing a second generation back. A new @girs library in the lockfile gets
+# an entry here; bump @girs/gjs in package.json together with this list.
+# Trade-off: the base-library types (GLib, Gio, GObject 2.89, Gtk 4.23) are newer than GNOME 49's
+# GLib 2.86 and Gtk 4.20, so tsc accepts base API that GNOME 49 may lack; the Shell-level types
+# (meta, mtk, st, shell, clutter, cogl) stay their own release's.
+# Re-evaluate when @girs/gnome-shell, @girs/gnome-shell-50 or @girs/gjs is bumped; drop the list
+# once each set's types depend on one generation themselves.
 overrides:
   '@girs/accountsservice-1.0': 4.9.0
   '@girs/adw-1': 4.9.0

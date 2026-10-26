@@ -1,15 +1,13 @@
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# CI — the local quality gate (mise run check) and the zip build (mise run pack), once per
-# supported GNOME Shell: Fedora 43 ships 49, Fedora 44 ships 50.
+# One job per supported GNOME Shell: Fedora 43 ships 49, Fedora 44 ships 50.
 #
 # Everything runs inside the Fedora containers, not on the Ubuntu runner: test, schemas:check,
 # pack and spdx:check use host tools mise cannot pin (gjs, dbus-daemon, glib2, gnome-extensions,
 # libmagic), and reuse installs only on glibc 2.41 or later (Ubuntu 24.04 has 2.39).
 #
-# Secrets and commit messages are checked by the mise-pinned gitleaks and cocogitto inside
-# `check` (secrets:scan, commits:check), so CI, the git hooks and a laptop run the same versions;
-# no gitleaks or cocogitto action. Actions are pinned by commit SHA, the tag in a comment.
+# No gitleaks or cocogitto action: `check` runs the mise-pinned ones, so CI, the git hooks and a
+# laptop run the same versions. Actions are pinned by commit SHA, the tag in a comment.
 
 name: ci
 

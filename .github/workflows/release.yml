@@ -1,16 +1,11 @@
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# Release — on a pushed vX.Y.Z or vX.Y.Z-rc.N tag: build the release files (read-only), run
-# the CI gate (ci.yml, both GNOME Shell releases), then create a draft GitHub Release with the
-# zip, its SHA-256 and the curated CHANGELOG.md section as notes. Publish the draft by hand
-# after a look.
-# A release candidate (-rc.N) becomes a draft pre-release: it tries the release flow and the zip
-# before the bump, so it may come from any commit, keeps metadata.json's version-name and has no
-# CHANGELOG.md section of its own.
+# Runs on a vX.Y.Z or vX.Y.Z-rc.N tag pushed by the release sequence in cog.toml and ends in a
+# draft GitHub Release; publish it by hand after a look.
+# A release candidate (-rc.N) tries the release flow before the bump: it may come from any
+# commit, keeps metadata.json's version-name and has no CHANGELOG.md section of its own.
 # Only the publish job holds a token that can write, and it runs no project code.
-#
-# The tag comes from the release sequence in cog.toml. Actions are pinned by commit SHA, the tag
-# in a comment.
+# Actions are pinned by commit SHA, the tag in a comment.
 
 name: release
 

@@ -11,10 +11,9 @@ shopt -s inherit_errexit
 IFS=$'\n\t'
 
 # A tsc program that loads both releases' ambient types passes silently (tsconfig.gnome50.json
-# says why), so the program's file list is searched for the other release's packages. The
-# patterns match pnpm's isolated store paths (node_modules/.pnpm/@girs+<name>@<version>/); the
-# run must also find its own release there, so a layout the patterns cannot read fails the
-# task instead of passing it.
+# says why), so its file list must not name the other release's packages. The patterns match
+# pnpm store paths (node_modules/.pnpm/@girs+<name>@<version>/); finding no package of its own
+# release fails too, so a store layout the patterns cannot read does not pass.
 main() {
   local release="${usage_release:?}"
   local config own other

@@ -38,9 +38,9 @@ export class FakeClock {
   }
 
   /**
-   * Move the clock `ms` forward, firing each timer that falls due, in the
-   * order they fall due (and were added, for the same moment), and letting
-   * the promises a callback starts settle before the next one fires.
+   * Move the clock `ms` forward. Timers that fall due fire in due order (in
+   * the order added, for the same moment). The promises a callback starts
+   * settle before the next one fires.
    *
    * @param {number} ms
    * @returns {Promise<void>} Settles when the clock has arrived.

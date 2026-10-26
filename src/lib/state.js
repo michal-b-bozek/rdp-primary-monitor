@@ -25,29 +25,37 @@ import { chooseSessionMonitor } from './monitors.js'
  */
 
 /**
- * Where Focusing is: an apply in flight, waiting for the monitor check that
- * follows the layout change the apply caused, a failed apply waiting for its
- * retry, or gathering. `gone` means the session's monitor was missing at a
- * check while the screen was locked: nothing new is pending, and the unlock
- * check ends the session as `sessionGone` does, or starts the apply over if
- * the monitor is back.
+ * Where Focusing is:
+ *
+ * - `apply`: an apply is in flight.
+ * - `awaitLayout`: waiting for the monitor check that follows the layout
+ *   change the apply caused.
+ * - `retry`: a failed apply is waiting for its retry.
+ * - `gather`: gathering.
+ * - `gone`: the session's monitor was missing at a check while the screen was
+ *   locked. Nothing new is pending. The unlock check ends the session as
+ *   `sessionGone` does, or starts the apply over if the monitor is back.
  *
  * @typedef {'apply' | 'awaitLayout' | 'retry' | 'gather' | 'gone'} FocusStep
  */
 
 /**
- * How an apply ended: the primary moved to the session's monitor, it was
- * there already, or `make-primary` is off and the monitor is not primary. A
- * monitor that is primary is reported as `primaryAlready`, whatever the
- * setting.
+ * How an apply ended:
+ *
+ * - `changed`: the primary moved to the session's monitor.
+ * - `primaryAlready`: the monitor was primary already, whatever
+ *   `make-primary` says.
+ * - `skipped`: `make-primary` is off and the monitor is not primary.
  *
  * @typedef {'changed' | 'primaryAlready' | 'skipped'} ApplyResult
  */
 
 /**
- * The five states; `goneAt` is the monitor check that found the session's
- * monitor gone. `primary` holds whether the session's monitor was primary when
- * gathering began; only then can losing the primary dismiss the session.
+ * The five states.
+ *
+ * - `goneAt`: the monitor check that found the session's monitor gone.
+ * - `primary`: whether the session's monitor was primary when gathering
+ *   began. Only then can losing the primary dismiss the session.
  *
  * @typedef {{ kind: 'idle' }
  *   | { kind: 'focusing', session: MonitorId, step: FocusStep, retried: boolean, primary: boolean }
@@ -81,14 +89,18 @@ import { chooseSessionMonitor } from './monitors.js'
  */
 
 /**
- * `apply` reads `GetCurrentState` and makes the monitor primary, reporting an
- * `ApplyResult`; `scheduleRetry` and `scheduleGather` fire `retryDue` and
- * `gatherDue` one debounce period later; `gather` runs to completion before
- * `gathered` and adds the windows it moves to the session's gathered set,
- * which `dropSnapshot` discards with the snapshot.
- * Settings are read by the effect that needs them, when it runs. A cancel
- * effect for something already finished or cancelled does nothing, and a
- * cancelled effect reports no event.
+ * What the caller carries out:
+ *
+ * - `apply` reads `GetCurrentState`, makes the monitor primary and reports an
+ *   `ApplyResult`.
+ * - `scheduleRetry` and `scheduleGather` fire `retryDue` and `gatherDue` one
+ *   debounce period later.
+ * - `gather` runs to completion before `gathered`. It adds the windows it
+ *   moves to the session's gathered set, which `dropSnapshot` discards with
+ *   the snapshot.
+ * - An effect reads the settings it needs when it runs.
+ * - A cancel effect for something already finished or cancelled does nothing.
+ * - A cancelled effect reports no event.
  *
  * @typedef {{ kind: 'rebuildRecord' }
  *   | { kind: 'runCheck' }
@@ -285,10 +297,12 @@ function check(machine, remotes) {
 
 /**
  * A monitor check while locked starts nothing and records no arrivals
- * (ADR-0005 part 2). In Focusing it lets the gather that waits for the apply's
- * layout change go ahead, and if the session's monitor went, it cancels what
- * is pending and leaves the session to the unlock check. A pending retry waits
- * for its timer (ADR-0005, Related).
+ * (ADR-0005 part 2). In Focusing:
+ *
+ * - the gather that waits for the apply's layout change goes ahead;
+ * - if the session's monitor went, what is pending is cancelled and the
+ *   session is left to the unlock check;
+ * - a pending retry waits for its timer (ADR-0005, Related).
  *
  * @param {Machine} machine
  * @param {readonly RemoteMonitor[]} remotes

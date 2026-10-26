@@ -40,11 +40,9 @@ main() {
     *) ;;
   esac
 
-  # GNOME's power-key handling may suspend or prompt on an ACPI request, so ask the guest
-  # itself first. ssh may also fail because the guest drops the connection while going down.
-  # The extra ACPI request is then harmless, and so is virsh refusing it because the domain is
-  # already off. Without the build's ssh key only the ACPI request is possible. The loop below
-  # decides success from the domain state.
+  # GNOME may suspend or prompt on an ACPI request, so ask the guest itself first. ssh may fail
+  # as the guest drops the connection going down; the extra ACPI request, or virsh refusing it,
+  # is then harmless. The domain state decides success.
   # shellcheck disable=SC2310  # failure only selects the ACPI fallback
   if [[ ! -r "${RDPPM_VM_STATE_DIR}/ssh-key" ]] || ! rdppm_vm_ssh_quiet sudo systemctl poweroff; then
     rdppm_virsh shutdown "${RDPPM_VM_NAME}" > /dev/null 2>&1 || true

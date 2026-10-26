@@ -29,11 +29,14 @@ import { createRecord, glibTimers, trackWindows } from './lib/tracking.js'
  */
 
 /**
- * The part of `Main.sessionMode` used here; the Shell types leave it `any`.
- * `isLocked` is true in the `unlock-dialog` mode, which the screen shield
- * pushes when the lock screen comes up and pops at unlock; `updated` follows
- * every mode change (js/ui/sessionMode.js, js/ui/screenShield.js, GNOME Shell
- * 49 and 50).
+ * The part of `Main.sessionMode` used here, since the Shell types leave it
+ * `any`.
+ *
+ * - `isLocked` is true in the `unlock-dialog` mode, which the screen shield
+ *   pushes when the lock screen comes up and pops at unlock.
+ * - `updated` follows every mode change.
+ *
+ * See js/ui/sessionMode.js and js/ui/screenShield.js, GNOME Shell 49 and 50.
  *
  * @typedef {object} SessionMode
  * @property {boolean} isLocked
@@ -156,15 +159,16 @@ export default class RdpPrimaryMonitor extends Extension {
   }
 
   /**
-   * The extension also runs in the `unlock-dialog` session mode (ADR-0005
-   * part 1 and its amendments). Without it, where the RDP connection survives
-   * the lock ("Allow Locked Remote Desktop"), locking the screen would call
-   * disable(), which puts the gathered windows back while the client is still
-   * connected, and the unlock would gather them again. With it, the session
-   * survives the lock: the windows stay gathered and the client's monitor
-   * stays primary, except at the first lock after the extension was enabled
-   * mid-session, when the Shell still disables and re-enables it. The
-   * extension draws nothing and connects no keyboard signals.
+   * The extension also runs in the `unlock-dialog` session mode, so the
+   * session survives a lock: the windows stay gathered and the client's
+   * monitor stays primary (ADR-0005 part 1 and its amendments). Without this,
+   * where the RDP connection survives the lock ("Allow Locked Remote
+   * Desktop"), locking would call disable() and put the gathered windows back
+   * while the client is still connected, and the unlock would gather them
+   * again. The exception is the first lock after the extension was enabled
+   * mid-session, when the Shell still disables and re-enables it. Running there
+   * is safe because the extension draws nothing and connects no keyboard
+   * signals.
    *
    * @override
    * @returns {void}

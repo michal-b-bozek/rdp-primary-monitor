@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT
 /**
  * A fake Mutter DisplayConfig on a private D-Bus daemon the test starts and
- * stops itself. Nothing here uses the session bus: GIO keeps a session bus
- * connection it already holds even after DBUS_SESSION_BUS_ADDRESS changes, so
- * a test that relied on it could reach the live Mutter and change the real
- * display configuration. Every connection is opened to the private daemon's own
- * address, and the fake must own the DisplayConfig name there before a test
- * may call anything.
+ * stops itself. Nothing here uses the session bus, so no test can reach the
+ * live Mutter and change the real display configuration (GIO keeps a session
+ * bus connection it already holds even after DBUS_SESSION_BUS_ADDRESS
+ * changes). Every connection is opened to the private daemon's address. The
+ * fake must own the DisplayConfig name there before a test may call
+ * anything.
  */
 
 import Gio from 'gi://Gio'
@@ -186,11 +186,10 @@ function startDaemon(dir, undo) {
 </busconfig>`,
   )
   // A shell holds the daemon until its stdin closes, then stops it and
-  // removes `dir`. The pipe closes when the teardown closes it and also when
-  // the test process exits without one, as after a test that timed out, so
-  // no daemon outlives the run. The shell lets go of stdout at once, so a
-  // daemon that fails to start ends the output instead of leaving the read
-  // below waiting.
+  // removes `dir`. The pipe closes at teardown, and also when the test process
+  // exits without one (after a timeout), so no daemon outlives the run. The
+  // shell lets go of stdout at once, so a daemon that fails to start ends the
+  // output instead of leaving the read below waiting.
   const daemon = Gio.Subprocess.new(
     [
       'sh',

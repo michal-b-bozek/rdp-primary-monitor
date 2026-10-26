@@ -18,33 +18,30 @@ branch_whitelist = ["main", "release/**"]
 # Tags look like v1.2.3.
 tag_prefix = "v"
 
-# Used only by `cog bump --skip-ci`; see the release sequence below.
+# Appended only by `cog bump --skip-ci`, which the release sequence below never uses.
 skip_ci = "[skip ci]"
 
-# Validate before anything mutates (cocogitto does not roll back hook side effects): the
-# checks first, then version:set writes the version into src/metadata.json's
-# `version-name` and stages it, so the bump commit and its tag carry it.
-# mise run check includes commits:check (cog check).
+# The checks run first: cocogitto does not roll back hook side effects. version:set then writes
+# the version into src/metadata.json's `version-name` and stages it, so the bump commit and its
+# tag carry it.
 pre_bump_hooks = ["mise run check", "mise run version:set {{version}}"]
 
 # No post_bump_hooks: the changelog is curated before anything is pushed. Release sequence:
-#   0. Delete every vX.Y.Z-rc.N tag, local and remote (git push origin :refs/tags/<tag>), and
-#      its draft pre-release (gh release delete <tag>): cog reads an rc tag as a released
-#      version and starts the new release's changelog range there.
+#   0. Delete every vX.Y.Z-rc.N tag, local and remote (git push origin :refs/tags/<tag>), and its
+#      draft pre-release (gh release delete <tag>): cog would start the changelog range there.
 #   1. cog bump --auto (with no tag yet, the first feat makes it 0.1.0)
-#   2. Curate CHANGELOG.md: headings to `## [X.Y.Z] - date` and `###` sections, entries in
-#      user voice, reference links at the bottom (`[Unreleased]` compares from the new tag,
-#      plus a `[X.Y.Z]` release link). Unreleased stays empty: cocogitto is its only author.
+#   2. Curate CHANGELOG.md: `## [X.Y.Z] - date` and `###` sections, entries in user voice, and
+#      reference links at the bottom (`[Unreleased]` compares from the new tag; a `[X.Y.Z]`
+#      release link). Unreleased stays empty: cocogitto is its only author.
 #      `mise run release:notes X.Y.Z` prints the section the release notes will carry.
 #   3. git add CHANGELOG.md && git commit --amend --no-edit && mise run check &&
 #      git tag -f vX.Y.Z
 #   4. git push && git push origin vX.Y.Z
-#   5. The tag runs .github/workflows/release.yml: release files built from the tag, CI on both
-#      Shells, then a draft GitHub Release with the zip and its SHA-256. Check it and publish it
-#      by hand.
+#   5. The tag runs .github/workflows/release.yml, which ends in a draft GitHub Release with the
+#      zip and its SHA-256. Check it and publish it by hand.
 # Never `cog bump --skip-ci`: [skip ci] on the tagged commit would stop the release workflow.
-# To try the release flow and the zip before step 0, tag a commit vX.Y.Z-rc.N and push only the
-# tag: release.yml makes a draft pre-release of it.
+# To try the release flow before step 0, push only a vX.Y.Z-rc.N tag: release.yml makes a draft
+# pre-release of it.
 
 [changelog]
 path = "CHANGELOG.md"

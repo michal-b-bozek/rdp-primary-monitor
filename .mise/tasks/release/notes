@@ -16,9 +16,8 @@ main() {
     exit 64
   fi
   local notes
-  # The section runs from its curated `## [X.Y.Z] - date` heading to the next `## ` heading,
-  # cocogitto's `- - -` separator or the link reference definitions at the bottom; blank
-  # lines around it are dropped. A section with headings but no entries prints nothing.
+  # The section ends at the next `## ` heading, cocogitto's `- - -` separator or the link
+  # reference definitions. A section with headings but no entries prints nothing.
   notes="$(awk -v heading="## [${version}]" '
     index($0, heading) == 1 && (length($0) == length(heading) || substr($0, length(heading) + 1, 3) == " - ") {
       inside = 1

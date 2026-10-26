@@ -28,11 +28,11 @@
       <default>'all-workspaces'</default>
       <summary>Which windows to move to the client’s virtual monitor</summary>
       <description>
-        When a client connects, move the normal windows of all workspaces
-        (“all-workspaces”), of the current workspace only (“current-workspace”), or none
-        (“off”) to its virtual monitor. Every window keeps its workspace while that monitor is
-        primary; on a monitor that is not, GNOME shows it on all workspaces (while
-        org.gnome.mutter workspaces-only-on-primary is on, its default).
+        When a client connects, move the normal windows of all workspaces (“all-workspaces”),
+        of the current workspace only (“current-workspace”), or none (“off”) to its virtual
+        monitor. Each window keeps its workspace while the client’s monitor is primary. On a
+        monitor that is not primary, GNOME shows every window on all workspaces while
+        org.gnome.mutter workspaces-only-on-primary is on, which is that key’s default.
       </description>
     </key>
 
@@ -50,9 +50,9 @@
       <default>500</default>
       <summary>Debounce period, in milliseconds</summary>
       <description>
-        The extension acts on monitor changes only after this long without another one. It is
-        also the longest wait for the layout change after making the monitor primary, and the
-        longest wait before trying again when that fails. Not shown in the preferences.
+        The extension acts on a monitor change only after this long without another. It also
+        caps the wait for the layout change after making the monitor primary, and the wait
+        before trying again when that fails. Not shown in the preferences.
       </description>
     </key>
 

@@ -1,13 +1,15 @@
 // SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
- * A desk and a Mutter for driving src/lib/session.js the way the extension
- * wires it (src/extension.js): the real state machine and placement record,
- * with fakes only for the ports. The fakes follow the real ones where the
- * session can tell: a cancelled call rejects, as a cancelled D-Bus call does;
- * every window move reaches the record, as the window signals do
- * (tracking.js); gathering honours the mode and skips windows already on the
- * target, as gather.js does.
+ * A desk and a Mutter for driving src/lib/session.js as src/extension.js
+ * wires it: the real state machine and placement record, with fakes only for
+ * the ports. Where the session can tell, the fakes follow the real ones:
+ *
+ * - a cancelled call rejects, as a cancelled D-Bus call does;
+ * - every window move reaches the record, as the window signals do
+ *   (tracking.js);
+ * - gathering honours the mode and skips windows already on the target, as
+ *   gather.js does.
  */
 
 import { PlacementRecord } from '../src/lib/placement.js'
@@ -104,9 +106,11 @@ function fakeDesk(record, initial) {
 /**
  * Two physical monitors, DP-1 (primary) and DP-2, and the virtual monitors of
  * RDP clients. Every change reports `monitors-changed` through `changed` and
- * makes the window moves Mutter makes with it: by default before the signal,
- * as Mutter relocates windows in `monitors-changed-internal`, which comes
- * first; with `movesFirst` off, after it, as late window signals can arrive.
+ * makes the window moves Mutter makes with it:
+ *
+ * - by default before the signal, as Mutter relocates windows in
+ *   `monitors-changed-internal`, which comes first;
+ * - with `movesFirst` off, after it, as late window signals can arrive.
  *
  * @param {Desk} desk
  * @param {() => void} changed

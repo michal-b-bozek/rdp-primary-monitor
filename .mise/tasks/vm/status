@@ -11,7 +11,7 @@ readonly SCRIPT_DIR
 # shellcheck source=tools/vm/lib.sh
 source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
 
-# show <id> — one line per VM; a subshell because rdppm_vm_resolve sets readonly globals.
+# A subshell: rdppm_vm_resolve sets readonly globals.
 show() (
   local state
   rdppm_vm_resolve "$1"

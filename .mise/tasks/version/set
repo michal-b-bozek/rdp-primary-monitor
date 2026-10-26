@@ -11,8 +11,8 @@ readonly METADATA="src/metadata.json"
 
 main() {
   local version="${usage_version:?}"
-  # extensions.gnome.org limits version-name to 1-16 letters, digits, spaces and dots; a
-  # SemVer pre-release or build suffix (-rc.1, +x) would be rejected there.
+  # extensions.gnome.org limits version-name to 1-16 letters, digits, spaces and dots, so it
+  # rejects a pre-release or build suffix (-rc.1, +x).
   if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || ${#version} -gt 16 ]]; then
     printf 'error: %s is not a plain X.Y.Z version of at most 16 characters\n' \
       "${version}" >&2

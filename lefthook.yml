@@ -7,8 +7,7 @@
 pre-commit:
   parallel: false
   commands:
-    # gitleaks pre-commit layer: the staged diff only; the full-history scan is
-    # mise run secrets:scan.
+    # The staged diff only; mise run secrets:scan covers the full history.
     gitleaks:
       run: mise exec -- gitleaks git --staged --no-banner --redact
     # Fix and format staged files; re-stage what changed.

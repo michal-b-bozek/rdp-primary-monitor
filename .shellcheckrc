@@ -1,63 +1,45 @@
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# ShellCheck config — strict defaults for bash.
-# Docs: https://www.shellcheck.net/wiki/Directive
-#       https://www.shellcheck.net/wiki/Optional
-#
-# Koalaman's guidance: do NOT use `enable=all`. Optional checks are
-# subjective and some conflict. Enumerate the ones we want, one per
-# line, so every addition is a deliberate policy decision.
+# ShellCheck config for bash. Optional checks are listed one by one: `enable=all` turns on
+# subjective checks, some of which conflict.
 
-# Target dialect. Files without a shebang (sourced libraries) inherit
-# this instead of defaulting to `sh`.
+# Sourced libraries without a shebang get bash, not `sh`.
 shell=bash
 
-# Report every severity, `style` included (ShellCheck's lowest level);
-# raising it silences fixable issues.
+# Report `style` too; a higher level hides fixable issues.
 severity=style
 
-# External sources followed. Without this, every `source` / `.` is
-# a blind spot unless it carries a per-line `# shellcheck source=...`.
+# Follow `source` without a per-line `# shellcheck source=...`.
 external-sources=true
 
-# --- Optional checks we opt into, rationale per line ---
+# --- Optional checks ---
 
-# Flag `case` without a default `*)` branch — unhandled inputs are bugs.
+# A `case` without `*)` leaves inputs unhandled.
 enable=add-default-case
 
-# Flag `[ $x ]` and `[[ $x ]]` — fragile and usually wrong;
-# prefer `[[ -n "$x" ]]` / `[[ -z "$x" ]]`.
+# `[[ $x ]]` is fragile; use `[[ -n "$x" ]]` / `[[ -z "$x" ]]`.
 enable=avoid-nullary-conditions
 
-# Flag exit codes masked beyond the default checks (SC2312), e.g.
-# the failure inside `rm -r "$(get_dir)/home"`. Pairs with `set -e`,
-# which misses a failed command substitution used as an argument.
+# SC2312: `set -e` misses a failed command substitution used as an argument.
 enable=check-extra-masked-returns
 
-# Flag `set -e` configurations where the exit-on-error guarantee is
-# silently dropped (command in `if`, `while`, function called from
-# a conditional, etc.).
+# Flags code where `set -e` is silently off (in `if`, `while`, a function called from a
+# conditional).
 enable=check-set-e-suppressed
 
-# Catch `$FOO` where `FOO` is never assigned — classic typo killer
-# (`$PAHT` instead of `$PATH`, etc.).
+# Catches typos such as `$PAHT`.
 enable=check-unassigned-uppercase
 
-# Push users from `which` toward `command -v` (portability + speed).
 enable=deprecate-which
 
-# Quote even variables that cannot word-split (SC2248) — uniform
-# quoting, no judgement calls.
+# SC2248: uniform quoting, no judgement calls.
 enable=quote-safe-variables
 
-# Nudge toward `[[ ]]` over `[ ]` in bash files (POSIX-sh files
-# will fire this; override inline with `# shellcheck shell=sh` there).
+# POSIX-sh files override it inline with `# shellcheck shell=sh`.
 enable=require-double-brackets
 
-# Warn on `$var` vs `${var}` — brace form is less ambiguous
-# alongside concatenation. Set on because shellcheck default is quiet.
+# Braces are unambiguous next to concatenation.
 enable=require-variable-braces
 
-# --- No blanket disables. Project-level exceptions belong here
-#     (with one-line reasons); scoped exceptions belong inline on
-#     the offending line with `# shellcheck disable=SCxxxx  # reason`. ---
+# Project-wide exceptions go here with a one-line reason; scoped ones go inline as
+# `# shellcheck disable=SCxxxx  # reason`.

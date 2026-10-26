@@ -8,20 +8,22 @@ description: Trust the checkout, then install the pinned mise and the tools in m
 runs:
   using: composite
   steps:
-    # The checkout belongs to the runner's user, the container runs as root: cocogitto
-    # (libgit2) and gitleaks refuse the repository unless it is a safe.directory. mise ignores
-    # an untrusted mise.toml. Both use $GITHUB_WORKSPACE because in a container job the
-    # github.workspace context holds the runner's path, not the container's.
+    # safe.directory: the checkout belongs to the runner's user and the container runs as root,
+    # so cocogitto (libgit2) and gitleaks refuse the repository otherwise.
+    # MISE_TRUSTED_CONFIG_PATHS: mise ignores an untrusted mise.toml.
+    # $GITHUB_WORKSPACE, not github.workspace: in a container job the context holds the runner's
+    # path, not the container's.
     - name: Trust the checkout
       shell: bash
       run: |
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
         printf 'MISE_TRUSTED_CONFIG_PATHS=%s\n' "$GITHUB_WORKSPACE" >> "$GITHUB_ENV"
 
-    # mise is pinned by version and by the SHA-256 of its linux-x64 binary (the same in the
-    # .tar.gz and .tar.zst assets of that release). The version equals min_version in
-    # mise.toml (mise run pins:check); recompute the hash when bumping both. With mise.lock
-    # present the action runs `mise install --locked`, so a tool missing from the lock fails.
+    # With mise.lock present the action runs `mise install --locked`: a tool missing from the
+    # lock fails.
+    # version equals min_version in mise.toml (mise run pins:check).
+    # sha256 is that of the linux-x64 binary (the same in the release's .tar.gz and .tar.zst);
+    # recompute it when bumping the version.
     - name: Install mise and the pinned tools
       uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
       with:

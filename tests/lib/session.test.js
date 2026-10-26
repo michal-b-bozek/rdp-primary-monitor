@@ -327,8 +327,8 @@ flow(
 
     // Mutter makes Meta-0 primary and the user moves the primary back, both
     // before the apply's reply. The check that follows and the gather's timeout
-    // fall due together; the check's timer was added first and, as in GLib,
-    // runs first.
+    // fall due together. The check's timer was added first, so it runs first,
+    // as in GLib.
     world.mutter.setPrimary('Meta-0')
     world.mutter.setPrimary('DP-1')
     apply.resolve('changed')
@@ -365,8 +365,8 @@ flow(
     await world.wait(DEBOUNCE)
     const first = only(world.control.heldApplies)
 
-    // A monitor change, then the apply fails half a debounce period later:
-    // the check is due half a period before the retry timer.
+    // The apply fails half a debounce period after a monitor change, so the
+    // check is due half a period before the retry timer.
     world.session.monitorsChanged()
     await world.wait(DEBOUNCE / 2)
     first.reject(new Error('stale serial'))

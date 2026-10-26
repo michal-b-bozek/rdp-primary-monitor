@@ -1,11 +1,9 @@
 # shellcheck shell=bash
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# tools/vm/lib.sh — settings and helpers shared by the vm:* mise tasks (.mise/tasks/vm/).
-# Sourced, never executed. The test VMs live in the unprivileged libvirt session
-# (qemu:///session); every helper works on rdppm-* domains only, so other session VMs are never
-# touched. Credentials are generated per build into RDPPM_VM_STATE_DIR, outside the repository.
-# Linux host only (libvirt session, passt) with GNU coreutils and bash >= 4.4.
+# Sourced by the vm:* mise tasks. Every helper works on rdppm-* domains only, so other session
+# VMs are never touched. Needs a Linux host (libvirt session, passt), GNU coreutils and
+# bash >= 4.4.
 
 if [[ -n "${__RDPPM_VM_LIB_SH:-}" ]]; then return 0; fi
 readonly __RDPPM_VM_LIB_SH=1
@@ -21,8 +19,6 @@ fi
 readonly RDPPM_RDP_USER="rdppm"
 
 # rdppm_vm_resolve <id> — set the RDPPM_VM_* globals for one test VM.
-#   f43: Fedora 43, GNOME Shell 49    f44: Fedora 44, GNOME Shell 50
-# Host ports are forwarded by passt on 127.0.0.1 only.
 rdppm_vm_resolve() {
   case "$1" in
     f43)
@@ -56,9 +52,9 @@ rdppm_virsh() {
   virsh --quiet --connect "${RDPPM_LIBVIRT_URI}" "$@"
 }
 
-# rdppm_vm_lookup — set RDPPM_VM_EXISTS to true or false. It fails when libvirt cannot be asked;
-# never read that failure as "not built" (build and destroy delete the VM's state on that
-# answer): call it as a plain command under set -e, or pass the status on with `|| return`.
+# Sets RDPPM_VM_EXISTS. Never read its failure as "not built": build and destroy delete the VM's
+# state on that answer. Call it as a plain command under set -e, or pass the status on with
+# `|| return`.
 rdppm_vm_lookup() {
   local names name
   names="$(rdppm_virsh list --all --name)" || return 70
@@ -68,7 +64,6 @@ rdppm_vm_lookup() {
   done <<< "${names}"
 }
 
-# rdppm_vm_require_exists — fail with a hint when the VM has not been built.
 rdppm_vm_require_exists() {
   rdppm_vm_lookup || return
   if [[ "${RDPPM_VM_EXISTS}" != "true" ]]; then
@@ -78,20 +73,17 @@ rdppm_vm_require_exists() {
   fi
 }
 
-# rdppm_vm_state — print the domain state; 70 if libvirt cannot be asked.
 rdppm_vm_state() {
   rdppm_virsh domstate "${RDPPM_VM_NAME}" || return 70
 }
 
-# rdppm_vm_is_off — 0 if the domain is shut off, 1 if not, 70 if libvirt cannot be asked.
 rdppm_vm_is_off() {
   local state
   state="$(rdppm_vm_state)" || return 70
   [[ "${state}" == "shut off" ]]
 }
 
-# rdppm_vm_force_off — power the domain off now. A guest that finished shutting down in the
-# meantime counts as success; any other failure is reported with virsh's own message.
+# A guest that finished shutting down in the meantime counts as success.
 rdppm_vm_force_off() {
   local err
   if err="$(rdppm_virsh destroy "${RDPPM_VM_NAME}" 2>&1 > /dev/null)"; then return 0; fi
@@ -101,8 +93,7 @@ rdppm_vm_force_off() {
   return 75
 }
 
-# rdppm_vm_require_ssh_key — fail with a hint when the build's ssh key is gone; without it every
-# ssh probe fails the same way a booting guest does.
+# Without the build's ssh key every ssh probe fails the same way a booting guest does.
 rdppm_vm_require_ssh_key() {
   if [[ ! -r "${RDPPM_VM_STATE_DIR}/ssh-key" ]]; then
     printf 'error: no ssh key in %s; rebuild the VM (vm:destroy, then vm:build %s)\n' \
@@ -111,7 +102,6 @@ rdppm_vm_require_ssh_key() {
   fi
 }
 
-# rdppm_vm_require_running — fail with a hint unless the VM exists and is running.
 rdppm_vm_require_running() {
   rdppm_vm_require_exists || return
   local state
@@ -123,7 +113,6 @@ rdppm_vm_require_running() {
   fi
 }
 
-# rdppm_require_cmd <cmd>... — fail with the missing command's name (exit code 127).
 rdppm_require_cmd() {
   local cmd
   for cmd in "$@"; do
@@ -134,8 +123,7 @@ rdppm_require_cmd() {
   done
 }
 
-# rdppm_vm_ssh_raw <ssh-argument>... — ssh to the guest's tester account with the build's key
-# and known_hosts; the one place the trust settings live.
+# The one place the ssh trust settings (the build's key and known_hosts) live.
 rdppm_vm_ssh_raw() {
   ssh -p "${RDPPM_VM_SSH_PORT}" -i "${RDPPM_VM_STATE_DIR}/ssh-key" \
     -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new \
@@ -143,24 +131,22 @@ rdppm_vm_ssh_raw() {
     -l tester "$@"
 }
 
-# rdppm_vm_ssh <command>... — run a command in the guest, non-interactively. ssh joins the
-# arguments with spaces into one string for the guest shell, so quote for that shell. ssh's
-# own errors (missing key, refused authentication) stay visible. `--` ends ssh's option
-# parsing, so a guest command starting with `-` is not taken for one.
+# rdppm_vm_ssh <command>... — ssh joins the arguments with spaces for the guest shell, so quote
+# for that shell. `--` stops a guest command starting with `-` being read as an ssh option.
 rdppm_vm_ssh() {
   rdppm_vm_ssh_raw -o BatchMode=yes -o ConnectTimeout=5 -o ServerAliveInterval=5 \
     -o ServerAliveCountMax=3 -- 127.0.0.1 "$@"
 }
 
-# rdppm_vm_ssh_quiet <command>... — rdppm_vm_ssh for polling, where failures are expected. passt
-# accepts a forwarded connection before the guest listens, so readiness is probed over ssh,
-# never by TCP. -n keeps a probe from reading the terminal while the caller waits.
+# For polling, where failures are expected. Readiness is probed over ssh, never by TCP: passt
+# accepts a forwarded connection before the guest listens. -n keeps a probe from reading the
+# terminal.
 rdppm_vm_ssh_quiet() {
   rdppm_vm_ssh_raw -n -q -o BatchMode=yes -o ConnectTimeout=5 -o ServerAliveInterval=5 \
     -o ServerAliveCountMax=3 -- 127.0.0.1 "$@" 2> /dev/null
 }
 
-# rdppm_vm_wait_ssh <timeout-seconds> — wait until the guest answers over ssh.
+# rdppm_vm_wait_ssh <timeout-seconds>
 rdppm_vm_wait_ssh() {
   local timeout="$1" started="${SECONDS}"
   until rdppm_vm_ssh_quiet true; do

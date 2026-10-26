@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# Dependabot proposes new versions of the SHA-pinned GitHub Actions, as one grouped pull request
-# a month; every bump is reviewed and merged by hand. mise.toml tools, mise itself, the Fedora
-# images and pnpm-lock.yaml are bumped by hand in build(deps) commits.
+# Only the SHA-pinned GitHub Actions; every bump is reviewed and merged by hand.
+# mise.toml tools, mise itself, the Fedora images and pnpm-lock.yaml are bumped by hand in
+# build(deps) commits.
 
 version: 2
 updates:
@@ -13,7 +13,7 @@ updates:
       - /.github/actions/*
     schedule:
       interval: monthly
-    # The same week of quiet as mise's minimum_release_age (mise.toml).
+    # A 7-day cooldown, as mise's minimum_release_age (mise.toml).
     cooldown:
       default-days: 7
     # Minor and patch bumps share one pull request; a major bump gets its own.
@@ -21,7 +21,7 @@ updates:
       github-actions:
         patterns: ['*']
         update-types: [minor, patch]
-    # Commit subjects start "build(deps):", a type cog.toml declares, so `cog check` accepts them.
+    # "build(deps):" is a type cog.toml declares, so `cog check` accepts the commits.
     commit-message:
       prefix: build
       include: scope

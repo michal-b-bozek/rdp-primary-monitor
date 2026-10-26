@@ -1,21 +1,17 @@
 // SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
-// ESLint flat config — strict defaults, adapted for plain ESM
-// JavaScript that runs under GJS (by design, no TypeScript sources):
+// ESLint flat config for plain ESM JavaScript that runs under GJS (no TypeScript sources):
 //
 // - Type-aware rules run on .js files: tsconfig.json type-checks them (checkJs) against the
 //   @girs GNOME types, so typescript-eslint's project service can see their types. It reads
 //   tsconfig.json only, so type-aware rules see the GNOME Shell 49 types; tsc checks 50.
 // - Rules that need TypeScript syntax are off for .js (they cannot be satisfied by JSDoc).
 // - eslint-plugin-import-x replaces eslint-plugin-import: the latter has no ESLint 10
-//   support and ESLint 9 is end-of-life. Same rules, `import-x/` prefix.
-// - GJS globals are declared; GNOME Shell requires a default export from extension.js and
-//   prefs.js.
+//   support and ESLint 9 is end-of-life.
+// - GNOME Shell requires a default export from extension.js and prefs.js.
 // - eslint-plugin-jsdoc requires JSDoc types on the extension's exports (src/), standing in for
 //   explicit-module-boundary-types, which cannot read JSDoc.
-//
-// Prettier integration as in the baseline: eslint-config-prettier last, no
-// eslint-plugin-prettier.
+// - eslint-config-prettier goes last; no eslint-plugin-prettier.
 
 import js from '@eslint/js'
 import { defineConfig } from 'eslint/config'
@@ -178,7 +174,7 @@ export default defineConfig(
       '@typescript-eslint/no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-eval': 'error',
-      // Fires on every `obj[key]` access, including safe Record reads (as in the baseline).
+      // Fires on every `obj[key]` access, including safe Record reads.
       'security/detect-object-injection': 'off',
     },
   },
@@ -325,8 +321,8 @@ export default defineConfig(
     languageOptions: { parserOptions: { projectService: false } },
   },
   {
-    // Tool config files run under Node, not GJS, and stay out of tsconfig.json (as in the
-    // baseline): no type-aware rules, Node globals, default exports allowed.
+    // Tool config files run under Node, not GJS, and stay out of tsconfig.json: no type-aware
+    // rules, Node globals, default exports allowed.
     files: ['**/*.config.js'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: {

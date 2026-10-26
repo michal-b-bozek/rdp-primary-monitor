@@ -96,8 +96,8 @@ export class Session {
 
   /**
    * Log what a reply handler, a timer, a monitor change or a lock change
-   * threw: the session broke an invariant; a throw inside `#drain` has also
-   * cleared the queue.
+   * threw. Such a throw means the session broke an invariant. A throw inside
+   * `#drain` has also cleared the queue.
    *
    * @param {unknown} error
    * @returns {void}
@@ -221,7 +221,7 @@ export class Session {
   }
 
   /**
-   * Run the queued events one transition at a time; an event an effect
+   * Run the queued events one transition at a time. An event that an effect
    * reports waits until every effect of the current transition has run.
    *
    * @returns {void}
@@ -253,8 +253,8 @@ export class Session {
 
   /**
    * Take one transition: report it to the record, then carry out its effects.
-   * The record hears first so that a check an effect starts reads the burst
-   * the record has after the transition (an unlock adds one).
+   * The record hears first, so a check that an effect starts reads the
+   * record's burst after the transition (an unlock adds one).
    *
    * @param {Transition} next
    * @param {number | undefined} burst
@@ -366,9 +366,9 @@ export class Session {
 
   /**
    * Start a monitor check, replacing one still in flight. A monitor burst or
-   * an unlock before its reply makes it stale, so it is dropped and the check
-   * that follows answers (see `PlacementRecord.checked()`); a lock cancels it
-   * (`lockChanged`).
+   * an unlock before its reply makes the check stale. Its reply is then
+   * dropped and the check that follows answers (see
+   * `PlacementRecord.checked()`). A lock cancels it (`lockChanged`).
    *
    * @returns {void}
    */

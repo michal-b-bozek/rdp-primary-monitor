@@ -122,13 +122,14 @@ export function readNormalWindows() {
 }
 
 /**
- * Move the snapshot's windows onto the session's monitor with
- * `move_to_monitor()`, which keeps each window's workspace and states
- * (ADR-0004 part 2). With `current-workspace`, only windows on the active
- * workspace move, including those on all workspaces. Windows that closed, or
- * are on that monitor already, are not moved. A window whose move throws is
- * reported and the rest still move, so the caller learns every window that
- * did.
+ * Move the snapshot's windows onto the session's monitor, keeping each
+ * window's workspace and states (`move_to_monitor()`, ADR-0004 part 2).
+ *
+ * - With `current-workspace`, only windows on the active workspace move,
+ *   including those on all workspaces.
+ * - Windows that closed, or are on that monitor already, are not moved.
+ * - A window whose move throws is reported, and the rest still move, so the
+ *   caller learns every window that did.
  *
  * @param {Iterable<Meta.Window>} windows The snapshot's windows.
  * @param {string} connector The connector of the session's monitor.
@@ -171,10 +172,12 @@ export function gather(windows, connector, mode) {
 
 /**
  * Put gathered windows back where their snapshot says (ADR-0004 part 4).
- * Windows that closed are skipped; a window whose original monitor is gone is
- * left as it is and returned, for the caller to log; a window whose restore
- * threw, possibly part-way, is returned too, and the others are still
- * restored.
+ *
+ * - A window that closed is skipped.
+ * - A window whose original monitor is gone is left as it is and returned,
+ *   for the caller to log.
+ * - A window whose restore threw, possibly part-way, is returned too. The
+ *   others are still restored.
  *
  * @param {Iterable<readonly [Meta.Window, WindowRecord]>} gathered Each
  *   gathered window with its snapshot record.
@@ -286,9 +289,8 @@ function maximizeFlags(flags) {
 }
 
 /**
- * A window that is not on all workspaces loses its workspace only while
- * unmanaging, after it loses its actor (see `isGone`), so one that is not gone
- * has one.
+ * A window that is not on all workspaces, and not gone, has a workspace. It
+ * loses it only while unmanaging, after it loses its actor (see `isGone`).
  *
  * @param {Meta.Window} window
  * @returns {number | 'all' | 'none'} The window's workspace index; `'all'`
@@ -297,12 +299,12 @@ function maximizeFlags(flags) {
  */
 function workspaceOf(window) {
   if (!window.is_on_all_workspaces()) return window.get_workspace().index()
-  // With workspaces-only-on-primary, Mutter puts every window off the primary
-  // monitor on all workspaces (should_be_on_all_workspaces in window.c, Mutter
-  // 49 and 50) and has no getter for whether the window also asked for it, so
-  // such a window counts as having no workspace of its own. Mutter tests for a
-  // monitor too: get_monitor() is -1 without one, and is_on_primary_monitor()
-  // fails its precondition then.
+  // With workspaces-only-on-primary, a window off the primary monitor counts
+  // as having no workspace of its own. Mutter puts every such window on all
+  // workspaces and has no getter for whether it also asked for it
+  // (should_be_on_all_workspaces in window.c, Mutter 49 and 50). Like Mutter,
+  // the test requires a monitor: get_monitor() is -1 without one, and
+  // is_on_primary_monitor() then fails its precondition.
   if (
     Meta.prefs_get_workspaces_only_on_primary() &&
     window.get_monitor() >= 0 &&
@@ -327,9 +329,9 @@ function isGone(window) {
 }
 
 /**
- * Mutter's monitor getters return NULL for a monitor without usable EDID
- * data, although typed as strings; DisplayConfig reports `unknown` then, and
- * so does this.
+ * Report `unknown` for a monitor without usable EDID data, as DisplayConfig
+ * does. Mutter's monitor getters return NULL then, although typed as
+ * strings.
  *
  * @param {string | null} value
  * @returns {string} The value, or `unknown`.

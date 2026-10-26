@@ -208,7 +208,7 @@ test('a plain window goes back to its monitor and its frame there', () => {
   ])
 })
 
-// --- the workspace (ADR-0004 part 4 and its amendments) ---------------------
+// --- the workspace ---------------------------------------------------------
 
 /** The workspace steps only. */
 const WORKSPACE_KINDS = ['stick', 'unstick', 'changeWorkspace']

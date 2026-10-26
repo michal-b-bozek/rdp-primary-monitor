@@ -7,14 +7,19 @@
  * failed, a file failed to load or no test ran.
  *
  * A GLib main loop runs meanwhile, so tests can await GLib's async calls. A
- * test fails when it throws or rejects, when it has not settled after
- * `TIMEOUT_MS`, or when GLib logs a warning or worse while it runs, which is
- * how GJS reports an exception thrown in a callback (a signal handler, an
- * idle). GJS reports an unhandled rejection only when it exits, too late to
- * fail a test, so tests must await their promises. Every warning counts,
- * expected or not: code under test logs through a fake where a test checks a
- * warning. A test that timed out may leave callbacks behind that fail the
- * next one; read the first failure after a timeout.
+ * test fails when:
+ *
+ * - it throws or rejects;
+ * - it has not settled after `TIMEOUT_MS`;
+ * - GLib logs a warning or worse while it runs, which is how GJS reports an
+ *   exception thrown in a callback (a signal handler, an idle). Every warning
+ *   counts, expected or not. Where a test checks a warning, the code under
+ *   test logs through a fake.
+ *
+ * A test must await its promises, since GJS reports an unhandled rejection
+ * only when it exits, too late to fail a test. A test that timed out may leave
+ * callbacks behind that fail the next one, so read the first failure after a
+ * timeout.
  */
 
 import Gio from 'gi://Gio'

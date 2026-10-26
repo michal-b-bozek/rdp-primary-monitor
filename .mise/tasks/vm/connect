@@ -7,9 +7,8 @@
 #USAGE }
 #USAGE flag "--size <size>" default="1920x1080" help="Client size, WIDTHxHEIGHT; becomes the virtual monitor's mode"
 #
-# The arguments, password included, reach FreeRDP on stdin (/args-from:stdin), never on its
-# command line. The server certificate is pinned to the fingerprint read from the guest over
-# ssh, so a rebuilt VM never trips a stale trust-on-first-use entry.
+# The password reaches FreeRDP on stdin, never on its command line. The certificate is pinned to
+# the guest's fingerprint, so a rebuilt VM never trips a stale trust-on-first-use entry.
 set -euo pipefail
 shopt -s inherit_errexit
 IFS=$'\n\t'
@@ -19,7 +18,7 @@ readonly SCRIPT_DIR
 # shellcheck source=tools/vm/lib.sh
 source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
 
-# guest_cert_fingerprint — SHA-256 of the guest's RDP certificate, lowercase hex.
+# Prints the SHA-256 of the guest's RDP certificate as lowercase hex.
 guest_cert_fingerprint() {
   local out
   out="$(rdppm_vm_ssh openssl x509 -noout -fingerprint -sha256 \

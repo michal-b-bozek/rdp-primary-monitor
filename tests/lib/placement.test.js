@@ -1,11 +1,12 @@
 // SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
- * src/lib/placement.js on its own: when a window's change is committed, and
- * how monitor bursts, the lock and leaving Idle hold changes back
- * (docs/design.md, The placement record; ADR-0004 part 1, ADR-0005 part 2). The
- * session flow tests cover the record as the session drives it; these cover
- * the paths that flow cannot reach.
+ * src/lib/placement.js without the session: when a window's change is
+ * committed, and how monitor bursts, the lock and leaving Idle hold changes
+ * back (docs/design.md, The placement record; ADR-0004 part 1,
+ * ADR-0005 part 2). The session flow tests cover the record as the session
+ * drives it. These also cover calls the session never makes, such as
+ * `checked()` for a stale burst, which the session drops itself.
  */
 
 import { PlacementRecord } from '../../src/lib/placement.js'
@@ -22,10 +23,10 @@ const SETTLE = 250
  */
 
 /**
- * A record over named windows whose place is a connector a test sets, Idle
- * and unlocked as after the first check. Returns the clock, the record, the
- * `settle-ms` value it reads (`timing.settle`), and helpers that change a
- * window and tell the record, as the window signals do.
+ * A record over named windows, each on a connector the test sets. The record
+ * is Idle and unlocked, as after the first check. Returns the clock, the
+ * record, the `settle-ms` value it reads (`timing.settle`), and helpers that
+ * change a window and tell the record, as the window signals do.
  *
  * @param {Record<string, string>} windows Window name to connector.
  */

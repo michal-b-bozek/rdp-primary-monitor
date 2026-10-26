@@ -1,10 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 // Type-checks the extension's plain ESM JavaScript (`// @ts-check` + JSDoc) against the
-// @girs GNOME types. Adapted from a strict-default tsconfig: the strictness
-// flags are kept; emit is off because GJS runs the sources directly. Dropped:
-// esModuleInterop / allowSyntheticDefaultImports (implied by NodeNext, always on in TS 6),
-// resolveJsonModule (GJS cannot import JSON) and the output block.
+// @girs GNOME types. Emit is off: GJS runs the sources directly. Not set:
+// esModuleInterop / allowSyntheticDefaultImports (implied by NodeNext, always on in TS 6) and
+// resolveJsonModule (GJS cannot import JSON).
 {
   "compilerOptions": {
     // --- base -------------------------------------------------------------
@@ -31,8 +30,7 @@
     "noFallthroughCasesInSwitch": true,
 
     // --- JavaScript checking ----------------------------------------------
-    // A strict TypeScript baseline turns these off for greenfield TS; this project is JS by
-    // design decision, so every .js file is checked as if it carried `// @ts-check`.
+    // The project is JS by design, so every .js file is checked as if it carried `// @ts-check`.
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,

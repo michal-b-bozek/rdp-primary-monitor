@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 // SPDX-License-Identifier: MIT
 /**
- * The preferences window: the three settings docs/design.md lets the user turn
- * off or change (Focusing). The timing and debug-logging keys stay hidden.
+ * The preferences window: the three settings the user can turn off or change
+ * (docs/design.md, Focusing). The timing and debug-logging keys stay hidden.
  * Runs in the preferences process, not in the Shell.
  */
 
@@ -68,8 +68,7 @@ export default class RdpPrimaryMonitorPreferences extends ExtensionPreferences {
     page.add(gather)
     page.add(disconnect)
     // libadwaita deprecates the whole PreferencesWindow for PreferencesDialog,
-    // but fillPreferencesWindow() is still given one, and add() is the way to
-    // fill it.
+    // but fillPreferencesWindow() is still given one.
     // eslint-disable-next-line @typescript-eslint/no-deprecated -- see above
     window.add(page)
     return Promise.resolve()

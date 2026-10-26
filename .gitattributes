@@ -1,10 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# Line-ending normalisation + binary markers.
-# Canonical LF on checkin and checkout; paired with .editorconfig's end_of_line = lf.
+# LF on checkin and checkout, as .editorconfig's end_of_line = lf.
 
 * text=auto eol=lf
-# Shell scripts must never be checked out with CRLF; declared, not left to text detection.
+# Shell scripts break with CRLF; declared, not left to text detection.
 *.sh text eol=lf
 .mise/tasks/** text eol=lf
 

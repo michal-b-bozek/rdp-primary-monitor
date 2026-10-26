@@ -20,10 +20,9 @@
  */
 
 /**
- * Where each window last settled. A change is committed once the window has
- * been still for the settle period. New placements are recorded only in Idle
- * with the screen unlocked; the caller replaces the record with `rebuild()` on
- * entering Idle.
+ * Where each window last settled. A change is committed only in Idle with
+ * the screen unlocked, once the window has been still for the settle period.
+ * The caller replaces the record with `rebuild()` on entering Idle.
  *
  * @template W The window handle.
  */
@@ -75,8 +74,9 @@ export class PlacementRecord {
   }
 
   /**
-   * Whether the extension is in Idle. Leaving Idle drops every change not yet
-   * committed, with nothing to read again: entering Idle rebuilds the record.
+   * Whether the extension is in Idle. Leaving Idle drops every uncommitted
+   * change and every window waiting to be read again, since entering Idle
+   * rebuilds the record.
    *
    * @param {boolean} idle
    * @returns {void}
@@ -90,10 +90,15 @@ export class PlacementRecord {
 
   /**
    * Whether the screen is locked. A lock works like a monitor burst that
-   * lasts until the unlock check (ADR-0005 part 2 and its amendment): changes
-   * not yet committed are discarded, and those windows, with the ones that
-   * change meanwhile, are read again after the unlock check. Report an unlock
-   * before the unlock check starts: it pauses commits until that check.
+   * lasts until the unlock check:
+   *
+   * - Locking discards the changes not yet committed.
+   * - Those windows, and the ones that change while locked, are read again
+   *   after the unlock check.
+   * - Report the unlock before the unlock check starts. It pauses commits
+   *   until that check.
+   *
+   * See ADR-0005 part 2.
    *
    * @param {boolean} locked
    * @returns {void}
@@ -109,14 +114,17 @@ export class PlacementRecord {
   }
 
   /**
-   * A window's placement may have changed (it moved, resized, changed
+   * A window's placement may have changed: it moved, resized, changed
    * workspace, maximized, fullscreen or minimized state, appeared, or became
-   * one the record holds): commit it once the window has been still for the
-   * settle period. Ignored outside Idle. While the screen is locked or commits
-   * are paused (a monitor burst, or an unlock before its check), the change is
-   * not timed. The window is read again after the next check that is not
-   * stale (the unlock check, if the screen is locked), and only if that check
-   * leaves the extension in Idle.
+   * one the record holds.
+   *
+   * - Outside Idle, the change is ignored.
+   * - While the screen is locked or commits are paused (a monitor burst, or an
+   *   unlock before its check), the window waits for the next check that is
+   *   not stale (the unlock check, if the screen is locked). It is read again
+   *   only if that check leaves the extension in Idle.
+   * - Otherwise the window is committed once it has been still for the settle
+   *   period.
    *
    * @param {W} window
    * @returns {void}
@@ -136,8 +144,8 @@ export class PlacementRecord {
 
   /**
    * A window closed or stopped being one the record holds. Applies in every
-   * state: it drops a window and records no placement (ADR-0005 part 2 and
-   * its amendment).
+   * state, since it drops a window and records no placement
+   * (ADR-0005 part 2).
    *
    * @param {W} window
    * @returns {void}
@@ -149,11 +157,11 @@ export class PlacementRecord {
   }
 
   /**
-   * A raw `monitors-changed`: discard every change not yet committed and stop
-   * commits until the caller reports the monitor check that follows with
-   * `checked()`, so moves Mutter makes during a monitor change cannot reach
-   * the record before that check. A check that fails reports nothing, and the
-   * record stays paused until a later check reports.
+   * A raw `monitors-changed`. Discards every change not yet committed and
+   * pauses commits until the caller reports the monitor check that follows
+   * with `checked()`, so moves Mutter makes during a monitor change cannot
+   * reach the record. A check that fails reports nothing, so the record stays
+   * paused until a later check reports.
    *
    * @returns {void}
    */
@@ -172,12 +180,15 @@ export class PlacementRecord {
   }
 
   /**
-   * A monitor check has run. Call it after the check's transition has been
-   * reported through `setIdle()`. A check that started before the latest
-   * burst or unlock changes nothing: the check that follows it answers. If
-   * the extension is in Idle with the screen unlocked, each window to read
-   * again starts a new settle timer; a check while the screen is locked keeps
-   * them for the unlock check.
+   * A monitor check has run. Call it after reporting the check's transition
+   * through `setIdle()`.
+   *
+   * - A check that started before the latest burst or unlock is stale and
+   *   changes nothing. The check that follows it answers.
+   * - A check while the screen is locked keeps the windows to read again for
+   *   the unlock check.
+   * - Otherwise each window to read again goes through `changed()`, which
+   *   ignores it outside Idle.
    *
    * @param {number} burst The `burst` value read when the check started.
    * @returns {void}

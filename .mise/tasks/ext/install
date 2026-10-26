@@ -10,9 +10,9 @@ IFS=$'\n\t'
 readonly UUID="rdp-primary-monitor@michal-b-bozek.github.io"
 readonly ZIP="build/${UUID}.shell-extension.zip"
 
-# read_list <key> — print each UUID in org.gnome.shell <key>, one per line. UUIDs hold no
-# quotes, so every single-quoted item in gsettings' output is one; "@as []" has none. Any other
-# shape stops the task: read as empty, the list would be written back without its entries.
+# read_list <key> — print each UUID in org.gnome.shell <key>, one per line. Any shape other than
+# a string list stops the task: read as empty, the list would be written back without its
+# entries.
 read_list() {
   local value list_shape='^(@as )?\[.*\]$'
   value="$(gsettings get org.gnome.shell "$1")"
@@ -24,7 +24,6 @@ read_list() {
   grep -oE "'[^']*'" <<< "${value}" | tr -d "'" || [[ $? -eq 1 ]]
 }
 
-# write_list <key> [uuid...] — set org.gnome.shell <key> to exactly these UUIDs.
 write_list() {
   local key="$1" list="" uuid
   shift
@@ -47,9 +46,8 @@ main() {
     exit 78
   fi
 
-  # Both lists are read before anything changes, each into a variable: a failed gsettings
-  # inside < <(…) would read as an empty list, and writing it back would drop every other
-  # extension. An empty list stays an empty array, not one empty item.
+  # Not < <(…): a failed gsettings there reads as an empty list, and writing it back would drop
+  # every other extension.
   local -a enabled=() disabled=() kept=()
   local uuid lines
   lines="$(read_list enabled-extensions)"
@@ -59,13 +57,11 @@ main() {
   for uuid in "${disabled[@]}"; do
     if [[ "${uuid}" != "${UUID}" ]]; then kept+=("${uuid}"); fi
   done
-  # Copies the files and compiles the schema. A Shell already running the extension keeps the
-  # old code until the next login.
+  # A Shell already running the extension keeps the old code until the next login.
   gnome-extensions install --force "${ZIP}"
 
-  # On Wayland the Shell finds a newly installed extension only at login, so
-  # `gnome-extensions enable` fails now; listed in enabled-extensions, the extension is enabled
-  # when the next session starts. Only this UUID is added or removed; the other entries stay.
+  # Listed in enabled-extensions, it starts at the next login. Not `gnome-extensions enable`: on
+  # Wayland that fails until the Shell finds the new extension at the next login.
   local enabled_already=false
   for uuid in "${enabled[@]}"; do
     if [[ "${uuid}" == "${UUID}" ]]; then enabled_already=true; fi

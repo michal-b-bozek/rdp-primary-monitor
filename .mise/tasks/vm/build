@@ -6,10 +6,8 @@
 #USAGE   choices "f43" "f44"
 #USAGE }
 #
-# Installs Fedora Workstation into a new qemu:///session domain: no root, no ISO, the
-# installer and packages come from the Fedora mirrors (a few GB, a long download). The
-# kickstart is rendered with fresh credentials kept in the VM's state directory, outside the
-# repository. Refuses to touch an existing VM: run vm:destroy first.
+# A qemu:///session domain: no root, no ISO; the installer and packages come from the Fedora
+# mirrors (a few GB). Credentials live in the VM's state directory, outside the repository.
 set -euo pipefail
 shopt -s inherit_errexit
 IFS=$'\n\t'
@@ -34,10 +32,10 @@ on_signal() {
   kill -s "${sig}" "$$"
 }
 
-# render_kickstart <template> <output> — fill the @…@ placeholders. The guest files travel
-# inside the kickstart as base64, so nothing depends on where the installer keeps extra
-# initrd files. Replacements are quoted so bash's patsub_replacement never treats `&` in a
-# value as the matched text.
+# render_kickstart <template> <output>
+# The guest files travel inside the kickstart as base64: nothing depends on where the installer
+# keeps extra initrd files. Quoted replacements stop patsub_replacement reading `&` in a value as
+# the matched text.
 render_kickstart() {
   local ks password_hash public_key guest_setup rdp_credentials
   ks="$(< "$1")"
@@ -62,7 +60,6 @@ render_kickstart() {
   )
 }
 
-# generate_credentials — fresh tester password, RDP credentials and ssh key for this build.
 generate_credentials() {
   rm -rf -- "${RDPPM_VM_STATE_DIR}"
   mkdir -p -- "${RDPPM_VM_STATE_DIR}"
@@ -99,12 +96,11 @@ main() {
 
   printf 'Installing %s (Fedora %s); progress: %s\n' "${RDPPM_VM_NAME}" "${RDPPM_VM_RELEASE}" \
     "${RDPPM_VM_STATE_DIR}/console.log" >&2
-  # Two virtio display heads stand in for two physical monitors. The resolution below reaches
-  # only Virtual-1 (1920x1080); Virtual-2, forced on by the kernel argument, comes up at QEMU's
-  # 5120x2160 and Mutter scales it by 2.67, a HiDPI monitor next to a normal one. passt
-  # forwards RDP and ssh on the host loopback only. The kickstart ends with poweroff and
-  # --noreboot keeps the VM off; the bounded wait turns a halted installer (failed %post,
-  # broken mirror) into an error.
+  # Two virtio heads stand in for two monitors. The resolution reaches only Virtual-1
+  # (1920x1080); Virtual-2, forced on by a kernel argument, comes up at 5120x2160 and Mutter
+  # scales it by 2.67, a HiDPI monitor next to a normal one.
+  # passt forwards RDP and ssh on the host loopback only.
+  # The bounded wait turns a halted installer (failed %post, broken mirror) into an error.
   if ! virt-install --connect "${RDPPM_LIBVIRT_URI}" \
     --name "${RDPPM_VM_NAME}" \
     --osinfo "${RDPPM_VM_OSINFO}" \

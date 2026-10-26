@@ -42,7 +42,7 @@ export const REMOTE_PRODUCT = 'Virtual remote monitor'
  */
 
 /**
- * A virtual monitor that matched, with the monitor check at which it first
+ * A matching virtual monitor and the monitor check at which it first
  * appeared.
  *
  * @typedef {object} Arrival
@@ -167,8 +167,8 @@ function currentModeId(state, connector) {
 }
 
 /**
- * Order serials such as `0x000001` numerically; one that is not entirely
- * hexadecimal sorts last, so the choice stays deterministic.
+ * Order serials such as `0x000001` numerically. A serial that is not
+ * entirely hexadecimal sorts last, so the choice stays deterministic.
  *
  * @param {string} serial
  * @returns {number} The sort key.

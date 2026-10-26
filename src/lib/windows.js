@@ -135,16 +135,16 @@ export function planRestore(record, current, present, workspaceCount) {
     steps.push({ kind: 'unmakeFullscreen' })
   }
   steps.push({ kind: 'moveToMonitor', monitor: monitor.index })
-  // The workspace comes after the monitor: a window that moves onto the
-  // primary monitor from another stops being on all workspaces and Mutter puts
-  // it on the active one, which would undo an earlier workspace change. A
-  // record with no workspace of its own, or whose workspace no longer exists,
-  // leaves the window on the workspace it has, or on all of them.
+  // The workspace comes after the monitor, or the monitor move undoes it (a
+  // window that moves onto the primary monitor from another stops being on all
+  // workspaces, and Mutter puts it on the active one). A record with no
+  // workspace of its own, or whose workspace no longer exists, leaves the
+  // window on the workspace it has, or on all of them.
   if (record.workspace === 'all') {
     if (current.workspace !== 'all') steps.push({ kind: 'stick' })
   } else if (record.workspace !== 'none' && record.workspace < workspaceCount) {
-    // A window off the primary monitor can have asked to be on all workspaces
-    // as well, so 'none' is unstuck like 'all'; unsticking a window that did
+    // 'none' is unstuck like 'all', since a window off the primary monitor can
+    // have asked to be on all workspaces as well. Unsticking a window that did
     // not ask changes nothing.
     if (current.workspace === 'all' || current.workspace === 'none') {
       steps.push({ kind: 'unstick' })
@@ -153,16 +153,16 @@ export function planRestore(record, current, present, workspaceCount) {
       steps.push({ kind: 'changeWorkspace', workspace: record.workspace })
     }
   }
-  // Unmaximizing returns the window to the rectangle Mutter saved when it was
-  // maximized, which can lie on the session's monitor, so only a window
-  // maximized in a direction the record lacks is unmaximized; maximizing adds
-  // missing directions in place. Such a record is never maximized in both
-  // directions, so the frame step below always follows an unmaximize.
+  // Only a window maximized in a direction the record lacks is unmaximized
+  // (unmaximizing returns it to the rectangle Mutter saved at maximize time,
+  // which can lie on the session's monitor). Maximizing adds missing directions
+  // in place. Such a record is never maximized in both directions, so the
+  // frame step below always follows an unmaximize.
   if ((current.maximizeFlags & ~record.maximizeFlags) !== 0) {
     steps.push({ kind: 'unmaximize' })
   }
-  // Maximizing in one direction leaves the other where it is, so a window
-  // maximized in one direction gets its frame first (ADR-0004 part 4).
+  // A window maximized in one direction gets its frame first, since maximizing
+  // leaves the other direction where it is (ADR-0004 part 4).
   if (record.maximizeFlags !== MAXIMIZE_BOTH) {
     steps.push({
       kind: 'moveResizeFrame',

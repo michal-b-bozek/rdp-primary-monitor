@@ -1,14 +1,8 @@
 # SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
 # SPDX-License-Identifier: MIT
-# Kickstart for the RDP Primary Monitor test VMs (Fedora Workstation, GNOME). A template:
-# `mise run vm:build` fills the @…@ placeholders into a temporary copy and injects it into the
-# installer initrd. The rendered copy carries a password hash, the RDP credentials and
-# rdppm-guest-setup.sh (base64) and is never written to the repository.
-#
-# Result: user `tester` logs in automatically into a GNOME session that never locks; on first
-# login rdppm-guest-setup enables Desktop Sharing (RDP, `extend` mode) with the generated
-# credentials. sshd accepts only the generated key (password login is turned off). Throwaway
-# VM: tester has passwordless sudo.
+# Kickstart template for the test VMs; `mise run vm:build` renders it. The rendered copy holds a
+# password hash and the RDP credentials and is never written to the repository.
+# Throwaway VM: tester has passwordless sudo.
 
 text
 lang en_US.UTF-8
@@ -39,13 +33,13 @@ openssl
 -gnome-initial-setup
 %end
 
-# This shell has no shebang, so ShellCheck and shfmt do not see it; keep it short and plain.
+# ShellCheck and shfmt do not see this shell; keep it short and plain.
 %post --interpreter=/usr/bin/bash --erroronfail
 set -euo pipefail
 IFS=$'\n\t'
 
-# Anaconda installs from the release tree even with the updates repo added above; bring the
-# GNOME stack to the current point release so the VM matches an updated desktop.
+# Anaconda installs from the release tree even with the updates repo; this brings GNOME to the
+# current point release.
 dnf -y upgrade --refresh
 
 mkdir -p /usr/local/libexec /home/tester/.config/rdppm
