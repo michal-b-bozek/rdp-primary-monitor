@@ -12,10 +12,8 @@ Making the session's monitor primary means changing Mutter's display configurati
 `org.gnome.Mutter.DisplayConfig`: read the layout with `GetCurrentState`, send it back with
 `ApplyMonitorsConfig`. That call takes a method: `0` verify, `1` temporary, `2` persistent. In the
 feasibility spike (GNOME Shell 49.10 and 50.5, test VMs, a FreeRDP client), the extension's call was
-prototyped as a script: the same logical monitors, with the same positions, scales, transforms and
-modes, only the virtual monitor's logical monitor marked primary, the `layout-mode` property copied,
-and the serial from the `GetCurrentState` reply passed back. Results, the same on both versions,
-with the replies kept as [fixtures](../../../tests/fixtures/display-config/README.md):
+prototyped as a script sending the configuration described in part 1. Results, the same on both
+versions, with the replies kept as [fixtures](../../../tests/fixtures/display-config/README.md):
 
 - verify (`0`) was accepted and changed nothing; temporary (`1`) was accepted and made the virtual
   monitor primary, with the `GetCurrentState` layout otherwise unchanged; the top bar left the
@@ -27,14 +25,14 @@ with the replies kept as [fixtures](../../../tests/fixtures/display-config/READM
 - the serial in the reply counts monitor changes, not applied configurations: it stayed the same
   after the apply.
 
-Five forces shape the call:
+What shapes the call:
 
 - **The user's remembered layouts must survive.** `~/.config/monitors.xml` is where GNOME keeps the
   layout the user chose for each set of monitors. The maintainer's workstation has five stored
   layouts with a virtual monitor in them, and in one of those it is not primary. A persistent apply
   asks the user to confirm the new layout and, once confirmed, saves it over the entry for the
   current set (Mutter's `src/backends/meta-monitor-manager.c`, branches `gnome-49` and `gnome-50`,
-  read on 2026-10-12); the project's ground rules forbid the extension to touch the file at all.
+  read on 2026-10-12); the project's ground rules forbid the extension to touch the file.
 - **A temporary configuration is forgotten.** Mutter does not keep it across a reconnect, so a
   rule that applies the primary only once would leave every later session unfocused.
 - **The layout can change between the read and the apply.** `ApplyMonitorsConfig` names the layout
@@ -42,9 +40,8 @@ Five forces shape the call:
   current one ("The requested configuration is based on stale information", in the same file). A
   monitor change in that interval, such as the rest of a connect burst after the debounce period,
   fails the apply. The spike did not provoke this case.
-- **The layout must come back when the client leaves.** In the spike, Mutter restored the
-  previous layout by itself, in the same monitor burst that removed the virtual monitor; a
-  configuration the extension sent then would race it.
+- **The layout must come back when the client leaves.** In the spike, Mutter restored the previous
+  layout by itself, in the same monitor burst that removed the virtual monitor (part 2).
 - **The user can take the primary back.** Settings → Displays, or another tool, can move the
   primary off the session's monitor while the client is still connected. Other changes also
   reach the extension as `monitors-changed`: the user moving a monitor or changing a scale, and,
@@ -59,8 +56,7 @@ The extension changes the display configuration **only** with `ApplyMonitorsConf
 (temporary), and only in Focusing. The configuration it sends is the `GetCurrentState` layout
 unchanged except for the `primary` flag, which moves to the logical monitor of the session's
 monitor, with the reply's serial and `layout-mode`. If that monitor is primary already, the
-extension sends nothing. It applies again in every session, since Mutter forgets the
-configuration.
+extension sends nothing. It applies again in every session.
 
 Explicitly not the persistent method (`2`): it asks the remote user to confirm a layout they did
 not choose, and then writes `~/.config/monitors.xml`, replacing the user's remembered layout for
@@ -78,15 +74,14 @@ the layout before the session; the spike saw only the test VMs.
 ### 3. Retry once, then Dismissed
 
 A failed temporary apply is retried **once**, from a fresh `GetCurrentState`, at the next monitor
-check or one debounce period after the failure, whichever comes first, so that the retry does not
-land in the same burst and still runs when no monitor changes; if it fails too, the extension logs
-the error once and goes to Dismissed, and gathers no windows. There is no verify call (method `0`)
-before the apply.
+check or one debounce period after the failure, whichever comes first. The two triggers keep the
+retry out of the same burst and make it run even when no monitor changes. If the retry fails too,
+the extension logs the error once, goes to Dismissed and gathers no windows.
 
 Explicitly not:
 
-- verify first: the temporary apply checks the same configuration and fails the same way, so a
-  verify step adds a round trip and a second chance for the serial to go stale;
+- verify first (method `0`): the temporary apply checks the same configuration and fails the same
+  way, so a verify step adds a round trip and a second chance for the serial to go stale;
 - going to Dismissed at the first failure: a stale serial is a race, not an error in the
   configuration, and one fresh read answers it;
 - retrying until it succeeds: a configuration Mutter rejects for another reason would loop.
@@ -103,14 +98,13 @@ goes, even if the primary comes back to it.
 
 > **Amendment (2026-10-13).** Two edge cases, found while writing the state machine
 > (`src/lib/state.js`). The rule applies only to a session whose monitor was primary when gathering
-> began. Without that condition, every session with the setting that makes the monitor primary
-> turned off would be dismissed at the first monitor check after gathering: the extension sends no
-> apply then, and the session's monitor is usually not primary. The rule also covers the check that
-> follows a successful apply: if the primary is off the session's monitor by then, the extension
-> goes from Focusing to Dismissed and gathers no windows. Gathering them would put them on a monitor
-> the user has just taken the primary from, and the next check would dismiss the session with the
-> windows left there. `docs/design.md`'s Focusing and Focused text and its state diagram change
-> with this.
+> began. Without that condition, a session would be dismissed at the first monitor check after
+> gathering whenever the `make-primary` setting is off: the extension sends no apply then, and the
+> session's monitor is usually not primary. The rule also covers the check that follows a successful
+> apply: if the primary is off the session's monitor by then, the extension goes from Focusing to
+> Dismissed and gathers no windows. Gathering them would put them on a monitor the user has just
+> taken the primary from, and the next check would dismiss the session with the windows left there.
+> `docs/design.md`'s Focusing and Focused text and its state diagram change with this.
 
 Explicitly not:
 
@@ -125,13 +119,14 @@ monitor hot-plug, dismisses their session.
 
 - **Temporary apply, Mutter's fallback on disconnect (chosen).**
 - **Persistent apply.** Would let Mutter apply a stored layout again on reconnect, but untested: the
-  virtual monitor's monitor serial changes every session (ADR-0002), so a stored entry may never
-  match again; prompts for confirmation, then rewrites the user's stored layouts in
-  `~/.config/monitors.xml`.
+  virtual monitor's serial changes every session (ADR-0002), so a stored entry may never match
+  again. Prompts for confirmation, then overwrites the user's stored layouts in
+  `~/.config/monitors.xml` (part 1).
 - **Temporary apply plus an explicit restore on disconnect.** Independent of Mutter's fallback;
   duplicates it and races it within the same monitor burst.
 - **Settings' own primary switch, done by hand.** No extension at all; this manual step is what the
-  project replaces, because it has not persisted reliably from one remote session to the next.
+  project replaces, because in the maintainer's use it has not persisted reliably from one remote
+  session to the next.
 
 ## Consequences
 
@@ -143,8 +138,7 @@ monitor hot-plug, dismisses their session.
 - **Cost:** a rejected retry leaves the session unfocused until the client reconnects; the
   journal is the only trace.
 - **Cost:** a user who moves the primary back to the session's monitor after the extension has
-  dismissed the session gets no gathering; the extension stays out of the way until the next
-  session.
+  dismissed the session gets no gathering.
 
 ## Tracked separately
 

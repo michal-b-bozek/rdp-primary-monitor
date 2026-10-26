@@ -8,13 +8,13 @@
 ## Context
 
 By the end of the feasibility spike and the design questions that followed it, the project had taken
-its first design decisions, several with rejected options: restore every gathered window even if it
-was moved remotely, rather than keep the remote changes; pick the most recently added virtual
-monitor, rather than the largest; keep a session through the lock screen, rather than restore on
-lock. The chosen rules are in `docs/design.md`; the rejected options and the reasons live only in
-the maintainer's working notes, which are not part of the repository.
-The repository is meant to go public, and it is worked on by people and coding agents who see only
-what is committed.
+its first design decisions, several with rejected options. It restores every gathered window even
+if it was moved remotely, rather than keep the remote changes. It picks the most recently added
+virtual monitor, rather than the largest. It keeps a session through the lock screen, rather than
+restore on lock. The chosen rules are in `docs/design.md`; the rejected options and the reasons
+live only in the maintainer's working notes, which are not part of the repository. The repository
+is meant to go public, and it is worked on by people and coding agents who see only what is
+committed.
 
 Decisions costly to reverse get re-litigated when their reasoning is lost:
 
@@ -34,11 +34,12 @@ Decisions costly to reverse get re-litigated when their reasoning is lost:
 
 One per file in `docs/architecture/decisions/NNNN-short-title.md`, numbered from `0001`, with the
 rejected options and why each lost, named in the words a reader would search for. Each ADR states
-the evidence it rests on in its own words; it does not link to working notes. Explicitly not for bug
-fixes, dependency bumps, settings defaults, routine tooling changes (a lint rule, a hook, a pinned
-version) or test setup: the commits record those, and settings defaults will live in the GSettings
-schema. Revisit the exclusions if a decision in one of these categories is re-proposed after being
-rejected once.
+its evidence in its own words, with no link to working notes.
+
+Not for bug fixes, dependency bumps, settings defaults, routine tooling changes (a lint rule, a
+hook, a pinned version) or test setup: the commits record those, and settings defaults will live in
+the GSettings schema. Revisit the exclusions if a decision in one of these categories is re-proposed
+after being rejected once.
 
 ### 2. An accepted ADR's meaning is never rewritten
 
@@ -52,11 +53,11 @@ are allowed.
 
 ### 3. Format
 
-So that every ADR can be read, amended and superseded the same way: one problem per file, its parts
-numbered when it has several. Sections: Context, Decision, Considered options, Consequences, and
-Tracked separately when work is deferred. The status line is `proposed`, `accepted`, `deprecated` or
-`superseded by ADR-NNNN`; superseding one part keeps `accepted` and adds `part N superseded by
-ADR-NNNN`. Links to other ADRs are typed: supersedes, exception to, builds on.
+One problem per file, its parts numbered when it has several. Sections: Context, Decision,
+Considered options, Consequences, and Tracked separately when work is deferred. The status line is
+`proposed`, `accepted`, `deprecated` or `superseded by ADR-NNNN`; superseding one part keeps
+`accepted` and adds `part N superseded by ADR-NNNN`. Links to other ADRs are typed: supersedes,
+exception to, builds on.
 
 ### 4. Routing
 
@@ -81,14 +82,13 @@ ADR-NNNN`. Links to other ADRs are typed: supersedes, exception to, builds on.
 
 ## Tracked separately
 
-- Recording the decisions taken so far: the virtual-monitor matching rule, the temporary display
-  configuration (with the rule for a primary moved off the session's monitor), window snapshot and
-  restore, the lock screen, and the language and tooling, one ADR each. The remaining decisions are
-  settings defaults, routine tooling changes or test setup, which part 1 excludes. The
-  language-and-tooling ADR covers the choice of language and type checking, which is not a routine
-  tooling change: it shapes the shipped code.
+- Recording the decisions taken so far, one ADR each: the virtual-monitor matching rule, the
+  temporary display configuration (with the rule for a primary moved off the session's monitor),
+  window snapshot and restore, the lock screen, and the language and tooling, which shapes the
+  shipped code and so is not a routine tooling change; the rest are settings defaults, routine
+  tooling changes or test setup, which part 1 excludes.
 
   > **Amendment (2026-10-13).** Settled by
   > [ADR-0002](0002-match-the-virtual-monitor.md) to
-  > [ADR-0006](0006-plain-javascript-checked-with-typescript.md), one per decision listed here, as
-  > the review of the whole log confirmed; the item is closed. No rule of this ADR changes.
+  > [ADR-0006](0006-plain-javascript-checked-with-typescript.md), one per decision listed here; the
+  > item is closed. No rule of this ADR changes.

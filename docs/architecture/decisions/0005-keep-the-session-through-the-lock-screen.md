@@ -3,31 +3,27 @@
 - **Status:** accepted; Last amended: 2026-10-14
 - **Date:** 2026-10-13
 - **Deciders:** Michał Bogusław Bożek (maintainer)
-- **Related:** builds on [ADR-0004](0004-snapshot-and-restore-windows.md), whose `disable()`
-  restores the gathered windows, and on [ADR-0002](0002-match-the-virtual-monitor.md) part 3 (the
-  reconnect). ADR-0004's part 4 restore, when the session's monitor goes while the screen is locked,
-  runs at unlock (part 3 here); ADR-0002's parts 2 and 4 rely on the unlock check set up here.
-  [ADR-0003](0003-apply-the-primary-temporarily.md)'s rules do not change; while the screen is
-  locked, its retry (part 3) runs on the debounce timer.
+- **Related:** builds on [ADR-0002](0002-match-the-virtual-monitor.md) (part 3, the reconnect),
+  [ADR-0003](0003-apply-the-primary-temporarily.md) and
+  [ADR-0004](0004-snapshot-and-restore-windows.md) (part 4's restore, part 5's `disable()`).
 
 ## Context
 
 The screen locks when the user at the workstation locks it, after the idle timeout, or from the
-remote side; on the maintainer's workstation, the "Allow Locked Remote Desktop" extension also lets
+remote side. On the maintainer's workstation, the "Allow Locked Remote Desktop" extension also lets
 an RDP client connect while the screen is locked, so a virtual monitor can appear, or go, behind the
-lock. Three forces follow:
+lock.
 
 - **Locking disables extensions that do not ask to stay.** GNOME Shell runs an extension only in the
-  session modes its `metadata.json` lists under `session-modes`; with the default (`user` only) it
+  session modes its `metadata.json` lists under `session-modes`. With the default (`user` only) it
   calls `disable()` when the screen locks and `enable()` again at unlock (gjs.guide, the extension
   session modes). Under ADR-0004, that `disable()` would put every gathered window back while the
-  screen is locked, and the `enable()` at unlock would gather them again: each lock moves the
-  windows away from the remote user and back.
+  screen is locked, and the `enable()` at unlock would gather them again.
 - **Work behind the lock is invisible and hard to check.** While the screen is locked, the windows
   are hidden; a gather or a restore that runs then cannot be watched, and its result is what the
   user meets at unlock. A placement record updated then would hold states the user never saw.
-  Mutter's own fallback still acts: in the spike (ADR-0004), on disconnect Mutter parked the
-  gathered windows on the remaining primary; behind the lock this is expected, not yet observed.
+  Mutter's own fallback still acts. In the spike (ADR-0004), Mutter parked the gathered windows on
+  the remaining primary on disconnect; behind the lock this is expected, not yet observed.
 - **A session can start or end during the lock.** With "Allow Locked Remote Desktop", a client
   can connect, disconnect, or both, while the screen is locked; the extension has to know at unlock
   what happened.
@@ -40,42 +36,32 @@ lock. Three forces follow:
 extension and a session survives the lock: the windows stay gathered, the temporary primary stays,
 and the snapshot is kept. The extension draws nothing, so it shows nothing on the lock screen.
 
-> **Amendment (2026-10-14).** Part 1 does not always hold. When the screen locks, GNOME Shell 49 and
-> 50 disable every extension that does not list `unlock-dialog`, and for each of them first disable,
-> then enable again, every extension enabled after it (`_callExtensionDisableWithRebase` in
-> `js/ui/extensionSystem.js`). If such an extension was enabled before this one, as after login it
-> can be, the lock calls this extension's `disable()`, once for each such extension: the gathered
-> windows go back behind the lock and the snapshot is dropped, and the last `enable()` waits for
-> unlock and gathers them again, so the remote user's arrangement is lost. The Shell does the same
-> whenever an extension enabled before this one is turned off, locked or not; unlocked, the windows
-> go back and are gathered again at once. After that unlock this extension comes before those
-> extensions, so later locks keep the session. Whether to carry a session across such a `disable()`
-> stays open until the test VMs show how often it happens with a typical set of extensions (Tracked
-> separately). Found in the review of the extension's wiring (`src/lib/session.js`,
-> `src/extension.js`); the first Good consequence and Tracked separately change with this, and so
-> does `docs/design.md`'s Lifecycle section.
-
-> **Amendment (2026-10-14).** The amendment above is wrong about when the lock calls this
-> extension's `disable()`: "as after login it can be" does not hold. Before enabling the extensions
-> at login, GNOME Shell 49 and 50 sort them by the number of session modes they list, most first
+> **Amendment (2026-10-14).** Part 1 does not always hold. Before enabling the extensions at login,
+> GNOME Shell 49 and 50 sort them by the number of session modes they list, most first
 > (`_compareExtensions`, used by `_getEnabledExtensions` and `_loadExtensions` in
-> `js/ui/extensionSystem.js`), so this extension, which lists two, is enabled before every extension
-> that lists `user` only, and a lock after login does not disable it. It comes after such an
-> extension only when it is enabled during the session (turned on, installed, or reloaded): the
-> Shell adds an extension enabled then to the end of its order (`_callExtensionEnable`). The next
-> lock then disables and re-enables it as the amendment above describes, and after that unlock it
-> comes before those extensions again. In the test VMs (GNOME Shell 49.10 and 50.5, with this
-> extension listed after two others in `enabled-extensions`), a lock after login left the extension
-> running. After it was turned off and on again with `gnome-extensions`, the next lock made the
-> Shell call its `disable()` and then `enable()`, as its debug log showed. Whether to carry a
-> session across that `disable()` stays open (Tracked separately). `docs/design.md`'s Lifecycle
-> section and the first Good consequence change with this.
+> `js/ui/extensionSystem.js`). This extension lists two, so it is enabled before every extension
+> that lists `user` only, and a lock after login does not disable it. An extension enabled during
+> the session (turned on, installed or reloaded) goes to the end of the order
+> (`_callExtensionEnable`). When the screen locks, the Shell disables every extension that does not
+> list `unlock-dialog`, and for each of them first disables, then enables again, every extension
+> enabled after it (`_callExtensionDisableWithRebase`). So at the first lock after this extension
+> was enabled during the session, its `disable()` runs, once for each such extension enabled before
+> it: the gathered windows go back behind the lock, the snapshot is dropped, and the last `enable()`
+> waits for unlock and gathers them again, so the remote user's arrangement is lost. After that
+> unlock this extension comes before those extensions again, so later locks keep the session. The
+> Shell does the same whenever an extension enabled before this one is turned off, locked or not;
+> unlocked, the windows go back and are gathered again at once. In the test VMs (GNOME Shell 49.10
+> and 50.5, this extension listed after two others in `enabled-extensions`), a lock after login left
+> the extension running. After it was turned off and on again with `gnome-extensions`, the next lock
+> made the Shell call its `disable()` and then `enable()`, as its debug log showed. A first reading
+> the same day held that a lock right after login could also disable the extension; the sort rules
+> that out. Found in the review of the extension's wiring (`src/lib/session.js`,
+> `src/extension.js`); `docs/design.md`'s Lifecycle section, the first Good consequence and Tracked
+> separately change with this.
 
 > **Amendment (2026-10-14).** The extension does not carry a session across a `disable()` caused by
 > the extension order: that `disable()` restores the gathered windows and drops the snapshot like
-> any other (ADR-0004 part 5), and the `enable()` after it gathers them again, at unlock if the
-> screen is locked, at once if not. The maintainer accepted this as a cost (Consequences). At the
-> lock it happens only at the first lock after the extension was enabled during the session, and
+> any other (ADR-0004 part 5). The maintainer accepted this as a cost (Consequences). At a lock it
 > matters only where the RDP session survives the lock, which it did not on GNOME Shell 49.10 and
 > 50.5 in the test VMs (Tracked separately, the amendment on stock GNOME). Explicitly not keeping
 > the snapshot and the gathered windows in module-level state that outlives `disable()`: the
@@ -95,7 +81,8 @@ placement record, and a pending monitor check is dropped. A restore that finishe
 is locked enters Idle without rebuilding the record; the rebuild waits for unlock. A `disable()`
 while the screen is locked still restores as ADR-0004 part 5 says, since nothing may outlive it.
 Work already under way when the screen locks finishes: a Focusing apply with its one retry, the
-gather that follows it, and a restore.
+gather that follows it, and a restore. [ADR-0003](0003-apply-the-primary-temporarily.md)'s rules do
+not change; while the screen is locked, its retry (part 3) runs on the debounce timer.
 
 > **Amendment (2026-10-14).** "No update of the placement record" means no new placements: a window
 > that closes, or stops being a normal window, still leaves the record while the screen is locked.
@@ -113,10 +100,10 @@ gather that follows it, and a restore.
 > follow the session's own monitor: they note no arrivals and start nothing. In Focusing, such a
 > check lets the gather that waits for the apply's layout change go ahead, which is work under way,
 > or ends Focusing in Dismissed if the primary has already left the session's monitor (ADR-0003 part
-> 4). If it finds the session's monitor gone, it cancels the apply, retry or gather still pending,
-> so "work already under way finishes" holds only while that monitor is present: with it gone there
-> is nothing to apply or gather onto. The rejection of cancelling work under way, below, still
-> holds: what this cancels has moved no window yet, since a gather runs to its end once started, so
+> 4). If it finds the session's monitor gone, it cancels the apply, retry or gather still pending:
+> "work already under way finishes" holds only while that monitor is present, since with it gone
+> there is nothing to apply or gather onto. The rejection of cancelling work under way, below, still
+> holds. What this cancels has moved no window yet: a gather runs to its end once started, so
 > nothing is left half-gathered. The unlock check then ends the session (or counts a new matching
 > monitor as a reconnect, under ADR-0002 part 3), or starts the apply over if the monitor is back.
 > Found in the review of the extension's wiring (`src/lib/session.js`); the state machine
@@ -134,8 +121,7 @@ and then the monitor check, which applies `docs/design.md`'s rules to what happe
 a client that disconnected has its windows restored right then; one that connected goes to Focusing;
 a disconnect followed by a connect counts as a reconnect
 ([ADR-0002](0002-match-the-virtual-monitor.md), part 3). An `enable()` that comes while the screen
-is locked waits and runs in full at unlock, since building the record and gathering then would be
-acting behind the lock (part 2).
+is locked waits and runs in full at unlock, since part 2 bars acting behind the lock.
 
 Explicitly not restoring immediately behind the lock when a client disconnects: the user at the
 workstation would unlock to windows already back in place, with no sign that the extension, not
@@ -148,8 +134,7 @@ would then have to make the virtual monitor primary behind the lock.
 ## Considered options
 
 - **`user` and `unlock-dialog`, idle while locked, catch up at unlock (chosen).**
-- **`user` only.** The default and the simplest review; the lock calls `disable()`, so every lock
-  ends the session and every unlock starts a new one.
+- **`user` only.** The default and the simplest review; every lock ends the session (part 1).
 - **Both modes, acting behind the lock.** The session is up to date at unlock; the extension moves
   windows nobody can see and records states nobody saw.
 
@@ -158,19 +143,13 @@ would then have to make the virtual monitor primary behind the lock.
 - **Good:** when the RDP session itself survives the lock, locking and unlocking leaves the remote
   user's windows and primary as they were.
 
-  > **Amendment (2026-10-14).** Except when the Shell disables and re-enables this extension at the
-  > lock (part 1 and its amendment): the windows are then put back behind the lock and gathered
-  > again at unlock, so the remote user's arrangement is lost.
-
-  > **Amendment (2026-10-14).** The Shell disables and re-enables this extension at the lock only
-  > after it was enabled during the session, not after login (part 1's second amendment of this
-  > date).
+  > **Amendment (2026-10-14).** Except at the first lock after the extension was enabled during the
+  > session (part 1's amendments).
 
 - **Good:** apart from Mutter's own parking of the windows when a client disconnects, what the user
   meets at unlock comes from one of three sources: what the extension did before the lock, work it
   had under way when the screen locked, or the unlock check.
-- **Cost:** the `unlock-dialog` mode has to be justified in the extensions.gnome.org review; the
-  extension must not create UI or keep anything visible on the lock screen.
+- **Cost:** the `unlock-dialog` mode has to be justified in the extensions.gnome.org review.
 - **Cost:** a client that connects while the screen is locked gets no primary and no windows
   until someone unlocks.
 - **Cost:** a disconnect followed by any matching monitor appearing during the lock counts as a
@@ -179,9 +158,7 @@ would then have to make the virtual monitor primary behind the lock.
   drop pending checks: more states than an extension that is disabled on lock.
 
   > **Amendment (2026-10-14).** Also a cost: at the first lock after the extension was enabled
-  > during the session, the Shell can disable and re-enable it, which puts the gathered windows back
-  > behind the lock and gathers them again at unlock, so the remote user's arrangement is lost
-  > (part 1's third amendment of this date).
+  > during the session, the remote user's arrangement is lost (part 1's amendments).
 
 ## Tracked separately
 
@@ -196,16 +173,10 @@ would then have to make the virtual monitor primary behind the lock.
   > **Amendment (2026-10-14).** They end it. In the test VMs (GNOME Shell 49.10 and 50.5, no "Allow
   > Locked Remote Desktop"), locking the screen ended the FreeRDP client's session and the virtual
   > monitor went; nothing moved behind the lock, and the unlock check restored the gathered windows
-  > with no difference from the snapshot. On stock GNOME, then, a lock is a disconnect, and part 1
-  > matters only where something keeps the RDP session through the lock. `docs/design.md`'s
-  > Lifecycle section changes with this.
+  > with no difference from the snapshot. On stock GNOME, then, a lock is a disconnect.
+  > `docs/design.md`'s Lifecycle section changes with this.
 
 - Whether to carry a session across a `disable()` that the Shell's extension order causes at the
   lock (part 1 amendment); to be settled on the test VMs with a typical set of extensions.
 
-  > **Amendment (2026-10-14).** The test VMs showed that this `disable()` happens only after the
-  > extension was enabled during the session (part 1's second amendment of this date), not after
-  > login; the question stays open.
-
-  > **Amendment (2026-10-14).** Settled: the session is not carried across it (part 1's third
-  > amendment of this date).
+  > **Amendment (2026-10-14).** Settled: not carried across (part 1's amendments).

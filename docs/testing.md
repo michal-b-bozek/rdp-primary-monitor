@@ -1,12 +1,11 @@
 # Manual test protocol
 
-Run this before every release, on GNOME Shell 49 and on 50; it is what the ADRs call the release
-checks. `mise run test` checks the extension's logic against a fake desk and a fake Mutter; this
-protocol checks what only a real Shell, a real Mutter and real monitors show. A **Check** must hold,
-or the case fails; a **Record** is an observation to write down. The reasons behind each check are
-in [the design](design.md) and the [ADRs](architecture/decisions/).
+Run this before every release, on GNOME Shell 49 and 50. `mise run test` checks the logic against a
+fake desk and a fake Mutter; this protocol checks what only a real Shell, a real Mutter and real
+monitors show. A **Check** must hold, or the case fails; a **Record** is an
+observation to write down.
 
-**Status:** written before its first run. Fix any step that turns out wrong while running it.
+Not yet run in full: fix any step that turns out wrong while running it.
 
 ## Where each case runs
 
@@ -22,13 +21,13 @@ Write down, per release: `gnome-shell --version`, where each case ran, and pass 
 
 In a VM, every `gsettings`, `gdbus` and `gnome-extensions` command needs the session bus of the
 logged-in user `tester`; the VM commands below set
-`DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus` for that. Quote a VM command whole, as
-below, so that your own shell expands nothing in it (`~` above all).
+`DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus`. Quote a VM command whole, as below, so
+your own shell expands nothing in it, especially `~`.
 
 1. Pack the extension on the host: `mise run pack`. The zip is
    `build/rdp-primary-monitor@michal-b-bozek.github.io.shell-extension.zip`.
-2. Install it so that it is enabled **at login**. An extension enabled during the session can be
-   disabled and enabled again by the Shell at the first lock, which would upset case 4
+2. Install it so that it is enabled **at login**: the Shell can disable and re-enable an extension
+   enabled during the session at the first lock, which would upset case 4
    ([design, Lifecycle](design.md#lifecycle-inside-the-shell)).
    - **Test VM** (here `f44`; the same for `f43`):
 
@@ -44,8 +43,8 @@ below, so that your own shell expands nothing in it (`~` above all).
      mise run vm:ssh f44 -- 'sudo systemctl restart gdm'
      ```
 
-   - **Workstation:** `mise run ext:install`, which packs too, so skip step 1. It enables the
-     extension for the next login, so one log out and in is enough.
+   - **Workstation:** `mise run ext:install`; it packs, so skip step 1, and enables the extension
+     for the next login, so one log out and in is enough.
 
 3. Turn on the debug lines and follow them in a second terminal. Each state change logs a line
    such as `idle -> focusing on check`; applies and gathers log too.
@@ -63,13 +62,12 @@ below, so that your own shell expands nothing in it (`~` above all).
 
      A session restart (`systemctl restart gdm`) ends the `journalctl`; start it again.
 
-4. Take the sum of the stored display layouts: `sha256sum ~/.config/monitors.xml`, or in a VM
+4. Take the checksum of the stored display layouts as the baseline:
+   `sha256sum ~/.config/monitors.xml`, or in a VM
    `mise run vm:ssh f44 -- 'sha256sum ~/.config/monitors.xml'`. If the file does not exist, "no
-   such file" is the baseline. Take it again at the end of every case: **Check:** unchanged. The
-   extension applies temporary configurations only
-   ([ADR-0003](architecture/decisions/0003-apply-the-primary-temporarily.md)). Settings → Displays
-   writes the file itself, so in cases 3 and 9 take a new sum right after that change and compare
-   against it.
+   such file" is the baseline. Take it again at the end of every case. **Check:** unchanged.
+   Settings → Displays writes the file itself, so in cases 3 and 9 take a new checksum right after
+   that change and compare against it.
 5. Open windows and spread them out: on two workspaces and more than one monitor; one maximized,
    one maximized in one direction only, one tiled to half the screen, one fullscreen, one minimized,
    and an application with two windows. Note where each one is; that is the layout a disconnect
@@ -99,8 +97,7 @@ the display state (read-only), use the `gdbus` command in the
 7. **Check:** the layout from before the connect comes back. The monitors have the same positions
    and the same primary as before; every gathered window is back on its monitor and workspace, in
    its position, size and state; the closed window is skipped with no error in the journal; the new
-   window stays where GNOME put it. On the workstation this checks Mutter's own fallback on real
-   hardware ([ADR-0003](architecture/decisions/0003-apply-the-primary-temporarily.md)).
+   window stays where GNOME put it.
    **Record:** whether the tiled windows came back tiled
    ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), Tracked separately).
 
@@ -120,14 +117,13 @@ preferences, and change it back afterwards. Read case 1's checks with that setti
 ## 3. The user takes the primary back
 
 1. Connect a client; wait for the windows to move.
-2. In Settings → Displays, make a real monitor primary and keep the change. Take a new sum of
-   `monitors.xml`: Settings has written it, storing a layout that includes the client's monitor.
+2. In Settings → Displays, make a real monitor primary and keep the change. Take a new checksum of
+   `monitors.xml`.
 3. **Check:** the extension stands aside (journal: `-> dismissed`); it moves nothing and
    does not take the primary back.
 4. Disconnect. **Check:** the gathered windows come back as in case 1, except that a window put back
-   on a monitor that is no longer primary stays on all workspaces while
-   `org.gnome.mutter workspaces-only-on-primary` is on ([design, Restoring](design.md#states));
-   `monitors.xml` matches the sum from step 2.
+   on a monitor that is no longer primary stays on all workspaces
+   ([design, Restoring](design.md#states)); `monitors.xml` matches the checksum from step 2.
 
 ## 4. Lock the screen
 
@@ -140,16 +136,17 @@ mise run vm:ssh f44 -- 'DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus gd
 mise run vm:ssh f44 -- 'sudo loginctl unlock-sessions'
 ```
 
-**Without "Allow Locked Remote Desktop"** (stock GNOME, as in the VMs): connect, wait for the windows to move, then lock.
-**Check:** the lock ends the client's session; the extension moves nothing behind the lock (Mutter
-may park windows when the client leaves); at unlock the windows come back as in case 1
-([ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md)).
+**Without "Allow Locked Remote Desktop"** (stock GNOME, as in the VMs): connect, wait for the
+windows to move, then lock. **Check:** the lock ends the client's session; the extension moves
+nothing behind the lock (Mutter may park windows when the client leaves); at unlock the windows come
+back as in case 1.
 
 **With "Allow Locked Remote Desktop"** (workstation, extension enabled at login):
 
 - **Connect while locked:** lock, connect, and look at the client. **Record:** whether the unlock
   dialog is visible and usable on the client's monitor; if not, that is the revisit trigger of
-  ADR-0005 parts 2 and 3. Unlock. **Check:** the monitor becomes primary and the windows move only
+  [ADR-0005](architecture/decisions/0005-keep-the-session-through-the-lock-screen.md) parts 2
+  and 3. Unlock. **Check:** the monitor becomes primary and the windows move only
   after the unlock.
 - **Disconnect while locked:** connect, wait for the windows to move, lock, disconnect, unlock.
   **Check:** the extension moves nothing behind the lock (Mutter may park windows when the client
@@ -160,10 +157,9 @@ may park windows when the client leaves); at unlock the windows come back as in 
   goes on; nothing moved.
 - **Enabled during the session** (needs another extension that runs only in the `user` session
   mode, enabled before this one): turn the extension off and on, connect, wait for the windows to
-  move, lock, unlock. **Check:**
-  the windows go back behind the lock and move to the client's monitor again at unlock, with no
-  error in the journal (ADR-0005, part 1 and its amendments). Log out and in afterwards, so the
-  extension is enabled at login again.
+  move, lock, unlock. **Check:** the windows go back behind the lock and move to the client's
+  monitor again at unlock, with no error in the journal. Log out and in afterwards, so the extension
+  is enabled at login again.
 
 ## 5. Undock during a session
 
@@ -186,9 +182,8 @@ The VMs cannot run this case: `vm:connect` opens one client window with one moni
 1. From a client machine with two monitors, connect with both (FreeRDP `/multimon`, or `/monitors`
    to pick them). **Check:** one of the two becomes primary and gets the windows. **Record:** how
    many virtual monitors Desktop Sharing created, their serials and positions, and the order they
-   appeared in the journal
-   ([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md)). Save the display state
-   as a fixture, sanitized as [AGENTS.md](../AGENTS.md) says.
+   appeared in the journal. Save the display state as a fixture, sanitized as
+   [AGENTS.md](../AGENTS.md) says.
 2. If Desktop Sharing accepts a second client while one is connected, connect it. **Check:** the
    first session keeps its monitor and windows. Disconnect the first. **Check:** the journal shows
    `restoring -> idle` and then `idle -> focusing` for the second client's monitor; its windows
@@ -199,18 +194,15 @@ The VMs cannot run this case: `vm:connect` opens one client window with one moni
 1. Connect a client; wait for the windows to move.
 2. Turn the extension off (Extensions app, or `gnome-extensions disable`).
 3. **Check:** every gathered window goes back at once to its monitor, position, size and state; the
-   client's monitor stays primary until the client disconnects; the journal shows no error. With
-   `org.gnome.mutter workspaces-only-on-primary` on (the default), windows put back on the monitor
-   that was primary before the session lose their workspace and stay on all workspaces, now and
-   after the disconnect; that is expected
-   ([design, Lifecycle](design.md#lifecycle-inside-the-shell);
-   [ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 5).
+   client's monitor stays primary until the client disconnects; the journal shows no error. Windows
+   put back on the monitor that was primary before the session stay on all workspaces, now and
+   after the disconnect ([design, Lifecycle](design.md#lifecycle-inside-the-shell)).
 4. Turn the extension on again with the client still connected. **Check:** a new session starts and
    the windows move to the client's monitor.
 5. Disconnect. **Check:** the windows come back to their monitor, position, size and state as when
    you turned the extension on in step 4.
-6. Repeat steps 1–3 with **Put the windows back** off. **Check:** turning the extension off still puts the
-   windows back.
+6. Repeat steps 1–3 with **Put the windows back** off. **Check:** turning the extension off still
+   puts the windows back.
 
 ## 8. Log out and in
 
@@ -227,25 +219,25 @@ The VMs cannot run this case: `vm:connect` opens one client window with one moni
 
 Workstation with two monitors.
 
-1. In Settings → Displays, mirror two monitors and keep the change; take a new sum of
+1. In Settings → Displays, mirror two monitors and keep the change; take a new checksum of
    `monitors.xml`.
 2. Connect a client. **Check:** no monitor goes dark and the mirrored pair stays mirrored.
    **Record:** whether the client's monitor became primary; if Mutter rejected the layout, the
    journal shows the apply failing twice and `focusing -> dismissed`, and nothing else changes.
-3. Disconnect. **Check:** the mirrored layout comes back; `monitors.xml` matches the sum from
+3. Disconnect. **Check:** the mirrored layout comes back; `monitors.xml` matches the checksum from
    step 1.
-4. Undo the mirroring, and take a new sum as the baseline for the next case.
+4. Undo the mirroring, and take a new checksum as the baseline for the next case.
 
 ## 10. Other virtual monitors
 
 If anything on the machine adds a virtual monitor without Desktop Sharing, such as a screen cast
 with a virtual source, start it with no client connected. **Record:** the monitor's vendor and
 product, and whether the journal shows `idle -> focusing`. It does if the monitor carries Desktop
-Sharing's vendor and product, which ADR-0002 part 1 would match; that is its revisit trigger
-([ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md)).
+Sharing's vendor and product, which
+[ADR-0002](architecture/decisions/0002-match-the-virtual-monitor.md) part 1 would match; that is the
+trigger to revisit the ADR.
 
 ## After the run
 
-Turn the debug lines off again. Record any failed check, and anything the design does not describe,
-before the release goes ahead; a difference between 49 and 50 goes into the ADR that covers that
-behaviour.
+Turn the debug lines off. Before releasing, record any failed check and anything the design does
+not describe; a difference between 49 and 50 goes into the ADR that covers it.
