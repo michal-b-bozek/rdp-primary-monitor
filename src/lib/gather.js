@@ -8,7 +8,7 @@
 
 import Meta from 'gi://Meta'
 
-import { planRestore, toMonitorFrame } from './windows.js'
+import { isOnWorkspace, planRestore, toMonitorFrame } from './windows.js'
 
 /**
  * @import { CurrentWindow, PresentMonitor, RestoreStep, WindowRecord } from './windows.js'
@@ -125,21 +125,24 @@ export function readNormalWindows() {
  * Move the snapshot's windows onto the session's monitor, keeping each
  * window's workspace and states (`move_to_monitor()`, ADR-0004 part 2).
  *
- * - With `current-workspace`, only windows on the active workspace move,
- *   including those on all workspaces.
+ * - With `current-workspace`, only the windows the snapshot puts on the workspace
+ *   active when it was taken move, including those on all workspaces
+ *   (`isOnWorkspace()`).
  * - Windows that closed, or are on that monitor already, are not moved.
  * - A window whose move throws is reported, and the rest still move, so the
  *   caller learns every window that did.
  *
- * @param {Iterable<Meta.Window>} windows The snapshot's windows.
+ * @param {Iterable<readonly [Meta.Window, WindowRecord]>} snapshot The
+ *   snapshot's windows and records.
  * @param {string} connector The connector of the session's monitor.
  * @param {GatherMode} mode The `gather-mode` setting, read right before the
  *   call.
+ * @param {number} workspace The workspace active at the snapshot.
  * @returns {{ moved: Meta.Window[], failed: WindowFailure[] }} The windows
  *   moved, for the gathered set (none when the monitor is gone or `mode` is
  *   `off`), and those whose move threw.
  */
-export function gather(windows, connector, mode) {
+export function gather(snapshot, connector, mode, workspace) {
   /** @type {Meta.Window[]} */
   const moved = []
   /** @type {WindowFailure[]} */
@@ -149,16 +152,11 @@ export function gather(windows, connector, mode) {
     .get_monitor_manager()
     .get_monitor_for_connector(connector)
   if (target < 0) return { moved, failed }
-  const active = global.workspace_manager.get_active_workspace()
 
-  for (const window of windows) {
+  for (const [window, record] of snapshot) {
     try {
       if (isGone(window) || window.get_monitor() === target) continue
-      if (
-        mode === 'current-workspace' &&
-        !window.is_on_all_workspaces() &&
-        window.get_workspace() !== active
-      ) {
+      if (mode === 'current-workspace' && !isOnWorkspace(record, workspace)) {
         continue
       }
       window.move_to_monitor(target)

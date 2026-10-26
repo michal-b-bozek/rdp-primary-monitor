@@ -14,6 +14,7 @@
 
 import { PlacementRecord } from '../src/lib/placement.js'
 import { Session } from '../src/lib/session.js'
+import { isOnWorkspace } from '../src/lib/windows.js'
 
 import { Deferred, FakeClock } from './fakes.js'
 
@@ -237,6 +238,8 @@ function fakeMutter(desk, changed, clients, movesFirst) {
  *   Virtual monitors already present before the session begins.
  * @property {boolean} [movesFirst] Whether Mutter moves windows before it
  *   reports a monitor change; by default it does.
+ * @property {Record<string, WindowRecord['workspace']>} [workspaces] Window
+ *   name to its workspace; by default 0, the active one.
  */
 
 /**
@@ -251,6 +254,7 @@ export function makeWorld({
   emitOnApply = true,
   clients = [],
   movesFirst = true,
+  workspaces = {},
 } = {}) {
   const clock = new FakeClock()
   const config = {
@@ -286,6 +290,7 @@ export function makeWorld({
     gatherThrows: false,
     /** @type {Set<string>} Windows whose move throws, by name. */
     stuck: new Set(),
+    activeWorkspace: 0,
   }
 
   /** @type {Settings} */
@@ -298,6 +303,13 @@ export function makeWorld({
     debugLogging: () => true,
   }
 
+  /**
+   * @param {FakeWindow} window
+   * @returns {WindowRecord['workspace']} Its workspace from `workspaces`, or
+   *   0, the active one.
+   */
+  const workspaceOf = (window) => workspaces[window.name] ?? 0
+
   /** @type {PlacementRecord<FakeWindow>} */
   const record = new PlacementRecord(
     (window) => {
@@ -305,7 +317,7 @@ export function makeWorld({
       const connector = desk.windows.get(window)
       return connector === undefined || !mutter.present(connector)
         ? null
-        : recordOn(connector)
+        : recordOn(connector, workspaceOf(window))
     },
     settings.settleMs,
     clock.timers,
@@ -376,10 +388,11 @@ export function makeWorld({
       new Map(
         [...desk.windows].map(([window, connector]) => [
           window,
-          recordOn(connector),
+          recordOn(connector, workspaceOf(window)),
         ]),
       ),
-    gather: (handles, connector, mode) => {
+    activeWorkspace: () => control.activeWorkspace,
+    gather: (snapshot, connector, mode, workspace) => {
       calls.gathers += 1
       if (control.gatherThrows) throw new Error('gather broke')
       /** @type {FakeWindow[]} */
@@ -389,9 +402,15 @@ export function makeWorld({
       if (mode === 'off' || !mutter.present(connector)) {
         return { moved, failed }
       }
-      for (const window of handles) {
+      for (const [window, snapshotRecord] of snapshot) {
         const now = desk.windows.get(window)
         if (now === undefined || now === connector) continue
+        if (
+          mode === 'current-workspace' &&
+          !isOnWorkspace(snapshotRecord, workspace)
+        ) {
+          continue
+        }
         try {
           throwIfStuck(window)
           desk.move(window, connector)
@@ -462,11 +481,12 @@ export function makeWorld({
 
 /**
  * @param {string} connector
- * @returns {WindowRecord} A window record on that monitor.
+ * @param {WindowRecord['workspace']} workspace
+ * @returns {WindowRecord} A window record on that monitor and workspace.
  */
-function recordOn(connector) {
+function recordOn(connector, workspace) {
   return {
-    workspace: 0,
+    workspace,
     monitor: { vendor: 'V', product: 'P', serial: 'S', connector },
     frame: { x: 10, y: 10, width: 800, height: 600 },
     maximizeFlags: 0,

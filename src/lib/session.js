@@ -54,7 +54,10 @@ import { start, transition } from './state.js'
  *   monitors present now, for a monitor check.
  * @property {(connector: string, makePrimary: boolean) => Pending<ApplyResult>} applyPrimary
  * @property {() => Map<W, WindowRecord>} readWindows Every normal window.
- * @property {(windows: Iterable<W>, connector: string, mode: GatherMode) =>
+ * @property {() => number} activeWorkspace The active workspace's index,
+ *   read with the snapshot.
+ * @property {(snapshot: Iterable<readonly [W, WindowRecord]>, connector: string,
+ *   mode: GatherMode, workspace: number) =>
  *   { moved: W[], failed: WindowFailure<W>[] }} gather Moves each window it
  *   can; returns those it moved and those whose move threw.
  * @property {(gathered: Iterable<readonly [W, WindowRecord]>) =>
@@ -91,6 +94,8 @@ export class Session {
   #apply = null
   /** @type {Map<W, WindowRecord> | null} */
   #snapshot = null
+  /** The workspace active when the snapshot was taken. */
+  #snapshotWorkspace = 0
   /** @type {Set<W>} */
   #gathered = new Set()
 
@@ -291,6 +296,7 @@ export class Session {
         break
       case 'takeSnapshot':
         this.#snapshot = ports.record.snapshot()
+        this.#snapshotWorkspace = ports.activeWorkspace()
         break
       case 'apply':
         this.#startApply(effect.connector)
@@ -324,9 +330,10 @@ export class Session {
           throw new Error('gather without a snapshot')
         try {
           const { moved, failed } = ports.gather(
-            this.#snapshot.keys(),
+            this.#snapshot,
             effect.connector,
             ports.settings.gatherMode(),
+            this.#snapshotWorkspace,
           )
           for (const window of moved) this.#gathered.add(window)
           ports.log.debug(`windows gathered: ${String(moved.length)}`)

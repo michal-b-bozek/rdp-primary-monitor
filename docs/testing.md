@@ -110,7 +110,8 @@ preferences, and change it back afterwards. Read case 1's checks with that setti
   windows still move to it and come back; the journal shows no `dismissed`.
 - **Don’t move windows.** **Check:** the client's monitor becomes primary; the extension moves no
   window (the journal shows no gather), at connect or at disconnect.
-- **From the current workspace.** **Check:** only that workspace's windows move and come back.
+- **From the current workspace.** **Check:** only the windows on the workspace active at connect
+  move and come back.
 - **Put the windows back** off. **Check:** windows move at connect and stay where Mutter puts them
   at disconnect.
 

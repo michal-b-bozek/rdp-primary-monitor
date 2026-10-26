@@ -96,6 +96,24 @@ export function toMonitorFrame(frame, monitor) {
 }
 
 /**
+ * Tell whether a window's snapshot puts it on a workspace. A record of `all`
+ * or `none` is on every workspace. The `current-workspace` gather asks the
+ * snapshot, not the window: on Mutter 50 the apply before the gather already
+ * puts the windows of the monitor it demotes on all workspaces.
+ *
+ * @param {WindowRecord} record The window's snapshot.
+ * @param {number} workspace A workspace index.
+ * @returns {boolean} True when the window is on that workspace.
+ */
+export function isOnWorkspace(record, workspace) {
+  return (
+    record.workspace === 'all' ||
+    record.workspace === 'none' ||
+    record.workspace === workspace
+  )
+}
+
+/**
  * Find a window's original monitor among the present ones: the monitor with
  * the stored vendor, product and serial; among several, the one with the
  * stored connector. Null means the monitor is gone (ADR-0004 part 3).
