@@ -13,6 +13,7 @@ path = [
   "package.json",
   "pnpm-lock.yaml",
   "src/metadata.json",
+  "tools/vm/probe/metadata.json",
   "tests/fixtures/**",
 ]
 SPDX-FileCopyrightText = "2026 Michał Bogusław Bożek"

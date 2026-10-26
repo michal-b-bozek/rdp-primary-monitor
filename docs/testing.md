@@ -10,7 +10,9 @@ Not yet run in full: fix any step that turns out wrong while running it.
 ## Where each case runs
 
 - **Test VMs** (`f43` for 49, `f44` for 50): cases 1–4, 7 and 8; case 4 only without "Allow
-  Locked Remote Desktop", which the VMs do not have.
+  Locked Remote Desktop", which the VMs do not have. Case 1's step 4 (resizing the client window)
+  and the tiling in step 5 run on the workstation: `vm:connect` opens a fixed-size client, and the
+  probe cannot tile.
 - **A workstation with real monitors:** every case. Case 5 needs a dock, case 6 a client machine
   with two monitors, case 9 two monitors on the workstation.
 
@@ -40,6 +42,7 @@ your own shell expands nothing in it, especially `~`.
      mise run vm:ssh f44 -- "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus \
        gsettings set org.gnome.shell enabled-extensions \
        \"['rdp-primary-monitor@michal-b-bozek.github.io']\""
+     mise run vm:probe f44 install
      mise run vm:ssh f44 -- 'sudo systemctl restart gdm'
      ```
 
@@ -74,8 +77,12 @@ your own shell expands nothing in it, especially `~`.
    must bring back.
 
 To connect a client to a VM, run `mise run vm:connect f44 --size 1600x900`; to disconnect it, close
-the FreeRDP window. On the workstation, connect from another machine with any RDP client. To read
-the display state (read-only), use the `gdbus` command in the
+the FreeRDP window. In a VM, `mise run vm:probe f44 state` prints the primary and every normal
+window's monitor, workspace, frame and states as JSON, so a check compares two states;
+`mise run vm:probe f44 do` arranges the open windows from a JSON array on stdin (the operations are
+in [tools/vm/probe/extension.js](../tools/vm/probe/extension.js)). The probe stops while the screen
+is locked. On the workstation, connect from another machine with any RDP client. To read the
+display state (read-only), use the `gdbus` command in the
 [fixtures README](../tests/fixtures/display-config/README.md).
 
 ## 1. Connect and disconnect

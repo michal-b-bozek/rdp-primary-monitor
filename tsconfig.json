@@ -37,6 +37,11 @@
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true
   },
-  "include": ["src/**/*.js", "tests/**/*.js", "types/**/*.d.ts"],
+  "include": [
+    "src/**/*.js",
+    "tests/**/*.js",
+    "tools/**/*.js",
+    "types/**/*.d.ts"
+  ],
   "exclude": ["node_modules", "build", "dist"]
 }
