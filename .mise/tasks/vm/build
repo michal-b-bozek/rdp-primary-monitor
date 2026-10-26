@@ -19,6 +19,9 @@ readonly VM_TOOLS_DIR="${SCRIPT_DIR}/../../../tools/vm"
 source "${VM_TOOLS_DIR}/lib.sh"
 
 readonly INSTALL_TIMEOUT_MINUTES=90
+# Installed disks measured 5.3 GiB (f44) and 8.5 GiB (f43) on 2026-10-26; installers that stopped
+# early left about 5 MiB.
+readonly MIN_INSTALLED_BYTES=$((1024 * 1024 * 1024))
 
 # The temporary directory holds the rendered kickstart (password hash, RDP credentials).
 tmp=
@@ -118,6 +121,19 @@ main() {
     --noautoconsole --noreboot --wait "${INSTALL_TIMEOUT_MINUTES}"; then
     printf 'error: installing %s failed or took over %s minutes; see %s, then: mise run vm:destroy %s\n' \
       "${RDPPM_VM_NAME}" "${INSTALL_TIMEOUT_MINUTES}" "${RDPPM_VM_STATE_DIR}/console.log" "${usage_vm}" >&2
+    exit 75
+  fi
+
+  # An installer that stops early also powers the guest off, which virt-install reports as
+  # success. vda: the one virtio disk above.
+  local allocation
+  # shellcheck disable=SC2310  # an unreadable size is reported below like a small one
+  allocation="$(rdppm_virsh domblkinfo "${RDPPM_VM_NAME}" vda |
+    awk '$1 == "Allocation:" { print $2 }')" || allocation=
+  if [[ ! "${allocation}" =~ ^[0-9]+$ ]] || ((10#${allocation} < MIN_INSTALLED_BYTES)); then
+    printf 'error: %s powered off with %s bytes on its disk, so the install did not finish; see %s, then: mise run vm:destroy %s\n' \
+      "${RDPPM_VM_NAME}" "${allocation:-an unreadable number of}" \
+      "${RDPPM_VM_STATE_DIR}/console.log" "${usage_vm}" >&2
     exit 75
   fi
 
