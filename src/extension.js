@@ -130,6 +130,8 @@ export default class RdpPrimaryMonitor extends Extension {
       applyPrimary: (connector, makePrimary) =>
         onProxy((p, c) => applyPrimary(p, connector, makePrimary, c)),
       readWindows: readNormalWindows,
+      activeWorkspace: () =>
+        global.workspace_manager.get_active_workspace_index(),
       gather,
       restore,
       describe: (window) => `window of ${window.get_wm_class() ?? 'unknown'}`,

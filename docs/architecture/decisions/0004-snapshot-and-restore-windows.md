@@ -1,6 +1,6 @@
 # 4. Snapshot and restore windows
 
-- **Status:** accepted; Last amended: 2026-10-14
+- **Status:** accepted; Last amended: 2026-10-26
 - **Date:** 2026-10-12
 - **Deciders:** Michał Bogusław Bożek (maintainer)
 - **Related:** builds on [ADR-0002](0002-match-the-virtual-monitor.md) (the session's monitor) and
@@ -81,6 +81,18 @@ with `move_to_monitor()` only, so it keeps its workspace and its states.
 > reversed; the snapshot records one more distinction. Part 4's amendment of the same date says what
 > the restore does with each form; the snapshot code (`src/lib/gather.js`, `src/lib/windows.js`) and
 > `docs/design.md`'s Restoring paragraph change with this.
+
+> **Amendment (2026-10-26).** With the gather limited to the current workspace, the snapshot decides
+> which windows move: those it puts on the workspace active when it was taken, or on all workspaces.
+> The gather runs after the apply, and on GNOME Shell 50.6 the apply had already put every window of
+> the monitor it demoted on all workspaces, so a filter reading the windows' workspaces at gather
+> time moved all seven test windows, three of them from a second workspace; GNOME Shell 49.10 moved
+> four, the right ones. Windows the gather leaves out are not restored; in the same run GNOME Shell
+> 50 left those of the demoted monitor on the active workspace after the disconnect, where 49 kept
+> their workspace, and with gathering off both versions moved the windows of the other monitor onto
+> the primary. Found in the release test protocol in the test VMs. The gather code
+> (`src/lib/gather.js`, `src/lib/session.js`) and `docs/design.md`'s gathering step change with
+> this.
 
 Explicitly not the frame in global coordinates: a layout change during the session would put the
 window somewhere else on its monitor, or off it.

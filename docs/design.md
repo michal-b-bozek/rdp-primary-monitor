@@ -84,10 +84,10 @@ The chosen monitor is the session's own until it goes
    follows the resulting `monitors-changed`, so that work areas and the top bar have moved; if that
    check finds the primary already off the session's monitor, the extension goes to Dismissed and
    gathers nothing; if no check comes by then, it gathers anyway;
-4. moves each snapshotted normal window (all workspaces or only the current one, per a setting) to
-   the session's monitor with `move_to_monitor`. Maximized, fullscreen and minimized windows are
-   moved too and keep their state. With `workspaces-only-on-primary` on and the session's monitor
-   not primary, the moved windows go on all workspaces (see Restoring below).
+4. moves each snapshotted normal window (all workspaces or only the one active at the snapshot, per
+   a setting) to the session's monitor with `move_to_monitor`. Maximized, fullscreen and minimized
+   windows are moved too and keep their state. With `workspaces-only-on-primary` on and the
+   session's monitor not primary, the moved windows go on all workspaces (see Restoring below).
 
 Settings can turn off making the monitor primary (step 2), gathering (step 4) and the restore when
 the session ends. Each step reads its setting when it runs, so a change during a session takes
@@ -143,6 +143,11 @@ keeps every window on a monitor other than the primary on all workspaces:
   stays where it is: on its current workspace, or on all of them.
 
 Other cases:
+
+- A window the gathering setting leaves out is not restored: the extension never moved it. Mutter
+  can still change its workspace or monitor during the session
+  ([ADR-0004](architecture/decisions/0004-snapshot-and-restore-windows.md), part 2's amendment of
+  2026-10-26).
 
 - The extension finds a window's original monitor by vendor, product and serial, and by connector
   only to choose among monitors that share all three. If none of them has the stored connector, the

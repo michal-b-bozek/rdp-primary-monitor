@@ -158,6 +158,38 @@ flow('with gathering off, no window moves and none is put back', async () => {
   assertEqual(world.where(), HOME)
 })
 
+flow(
+  'gathering from the current workspace moves the windows the snapshot puts there',
+  async () => {
+    const world = await started({
+      windows: { a: 'DP-1', b: 'DP-1', c: 'DP-2' },
+      workspaces: { a: 0, b: 1, c: 'none' },
+    })
+    world.config.gatherMode = 'current-workspace'
+
+    await connected(world)
+
+    assertEqual(world.where(), { a: 'Meta-0', b: 'DP-1', c: 'Meta-0' })
+  },
+)
+
+flow(
+  'gathering from the current workspace uses the workspace active at the snapshot',
+  async () => {
+    const world = await started({ workspaces: { a: 0, b: 1 } })
+    world.config.gatherMode = 'current-workspace'
+    world.control.holdApplies = true
+    world.mutter.connect('Meta-0', '0x000001')
+    await world.wait(DEBOUNCE)
+    // An empty dynamic workspace going away renumbers the active one.
+    world.control.activeWorkspace = 1
+    only(world.control.heldApplies).resolve('changed')
+    await world.wait(DEBOUNCE)
+
+    assertEqual(world.where(), { a: 'Meta-0', b: 'DP-2' })
+  },
+)
+
 flow('each step reads its setting when it runs', async () => {
   const world = await started()
   world.control.holdApplies = true

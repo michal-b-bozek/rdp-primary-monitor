@@ -9,6 +9,7 @@
 import { parseDisplayState } from '../../src/lib/monitors.js'
 import {
   findOriginalMonitor,
+  isOnWorkspace,
   planRestore,
   toMonitorFrame,
 } from '../../src/lib/windows.js'
@@ -116,6 +117,21 @@ function kinds(steps) {
 }
 
 // --- the monitor -----------------------------------------------------------
+
+test('a window on all workspaces of its own accord is on every workspace', () => {
+  assertEqual(isOnWorkspace(saved({ workspace: 'all' }), 1), true)
+})
+
+test('a window with no workspace of its own is on every workspace', () => {
+  assertEqual(isOnWorkspace(saved({ workspace: 'none' }), 1), true)
+})
+
+test('a window on one workspace is on that workspace only', () => {
+  assertEqual(
+    [0, 1].map((w) => isOnWorkspace(saved({ workspace: 1 }), w)),
+    [false, true],
+  )
+})
 
 test('a frame is stored relative to its monitor', () => {
   assertEqual(
