@@ -45,14 +45,25 @@ and I don't plan to submit it there:
 
 ## Install
 
+From a [release](https://github.com/michal-b-bozek/rdp-primary-monitor/releases): download the
+`.shell-extension.zip` and its `.sha256` file, then:
+
+```sh
+sha256sum -c rdp-primary-monitor@michal-b-bozek.github.io.shell-extension.zip.sha256
+gnome-extensions install --force rdp-primary-monitor@michal-b-bozek.github.io.shell-extension.zip
+```
+
 From a clone, with [mise](https://mise.jdx.dev/):
 
 ```sh
 mise trust mise.toml && mise run ext:install
 ```
 
-Then log out and in. Without mise, `gnome-extensions pack src --extra-source=lib`, then
-`gnome-extensions install` the zip, log out and in, and enable it in the Extensions app.
+Without mise, `gnome-extensions pack src --extra-source=lib`, then `gnome-extensions install` the
+zip.
+
+Then log out and in, and enable the extension in the Extensions app (`ext:install` enables it for
+you).
 
 ## Settings
 
