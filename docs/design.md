@@ -124,7 +124,9 @@ whatever the remote user did to them. For each window it:
 3. leaves the maximized state if the window is maximized in a direction the snapshot does not have;
 4. sets the frame rectangle (stored relative to its monitor) unless the snapshot has it maximized
    in both directions;
-5. maximizes it in the snapshot's directions;
+5. maximizes it in the snapshot's directions, and sets the frame again if that is one direction
+   only (while leaving fullscreen is pending, the maximize takes the other direction's position and
+   size from the fullscreen rectangle);
 6. restores the fullscreen and minimized states.
 
 Workspaces follow `org.gnome.mutter workspaces-only-on-primary`. With it on (the default), Mutter

@@ -181,20 +181,26 @@ export function planRestore(record, current, present, workspaceCount) {
   }
   // A window maximized in one direction gets its frame first, since maximizing
   // leaves the other direction where it is (ADR-0004 part 4).
-  if (record.maximizeFlags !== MAXIMIZE_BOTH) {
-    steps.push({
-      kind: 'moveResizeFrame',
-      frame: {
-        x: record.frame.x + monitor.geometry.x,
-        y: record.frame.y + monitor.geometry.y,
-        width: record.frame.width,
-        height: record.frame.height,
-      },
-    })
+  const oneDirection =
+    record.maximizeFlags !== 0 && record.maximizeFlags !== MAXIMIZE_BOTH
+  /** @type {RestoreStep} */
+  const frameStep = {
+    kind: 'moveResizeFrame',
+    frame: {
+      x: record.frame.x + monitor.geometry.x,
+      y: record.frame.y + monitor.geometry.y,
+      width: record.frame.width,
+      height: record.frame.height,
+    },
   }
+  if (record.maximizeFlags !== MAXIMIZE_BOTH) steps.push(frameStep)
   if (record.maximizeFlags !== 0) {
     steps.push({ kind: 'maximize', flags: record.maximizeFlags })
   }
+  // Set the frame again after the maximize: while leaving fullscreen is still
+  // pending (Wayland), the maximize takes the other direction's position and
+  // size from the fullscreen rectangle, not from the frame just set.
+  if (oneDirection) steps.push(frameStep)
   if (record.fullscreen && !current.fullscreen) {
     steps.push({ kind: 'makeFullscreen' })
   }

@@ -302,15 +302,33 @@ test('a window maximized in the snapshot is maximized without a frame', () => {
   )
 })
 
-test('a window maximized in one direction gets its frame, then that direction', () => {
+test('a window maximized in one direction gets its frame, that direction, then its frame again', () => {
+  /** @type {RestoreStep} */
+  const frame = {
+    kind: 'moveResizeFrame',
+    frame: { x: 2020, y: 50, width: 800, height: 600 },
+  }
   assertEqual(plan(saved({ maximizeFlags: VERTICAL }), now()), [
     { kind: 'moveToMonitor', monitor: 1 },
-    {
-      kind: 'moveResizeFrame',
-      frame: { x: 2020, y: 50, width: 800, height: 600 },
-    },
+    frame,
     { kind: 'maximize', flags: VERTICAL },
+    frame,
   ])
+})
+
+test('a window maximized in one direction and fullscreen only now gets its frame again after the maximize', () => {
+  assertEqual(
+    kinds(
+      plan(saved({ maximizeFlags: HORIZONTAL }), now({ fullscreen: true })),
+    ),
+    [
+      'unmakeFullscreen',
+      'moveToMonitor',
+      'moveResizeFrame',
+      'maximize',
+      'moveResizeFrame',
+    ],
+  )
 })
 
 test('a window maximized in a direction the snapshot lacks is unmaximized first', () => {
@@ -318,7 +336,13 @@ test('a window maximized in a direction the snapshot lacks is unmaximized first'
     kinds(
       plan(saved({ maximizeFlags: VERTICAL }), now({ maximizeFlags: BOTH })),
     ),
-    ['moveToMonitor', 'unmaximize', 'moveResizeFrame', 'maximize'],
+    [
+      'moveToMonitor',
+      'unmaximize',
+      'moveResizeFrame',
+      'maximize',
+      'moveResizeFrame',
+    ],
   )
 })
 
@@ -330,7 +354,7 @@ test('a window maximized as in the snapshot is not unmaximized', () => {
         now({ maximizeFlags: HORIZONTAL }),
       ),
     ),
-    ['moveToMonitor', 'moveResizeFrame', 'maximize'],
+    ['moveToMonitor', 'moveResizeFrame', 'maximize', 'moveResizeFrame'],
   )
 })
 
