@@ -1,0 +1,6 @@
+{
+  "uuid": "rdppm-probe@test.invalid",
+  "name": "RDP Primary Monitor test probe",
+  "description": "Test VMs only: reports and arranges windows over D-Bus for the manual test protocol.",
+  "shell-version": ["49", "50"]
+}

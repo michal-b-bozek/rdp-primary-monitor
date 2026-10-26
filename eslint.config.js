@@ -225,7 +225,7 @@ export default defineConfig(
   // --- 8. per-file overrides ----------------------------------------------
   {
     // GNOME Shell loads the extension and its preferences through their default export.
-    files: ['src/extension.js', 'src/prefs.js'],
+    files: ['src/extension.js', 'src/prefs.js', 'tools/vm/probe/extension.js'],
     rules: { 'import-x/no-default-export': 'off' },
   },
   {

@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Michał Bogusław Bożek
+# SPDX-License-Identifier: MIT
+#MISE description="Install or query the test probe in a test VM (window state and arrangement, docs/testing.md)"
+#USAGE arg "<vm>" help="f43 (Fedora 43, GNOME 49) or f44 (Fedora 44, GNOME 50)" {
+#USAGE   choices "f43" "f44"
+#USAGE }
+#USAGE arg "<command>" help="install: enable the probe from the next login, before the extension; state: print the monitors and windows as JSON; do: run the JSON array of operations read from stdin" {
+#USAGE   choices "install" "state" "do"
+#USAGE }
+#
+# The probe (tools/vm/probe) is a test-only extension; it never goes into the release zip.
+set -euo pipefail
+shopt -s inherit_errexit
+IFS=$'\n\t'
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+readonly SCRIPT_DIR
+readonly PROBE_DIR="${SCRIPT_DIR}/../../../tools/vm/probe"
+# shellcheck source=tools/vm/lib.sh
+source "${SCRIPT_DIR}/../../../tools/vm/lib.sh"
+
+readonly PROBE_UUID="rdppm-probe@test.invalid"
+readonly GUEST_ENV="export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus;"
+readonly CALL="gdbus call --session --dest org.rdppm.Probe --object-path /org/rdppm/Probe --method"
+
+tmp=
+cleanup() {
+  if [[ -n "${tmp}" ]]; then rm -rf -- "${tmp}"; fi
+}
+
+install_probe() {
+  rdppm_require_cmd gnome-extensions
+  trap cleanup EXIT
+  tmp="$(mktemp -d)"
+  gnome-extensions pack "${PROBE_DIR}" --out-dir="${tmp}" --force
+  rdppm_vm_ssh 'cat > /tmp/rdppm-probe.zip' < "${tmp}/${PROBE_UUID}.shell-extension.zip"
+  # First in enabled-extensions, so it is enabled before the extension: case 4's "Enabled during
+  # the session" (docs/testing.md) needs a `user`-mode extension enabled before this one.
+  rdppm_vm_ssh "PROBE_UUID=${PROBE_UUID} sh -s" << 'GUEST'
+set -eu
+export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+gnome-extensions install --force /tmp/rdppm-probe.zip
+list="$(gsettings get org.gnome.shell enabled-extensions | sed -e "s/'$PROBE_UUID',\{0,1\} \{0,1\}//" -e 's/^@as //')"
+if [ "$list" = '[]' ]; then list="['$PROBE_UUID']"; else list="['$PROBE_UUID', ${list#\[}"; fi
+gsettings set org.gnome.shell enabled-extensions "$list"
+gsettings get org.gnome.shell enabled-extensions
+GUEST
+  printf 'The probe starts at the next login: mise run vm:ssh %s -- sudo systemctl restart gdm\n' \
+    "${usage_vm:?}" >&2
+}
+
+main() {
+  rdppm_vm_resolve "${usage_vm:?}"
+  rdppm_require_cmd virsh ssh
+  rdppm_vm_require_running
+  rdppm_vm_require_ssh_key
+  case "${usage_command:?}" in
+    install) install_probe ;;
+    state) rdppm_vm_ssh "${GUEST_ENV} ${CALL} org.rdppm.Probe.State /tmp/rdppm-probe.json > /dev/null && cat /tmp/rdppm-probe.json" ;;
+    do)
+      rdppm_vm_ssh 'cat > /tmp/rdppm-probe-ops.json'
+      rdppm_vm_ssh "${GUEST_ENV} ${CALL} org.rdppm.Probe.Do /tmp/rdppm-probe-ops.json"
+      ;;
+    *) return 64 ;;
+  esac
+}
+
+main "$@"

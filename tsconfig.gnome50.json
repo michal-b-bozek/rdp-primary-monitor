@@ -7,5 +7,10 @@
 // place of types/.
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.js", "tests/**/*.js", "types50/**/*.d.ts"]
+  "include": [
+    "src/**/*.js",
+    "tests/**/*.js",
+    "tools/**/*.js",
+    "types50/**/*.d.ts"
+  ]
 }
