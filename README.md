@@ -10,9 +10,10 @@ moved window back.
 In `extend` mode the primary monitor stays a physical one, so the top bar, the Alt+Tab switcher,
 notifications and the open windows stay on screens the remote user cannot see. In my use, making
 the virtual monitor primary by hand in Settings → Displays did not persist from one remote session
-to the next. GNOME Remote Desktop 50 has no option for it
-([requested upstream in 2022](https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/issues/133)),
-and Remote Login gives the client a separate session, not the one running at the workstation.
+to the next. GNOME Remote Desktop 50 has no option for it. The
+[upstream request](https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/issues/133) was closed as
+a duplicate of [#91](https://gitlab.gnome.org/GNOME/gnome-remote-desktop/-/issues/91), which is
+still open. Remote Login gives the client a separate session, not the one running at the workstation.
 
 ## Behaviour
 
