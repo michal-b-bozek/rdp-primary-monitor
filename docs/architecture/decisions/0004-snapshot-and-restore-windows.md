@@ -267,6 +267,11 @@ restored too.
 
 - Whether real monitors are moved by a connect as the QEMU heads were; part 1's revisit trigger.
 - Tiled (half-screen) windows and applications with several windows; the spike covered neither.
+
+  > **Amendment (2026-10-26).** An application with two windows ran in the test VMs (GNOME Shell
+  > 49.10 and 50.6) and came back with no difference. Tiling did not run there; it stays open for
+  > the workstation run.
+
 - Part 4's cases the spike did not run: windows the remote user moved, resized, maximized, made
   fullscreen or minimized; windows opened or closed during the session; an original monitor that
   is gone at restore.
@@ -275,3 +280,10 @@ restored too.
   > amended steps. Among them, a window maximized vertically in the snapshot that the remote user
   > tiled to one side: it is not unmaximized, and maximizing it vertically again leaves the tile in
   > place, so it may come back tiled.
+
+  > **Amendment (2026-10-26).** Run in the test VMs (GNOME Shell 49.10 and 50.6), in the release
+  > test protocol: windows the remote user moved, resized, maximized, made fullscreen or minimized;
+  > windows opened and closed during the session; windows maximized in one direction. All came back
+  > with no difference, the one-direction windows after part 4's amendment of the same date. An
+  > original monitor gone at restore needs a dock, and the tiled window above needs tiling; both
+  > stay open for the workstation run.

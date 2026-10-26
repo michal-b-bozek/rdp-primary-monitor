@@ -5,8 +5,6 @@ fake desk and a fake Mutter; this protocol checks what only a real Shell, a real
 monitors show. A **Check** must hold, or the case fails; a **Record** is an
 observation to write down.
 
-Not yet run in full: fix any step that turns out wrong while running it.
-
 ## Where each case runs
 
 - **Test VMs** (`f43` for 49, `f44` for 50): cases 1–4, 7 and 8; case 4 only without "Allow
