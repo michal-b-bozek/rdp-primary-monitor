@@ -1,6 +1,6 @@
 # Design
 
-**Status:** design for the first release; the code that implements it is being written.
+**Status:** the design of the first release, as the code implements it.
 
 The extension is a five-state machine inside `gnome-shell`, driven by the monitor check (see
 [States](#states)). The reasons behind its decisions are recorded in the
