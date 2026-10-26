@@ -4,7 +4,8 @@
 # draft GitHub Release; publish it by hand after a look.
 # A release candidate (-rc.N) tries the release flow before the bump: it may come from any
 # commit, keeps metadata.json's version-name and has no CHANGELOG.md section of its own.
-# Only the publish job holds a token that can write, and it runs no project code.
+# Only the publish job holds a token that can write, and it runs no project code. The publish job
+# also signs the zip's provenance; `gh attestation verify` checks the signature.
 # Actions are pinned by commit SHA, the tag in a comment.
 
 name: release
@@ -131,12 +132,20 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write
+      # Sigstore signing (an OIDC token) and storing the attestation.
+      id-token: write
+      attestations: write
     steps:
       - name: Fetch the release files
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: release
           path: release
+
+      - name: Attest the zip's build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: release/*.shell-extension.zip
 
       - name: Create the draft release
         run: |
